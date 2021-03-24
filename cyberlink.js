@@ -2,12 +2,8 @@
 const { DirectSecp256k1HdWallet, Registry } = require("@cosmjs/proto-signing");
 const { defaultRegistryTypes, SigningStargateClient } = require("@cosmjs/stargate");
 const {stringToPath} = require("@cosmjs/crypto");
-const { MsgCyberlink } = require("./build/index");
+const { SigningCyberClient } = require("./build/index");
 
-const cyberRegistry = new Registry([
-  ...defaultRegistryTypes,
-  ["/cyber.graph.v1beta1.MsgCyberlink", MsgCyberlink],
-]);
 const mnemonic =
   "diet tragic tell acquire one wash fiber reopen surprise duty discover inner kind ketchup guilt exit three elegant sausage utility slab banner yellow asset";
 const rpcUrl = "http://localhost:26657"
@@ -24,42 +20,16 @@ async function main() {
     prefix,
   );
 
-  const client = await SigningStargateClient.connectWithSigner(
-    rpcUrl,
-    signer,
-    {
-      registry: cyberRegistry,
-    },
-  );
+  const client = await SigningCyberClient.connectWithSigner(rpcUrl, signer);
 
   const myAddress = "cyber15vyqaz9fzqn0maywf20z5etw99k6xpp426mm2g";
+  const response = await client.cyberlink(
+    myAddress,
+    "QmUX9mt8ftaHcn9Nc6SR4j9MsKkYfkcZqkfPTmMmBgeTe3",
+    "QmUX9mt8ftaHcn9Nc6SR4j9MsKkYfkcZqkfPTmMmBgeTe1",
+  )
+  console.log(JSON.stringify(response, null, 4));
 
-  const message = {
-    typeUrl: "/cyber.graph.v1beta1.MsgCyberlink",
-    value: {
-      address: myAddress,
-      links: [
-        {
-          from: "QmUX9mt8ftaHcn9Nc6SR4j9MsKkYfkcZqkfPTmMmBgeTe3",
-          to: "QmUX9mt8ftaHcn9Nc6SR4j9MsKkYfkcZqkfPTmMmBgeTe7"
-        }
-      ]
-    },
-  };
-
-  const fee = {
-    amount: [
-      {
-        denom: tokenDenom,
-        amount: "100",
-      },
-    ],
-    gas: "150000",
-  };
-
-  console.log("Message:\n", message)
-  const response = await client.signAndBroadcast(myAddress, [message], fee);
-  console.log("Response:\n", response)
 }
 
 main().then(

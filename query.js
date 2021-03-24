@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 const { QueryClient } = require("@cosmjs/stargate");
 const { Tendermint34Client } = require("@cosmjs/tendermint-rpc");
-const { setupGraphExtension } = require("./build/index");
+const { CyberClient } = require("./build/index");
 
 
 const rpcUrl = "http://localhost:26657"
@@ -10,12 +10,9 @@ async function main() {
 
     const tendermintClient = await Tendermint34Client.connect(rpcUrl);
 
-    const queryClient = QueryClient.withExtensions(
-      tendermintClient,
-      setupGraphExtension
-    );
+    const queryClient = new CyberClient(tendermintClient)
     
-    const queryResult = await queryClient.unverified.graph.graphStats({});
+    const queryResult = await queryClient.graphStats({ });
     console.log(queryResult)
 }
 
