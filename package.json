@@ -1,0 +1,23 @@
+{
+  "name": "cyber-js",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "get-proto": "./scripts/get-proto.sh",
+    "define-proto": "./scripts/define-proto.sh",
+    "postdefine-proto": "prettier --write \"src/codec/**/*.ts\""
+  },
+  "dependencies": {
+    "@cosmjs/proto-signing": "^0.25.0-alpha.0",
+    "@cosmjs/stargate": "^0.25.0-alpha.0",
+    "@cosmjs/tendermint-rpc": "^0.25.0-alpha.0",
+    "@cosmjs/crypto": "^0.25.0-alpha.0",
+    "long": "^4.0.0",
+    "protobufjs": "~6.10.2"
+  },
+  "devDependencies": {
+    "ts-proto": "^1.74.0"
+  }
+}

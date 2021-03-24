@@ -1,0 +1,29 @@
+{
+    "compilerOptions": {
+        "baseUrl": ".",
+        "outDir": "build",
+        "experimentalDecorators": true,
+        "rootDir": "src",
+        "declaration": true,
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
+        "lib": ["es2017"],
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "newLine": "LF",
+        "noEmitOnError": true,
+        "noFallthroughCasesInSwitch": true,
+        "noImplicitReturns": true,
+        "noUnusedLocals": false,
+        "noUnusedParameters": false,
+        "pretty": true,
+        "removeComments": false,
+        "resolveJsonModule": true,
+        "sourceMap": true,
+        "strict": true,
+        "target": "es2017"
+      },
+    "include": [
+      "src/**/*"
+    ]
+  }
