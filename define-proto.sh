@@ -10,17 +10,23 @@ OUT_DIR="./src/codec/"
 
 mkdir -p "$OUT_DIR"
 
+# echo $THIRD_PARTY_PROTO_DIR
+
 protoc \
   --plugin="$(yarn bin protoc-gen-ts_proto)" \
   --ts_proto_out="$OUT_DIR" \
   --proto_path="$CYBER_PROTO_DIR/cyber" \
   --proto_path="$THIRD_PARTY_PROTO_DIR" \
   --ts_proto_opt="esModuleInterop=true,forceLong=long,useOptionals=true" \
+  "$THIRD_PARTY_PROTO_DIR/cosmos_proto/coin.proto" \
   "$CYBER_PROTO_DIR/cyber/graph/v1beta1/graph.proto" \
-  "$CYBER_PROTO_DIR/cyber/graph/v1beta1/query.proto"
+  "$CYBER_PROTO_DIR/cyber/graph/v1beta1/query.proto" \
+  "$CYBER_PROTO_DIR/cyber/bandwidth/v1beta1/params.proto" \
+  "$CYBER_PROTO_DIR/cyber/bandwidth/v1beta1/bandwidth.proto" \
+  "$CYBER_PROTO_DIR/cyber/bandwidth/v1beta1/query.proto" \
 
 # Remove unnecessary codec files
-rm -rf \
-  src/codec/cosmos_proto/ \
-  src/codec/gogoproto/ \
-  src/codec/google/
+# rm -rf \
+  # src/codec/cosmos_proto/ \
+  # src/codec/gogoproto/ \
+  # src/codec/google/

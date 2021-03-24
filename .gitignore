@@ -8,5 +8,9 @@ scripts/proto
 node_modules/
 tmp/
 
+src/codec/cosmos_proto
+src/codec/gogoproto
+src/codec/google
+
 yarn-error.log
 yarn.lock
