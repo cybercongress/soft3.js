@@ -12,8 +12,8 @@
   ],
   "scripts": {
     "build": "tsc",
-    "get-proto": "./scripts/get-proto.sh",
-    "define-proto": "./scripts/define-proto.sh",
+    "get-proto": "./get-proto.sh",
+    "define-proto": "./define-proto.sh",
     "postdefine-proto": "prettier --write \"src/codec/**/*.ts\""
   },
   "dependencies": {

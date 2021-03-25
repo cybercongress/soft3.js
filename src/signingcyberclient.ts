@@ -24,7 +24,7 @@ import {
   BroadcastTxResponse,
   defaultRegistryTypes,
   isBroadcastTxFailure,
-  parseRawLog,
+  logs,
 } from "@cosmjs/stargate";
 import {
   fromBase64,
@@ -139,7 +139,7 @@ export class SigningCyberClient extends CyberClient {
       throw new Error(createBroadcastTxErrorMessage(result));
     }
     return {
-      logs: parseRawLog(result.rawLog),
+      // logs: parseRawLog(result.rawLog),
       transactionHash: result.transactionHash,
     };
   }

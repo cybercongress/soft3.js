@@ -10,7 +10,7 @@ import {
 import {
   createPagination,
   Account,
-  accountFromProto,
+  accountFromAny,
   AuthExtension,
   BankExtension,
   BroadcastTxResponse,
@@ -90,7 +90,7 @@ export class CyberClient {
     console.log("ACCOUNT", searchAddress)
     const account = await this.queryClient.auth.account(searchAddress);
     console.log("ACCOUNT", account)
-    return account ? accountFromProto(account) : null;
+    return account ? accountFromAny(account) : null;
   }
 
   public async getSequence(address: string): Promise<SequenceResponse | null> {
