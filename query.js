@@ -14,6 +14,8 @@ async function main() {
     
     const queryResult = await queryClient.graphStats({ });
     console.log(queryResult)
+
+    // console.log(await queryClient.getAccount("cyber15vyqaz9fzqn0maywf20z5etw99k6xpp426mm2g"))
 }
 
 main().then(

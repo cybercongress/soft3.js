@@ -21,6 +21,7 @@ async function main() {
   );
 
   const client = await SigningCyberClient.connectWithSigner(rpcUrl, signer);
+  const pk = Buffer.from(signer.pubkey).toString('hex');
 
   const myAddress = "cyber15vyqaz9fzqn0maywf20z5etw99k6xpp426mm2g";
   const response = await client.cyberlink(
