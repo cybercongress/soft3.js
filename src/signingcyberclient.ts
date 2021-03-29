@@ -4,8 +4,11 @@ import {
   buildFeeTable,
   GasLimits,
   GasPrice,
-  StdFee
+  StdFee,
+  Coin,
+  uint64ToString,
 } from "@cosmjs/launchpad";
+import Long from "long";
 import {
   encodeSecp256k1Pubkey
 } from "@cosmjs/amino";
@@ -33,7 +36,8 @@ import {
 } from "@cosmjs/encoding";
 import {
   Int53,
-  Uint53
+  Uint53,
+  Uint64,
 } from "@cosmjs/math";
 import {
   Tendermint34Client
@@ -49,17 +53,23 @@ import {
   MsgCyberlinkResponse
 } from "./codec/graph/v1beta1/graph"
 import {
+  MsgConvert,
+  MsgConvertResponse
+} from "./codec/resources/v1beta1/tx"
+import {
   CyberClient
 } from "./cyberclient";
 
 interface CyberFeeTable extends CosmosFeeTable {
   readonly cyberlink: StdFee;
+  readonly convert: StdFee;
 }
 
-const defaultGasPrice = GasPrice.fromString("0.025nick");
+const defaultGasPrice = GasPrice.fromString("0.001nick");
 const defaultGasLimits: GasLimits < CyberFeeTable > = {
-  cyberlink: 128000,
-  send: 100000,
+  cyberlink: 256000,
+  convert: 128000,
+  send: 128000,
 };
 
 function createBroadcastTxErrorMessage(result: BroadcastTxFailure): string {
@@ -70,6 +80,7 @@ function createDefaultRegistry(): Registry {
   return new Registry([
     ...defaultRegistryTypes,
     ["/cyber.graph.v1beta1.MsgCyberlink", MsgCyberlink, ],
+    ["/cyber.resources.v1beta1.MsgConvert", MsgConvert, ],
   ]);
 }
 
@@ -135,6 +146,33 @@ export class SigningCyberClient extends CyberClient {
       },
     };
     const result = await this.signAndBroadcast(senderAddress, [cyberlinkMsg], this.fees.cyberlink, memo);
+    if (isBroadcastTxFailure(result)) {
+      throw new Error(createBroadcastTxErrorMessage(result));
+    }
+    return {
+      // logs: parseRawLog(result.rawLog),
+      transactionHash: result.transactionHash,
+    };
+  }
+
+  public async convertResources(
+    senderAddress: string,
+    amount: Coin,
+    resource: string,
+    time: number,
+    memo = "",
+  ): Promise < MsgConvertResponse > {
+    const convertResourcesMsg = {
+      typeUrl: "/cyber.resources.v1beta1.MsgConvert",
+      value: MsgConvert.fromPartial({
+        agent: senderAddress,
+        amount: amount,
+        resource: resource,
+        endTime: Long.fromString(new Uint53(10000).toString()),
+      }),
+    };
+    console.log(convertResourcesMsg)
+    const result = await this.signAndBroadcast(senderAddress, [convertResourcesMsg], this.fees.convert, memo);
     if (isBroadcastTxFailure(result)) {
       throw new Error(createBroadcastTxErrorMessage(result));
     }

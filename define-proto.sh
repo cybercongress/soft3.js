@@ -24,6 +24,9 @@ protoc \
   "$CYBER_PROTO_DIR/cyber/bandwidth/v1beta1/params.proto" \
   "$CYBER_PROTO_DIR/cyber/bandwidth/v1beta1/bandwidth.proto" \
   "$CYBER_PROTO_DIR/cyber/bandwidth/v1beta1/query.proto" \
+  "$CYBER_PROTO_DIR/cyber/resources/v1beta1/tx.proto" \
+  "$CYBER_PROTO_DIR/cyber/rank/v1beta1/params.proto" \
+  "$CYBER_PROTO_DIR/cyber/rank/v1beta1/query.proto" \
 
 # Remove unnecessary codec files
 # rm -rf \

@@ -24,9 +24,32 @@ async function main() {
   const pk = Buffer.from(signer.pubkey).toString('hex');
 
   const myAddress = "cyber15vyqaz9fzqn0maywf20z5etw99k6xpp426mm2g";
-  const response = await client.cyberlink(
+
+  var response = await client.convertResources(
     myAddress,
-    "QmUX9mt8ftaHcn9Nc6SR4j9MsKkYfkcZqkfPTmMmBgeTe3",
+    {
+      denom: "nick",
+      amount: "1000000"
+    },
+    "volt",
+    10000
+  )
+  console.log(JSON.stringify(response, null, 4));
+
+  var response = await client.convertResources(
+    myAddress,
+    {
+      denom: "nick",
+      amount: "1000000"
+    },
+    "amper",
+    10000
+  )
+  console.log(JSON.stringify(response, null, 4));
+
+  var response = await client.cyberlink(
+    myAddress,
+    "QmRX8qYgeZoYM3M5zzQaWEpVFdpin6FvVXvp6RPQK3oufV",
     "QmUX9mt8ftaHcn9Nc6SR4j9MsKkYfkcZqkfPTmMmBgeTe1",
   )
   console.log(JSON.stringify(response, null, 4));

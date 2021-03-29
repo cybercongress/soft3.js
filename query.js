@@ -11,8 +11,20 @@ async function main() {
     const tendermintClient = await Tendermint34Client.connect(rpcUrl);
 
     const queryClient = new CyberClient(tendermintClient)
-    
-    const queryResult = await queryClient.graphStats({ });
+
+    var queryResult = await queryClient.getAccount("cyber15vyqaz9fzqn0maywf20z5etw99k6xpp426mm2g");
+    console.log(queryResult)
+
+    var queryResult = await queryClient.graphStats({ });
+    console.log(queryResult)
+
+    var queryResult = await queryClient.getBalance("cyber15vyqaz9fzqn0maywf20z5etw99k6xpp426mm2g", "nick")
+    console.log(queryResult)
+
+    var queryResult = await queryClient.getBalance("cyber15vyqaz9fzqn0maywf20z5etw99k6xpp426mm2g", "amper")
+    console.log(queryResult)
+
+    var queryResult = await queryClient.getBalance("cyber15vyqaz9fzqn0maywf20z5etw99k6xpp426mm2g", "volt")
     console.log(queryResult)
 
     // console.log(await queryClient.getAccount("cyber15vyqaz9fzqn0maywf20z5etw99k6xpp426mm2g"))
