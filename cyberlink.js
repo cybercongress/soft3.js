@@ -50,7 +50,7 @@ async function main() {
   var response = await client.cyberlink(
     myAddress,
     "QmRX8qYgeZoYM3M5zzQaWEpVFdpin6FvVXvp6RPQK3oufV",
-    "QmUX9mt8ftaHcn9Nc6SR4j9MsKkYfkcZqkfPTmMmBgeTe1",
+    "QmUX9mt8ftaHcn9Nc6SR4j9MsKkYfkcZqkfPTmMmBgeTe5",
   )
   console.log(JSON.stringify(response, null, 4));
 

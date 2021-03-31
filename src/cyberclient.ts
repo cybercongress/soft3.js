@@ -8,11 +8,16 @@ import {
   SearchTxQuery,
 } from "@cosmjs/launchpad";
 import {
+  JsonObject,
+} from "@cosmjs/cosmwasm-launchpad";
+import {
   createPagination,
   Account,
   accountFromAny,
   AuthExtension,
   BankExtension,
+  DistributionExtension,
+  StakingExtension,
   BroadcastTxResponse,
   coinFromProto,
   IndexedTx,
@@ -20,6 +25,8 @@ import {
   SequenceResponse,
   setupAuthExtension,
   setupBankExtension,
+  setupDistributionExtension,
+  setupStakingExtension,
 } from "@cosmjs/stargate";
 import {
   fromAscii,
@@ -37,22 +44,42 @@ import {
 import {
   QueryGraphStatsResponse
 } from "./codec/graph/v1beta1/query";
-
+import {
+  Query,
+  QueryClientImpl,
+  QuerySearchRequest,
+  QuerySearchResponse,
+  QueryRankRequest,
+  QueryRankResponse,
+  QueryTopRequest,
+  QueryIsAnyLinkExistRequest,
+  QueryIsLinkExistRequest,
+  QueryLinkExistResponse,
+} from "./codec/rank/v1beta1/query";
+import {
+  QueryLoadResponse,
+  QueryAccountResponse,
+  QueryPriceResponse,
+} from "./codec/bandwidth/v1beta1/query"
 import {
   GraphExtension,
+  RankExtension,
+  BandwidthExtension,
   setupGraphExtension,
+  setupRankExtension,
+  setupBandwidthExtension,
 } from "./queries/index";
 
 
 
 export interface PrivateCyberClient {
   readonly tmClient: Tendermint34Client;
-  readonly queryClient: QueryClient & AuthExtension & BankExtension & GraphExtension;
+  readonly queryClient: QueryClient & AuthExtension & BankExtension & DistributionExtension & StakingExtension & GraphExtension & RankExtension & BandwidthExtension;
 }
 
 export class CyberClient {
   private readonly tmClient: Tendermint34Client;
-  private readonly queryClient: QueryClient & AuthExtension & BankExtension & GraphExtension;
+  private readonly queryClient: QueryClient & AuthExtension & BankExtension & DistributionExtension & StakingExtension & GraphExtension & RankExtension & BandwidthExtension;
   private chainId: string | undefined;
 
   public static async connect(endpoint: string): Promise < CyberClient > {
@@ -66,7 +93,11 @@ export class CyberClient {
       tmClient,
       setupAuthExtension,
       setupBankExtension,
+      setupDistributionExtension,
+      setupStakingExtension,
       setupGraphExtension,
+      setupRankExtension,
+      setupBandwidthExtension,
     );
   }
 
@@ -166,10 +197,55 @@ export class CyberClient {
 
   //-------------------------
 
-  public async graphStats(): Promise < QueryGraphStatsResponse > {
-    return await this.queryClient.unverified.graph.graphStats();
+  public async graphStats(): Promise < JsonObject > {
+    const response =  await this.queryClient.unverified.graph.graphStats();
+    return QueryGraphStatsResponse.toJSON(response)
   }
 
+  //-------------------------
+
+  public async search(cid: string, page?: number, perPage?: number): Promise < JsonObject > {
+    const response = await this.queryClient.unverified.rank.search(cid, page, perPage);
+    return QuerySearchResponse.toJSON(response)
+  }
+
+  public async backlinks(cid: string, page?: number, perPage?: number): Promise < JsonObject > {
+    const response = await this.queryClient.unverified.rank.backlinks(cid, page, perPage);
+    return QuerySearchResponse.toJSON(response)
+  }
+
+  public async rank(cid: string): Promise < JsonObject > {
+    const response = await this.queryClient.unverified.rank.rank(cid);
+    return QueryRankResponse.toJSON(response)
+  }
+
+  public async isLinkExist(from: string, to: string, agent: string): Promise < JsonObject > {
+    const response = await this.queryClient.unverified.rank.isLinkExist(from, to, agent);
+    return QueryLinkExistResponse.toJSON(response)
+  }
+
+  public async isAnyLinkExist(from: string, to: string, agent: string): Promise < JsonObject > {
+     const response = await this.queryClient.unverified.rank.isAnyLinkExist(from, to);
+     return QueryLinkExistResponse.toJSON(response)
+  }
+  
+  //-------------------------
+
+  public async load(): Promise < JsonObject > {
+    const response = await this.queryClient.unverified.bandwidth.load();
+    return QueryLoadResponse.toJSON(response)
+ }
+
+  public async price(): Promise < JsonObject > {
+    const response = await this.queryClient.unverified.bandwidth.price();
+    return QueryPriceResponse.toJSON(response)
+  }
+
+  public async account(agent: string): Promise < JsonObject > {
+    const response = await this.queryClient.unverified.bandwidth.account(agent);
+    return QueryAccountResponse.toJSON(response)
+ }
+ 
   //-------------------------
 
   private async txsQuery(query: string): Promise<readonly IndexedTx[]> {
