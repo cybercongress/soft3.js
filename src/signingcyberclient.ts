@@ -6,7 +6,6 @@ import {
   GasPrice,
   StdFee,
   Coin,
-  uint64ToString,
 } from "@cosmjs/launchpad";
 import Long from "long";
 import {
@@ -50,12 +49,16 @@ import {
 } from "@cosmjs/stargate/build/codec/cosmos/tx/v1beta1/tx";
 import {
   MsgCyberlink,
-  MsgCyberlinkResponse
 } from "./codec/graph/v1beta1/graph"
 import {
   MsgConvert,
-  MsgConvertResponse
 } from "./codec/resources/v1beta1/tx"
+import {
+  MsgCreateEnergyRoute,
+  MsgDeleteEnergyRoute,
+  MsgEditEnergyRoute,
+  MsgEditEnergyRouteAlias,
+} from "./codec/energy/v1beta1/tx"
 import {
   CyberClient
 } from "./cyberclient";
@@ -63,6 +66,10 @@ import {
 interface CyberFeeTable extends CosmosFeeTable {
   readonly cyberlink: StdFee;
   readonly convert: StdFee;
+  readonly createRoute: StdFee;
+  readonly editRoute: StdFee;
+  readonly deleteRoute: StdFee;
+  readonly editRouteAlias: StdFee;
 }
 
 const defaultGasPrice = GasPrice.fromString("0.001nick");
@@ -70,7 +77,46 @@ const defaultGasLimits: GasLimits < CyberFeeTable > = {
   cyberlink: 256000,
   convert: 128000,
   send: 128000,
+  createRoute: 100000,
+  editRoute: 100000,
+  deleteRoute: 100000,
+  editRouteAlias: 100000,
 };
+
+export interface SendResult {
+  readonly logs: readonly logs.Log[];
+  readonly transactionHash: string;
+}
+
+export interface CyberlinkResult {
+  readonly logs: readonly logs.Log[];
+  readonly transactionHash: string;
+}
+
+export interface ConvertResult {
+  readonly logs: readonly logs.Log[];
+  readonly transactionHash: string;
+}
+
+export interface CreateRouteResult {
+  readonly logs: readonly logs.Log[];
+  readonly transactionHash: string;
+}
+
+export interface EditRouteResult {
+  readonly logs: readonly logs.Log[];
+  readonly transactionHash: string;
+}
+
+export interface DeleteRouteResult {
+  readonly logs: readonly logs.Log[];
+  readonly transactionHash: string;
+}
+
+export interface EditRouteAliasResult {
+  readonly logs: readonly logs.Log[];
+  readonly transactionHash: string;
+}
 
 function createBroadcastTxErrorMessage(result: BroadcastTxFailure): string {
   return `Error when broadcasting tx ${result.transactionHash} at height ${result.height}. Code: ${result.code}; Raw log: ${result.rawLog}`;
@@ -81,6 +127,10 @@ function createDefaultRegistry(): Registry {
     ...defaultRegistryTypes,
     ["/cyber.graph.v1beta1.MsgCyberlink", MsgCyberlink, ],
     ["/cyber.resources.v1beta1.MsgConvert", MsgConvert, ],
+    ["/cyber.energy.v1beta1.MsgCreateEnergyRoute", MsgCreateEnergyRoute, ],
+    ["/cyber.energy.v1beta1.MsgEditEnergyRoute", MsgEditEnergyRoute, ],
+    ["/cyber.energy.v1beta1.MsgDeleteEnergyRoute", MsgDeleteEnergyRoute, ],
+    ["/cyber.energy.v1beta1.MsgEditEnergyRouteAlias", MsgEditEnergyRouteAlias, ],
   ]);
 }
 
@@ -129,12 +179,40 @@ export class SigningCyberClient extends CyberClient {
     this.signer = signer;
   }
 
+  // ------------------
+
+  public async sendTokens(
+    senderAddress: string,
+    recipientAddress: string,
+    transferAmount: readonly Coin[],
+    memo = "",
+  ): Promise < SendResult > {
+    const sendMsg = {
+      typeUrl: "/cosmos.bank.v1beta1.MsgSend",
+      value: {
+        fromAddress: senderAddress,
+        toAddress: recipientAddress,
+        amount: transferAmount,
+      },
+    };
+    const result = await this.signAndBroadcast(senderAddress, [sendMsg], this.fees.send, memo);
+    if (isBroadcastTxFailure(result)) {
+      throw new Error(createBroadcastTxErrorMessage(result));
+    }
+    return {
+      logs: logs.parseRawLog(result.rawLog),
+      transactionHash: result.transactionHash,
+    };
+  }
+
+  // ------------------
+
   public async cyberlink(
     senderAddress: string,
     from: string,
     to: string,
     memo = "",
-  ): Promise < MsgCyberlinkResponse > {
+  ): Promise < CyberlinkResult > {
     const cyberlinkMsg = {
       typeUrl: "/cyber.graph.v1beta1.MsgCyberlink",
       value: {
@@ -150,10 +228,12 @@ export class SigningCyberClient extends CyberClient {
       throw new Error(createBroadcastTxErrorMessage(result));
     }
     return {
-      // logs: parseRawLog(result.rawLog),
+      logs: logs.parseRawLog(result.rawLog),
       transactionHash: result.transactionHash,
     };
   }
+
+  // ------------------
 
   public async convertResources(
     senderAddress: string,
@@ -161,7 +241,7 @@ export class SigningCyberClient extends CyberClient {
     resource: string,
     time: number,
     memo = "",
-  ): Promise < MsgConvertResponse > {
+  ): Promise < ConvertResult > {
     const convertResourcesMsg = {
       typeUrl: "/cyber.resources.v1beta1.MsgConvert",
       value: MsgConvert.fromPartial({
@@ -171,17 +251,113 @@ export class SigningCyberClient extends CyberClient {
         endTime: Long.fromString(new Uint53(10000).toString()),
       }),
     };
-    console.log(convertResourcesMsg)
     const result = await this.signAndBroadcast(senderAddress, [convertResourcesMsg], this.fees.convert, memo);
     if (isBroadcastTxFailure(result)) {
       throw new Error(createBroadcastTxErrorMessage(result));
     }
     return {
-      // logs: parseRawLog(result.rawLog),
+      logs: logs.parseRawLog(result.rawLog),
       transactionHash: result.transactionHash,
     };
   }
 
+  // ------------------
+
+  public async createEnergyRoute(
+    senderAddress: string,
+    destination: string,
+    alias: string,
+    memo = "",
+  ): Promise < CreateRouteResult > {
+    const createEnergyRouteMsg = {
+      typeUrl: "/cyber.energy.v1beta1.MsgCreateEnergyRoute",
+      value: MsgCreateEnergyRoute.fromPartial({
+        source: senderAddress,
+        destination: destination,
+        alias: alias,
+      }),
+    };
+    const result = await this.signAndBroadcast(senderAddress, [createEnergyRouteMsg], this.fees.createRoute, memo);
+    if (isBroadcastTxFailure(result)) {
+      throw new Error(createBroadcastTxErrorMessage(result));
+    }
+    return {
+      logs: logs.parseRawLog(result.rawLog),
+      transactionHash: result.transactionHash,
+    };
+  }
+
+  public async editEnergyRoute(
+    senderAddress: string,
+    destination: string,
+    value: Coin,
+    memo = "",
+  ): Promise < EditRouteResult > {
+    const editEnergyRouteMsg = {
+      typeUrl: "/cyber.energy.v1beta1.MsgEditEnergyRoute",
+      value: MsgEditEnergyRoute.fromPartial({
+        source: senderAddress,
+        destination: destination,
+        value: value,
+      }),
+    };
+    const result = await this.signAndBroadcast(senderAddress, [editEnergyRouteMsg], this.fees.editRoute, memo);
+    if (isBroadcastTxFailure(result)) {
+      throw new Error(createBroadcastTxErrorMessage(result));
+    }
+    return {
+      logs: logs.parseRawLog(result.rawLog),
+      transactionHash: result.transactionHash,
+    };
+  }
+
+  public async deleteEnergyRoute(
+    senderAddress: string,
+    destination: string,
+    memo = "",
+  ): Promise < DeleteRouteResult > {
+    const deleteEnergyRouteMsg = {
+      typeUrl: "/cyber.energy.v1beta1.MsgDeleteEnergyRoute",
+      value: MsgDeleteEnergyRoute.fromPartial({
+        source: senderAddress,
+        destination: destination,
+      }),
+    };
+    const result = await this.signAndBroadcast(senderAddress, [deleteEnergyRouteMsg], this.fees.deleteRoute, memo);
+    if (isBroadcastTxFailure(result)) {
+      throw new Error(createBroadcastTxErrorMessage(result));
+    }
+    return {
+      logs: logs.parseRawLog(result.rawLog),
+      transactionHash: result.transactionHash,
+    };
+  }
+
+  public async editEnergyRouteAlias(
+    senderAddress: string,
+    destination: string,
+    alias: string,
+    memo = "",
+  ): Promise < EditRouteAliasResult > {
+    const editEnergyRouteAliasMsg = {
+      typeUrl: "/cyber.energy.v1beta1.MsgEditEnergyRouteAlias",
+      value: MsgEditEnergyRouteAlias.fromPartial({
+        source: senderAddress,
+        destination: destination,
+        alias: alias,
+      }),
+    };
+    const result = await this.signAndBroadcast(senderAddress, [editEnergyRouteAliasMsg], this.fees.editRouteAlias, memo);
+    if (isBroadcastTxFailure(result)) {
+      throw new Error(createBroadcastTxErrorMessage(result));
+    }
+    return {
+      logs: logs.parseRawLog(result.rawLog),
+      transactionHash: result.transactionHash,
+    };
+  }
+
+  // ------------------
 
   public async signAndBroadcast(
     signerAddress: string,

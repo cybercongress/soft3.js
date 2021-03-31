@@ -62,24 +62,35 @@ import {
   QueryPriceResponse,
 } from "./codec/bandwidth/v1beta1/query"
 import {
+  QuerySourceRequest,
+  QueryDestinationRequest,
+  QueryRouteResponse,
+  QueryRoutesRequest,
+  QueryRouteRequest,
+  QueryRoutedEnergyResponse,
+  QueryRoutesResponse,
+} from "./codec/energy/v1beta1/query"
+import {
   GraphExtension,
   RankExtension,
   BandwidthExtension,
+  EnergyExtension,
   setupGraphExtension,
   setupRankExtension,
   setupBandwidthExtension,
+  setupEnergyExtension,
 } from "./queries/index";
 
 
 
 export interface PrivateCyberClient {
   readonly tmClient: Tendermint34Client;
-  readonly queryClient: QueryClient & AuthExtension & BankExtension & DistributionExtension & StakingExtension & GraphExtension & RankExtension & BandwidthExtension;
+  readonly queryClient: QueryClient & AuthExtension & BankExtension & DistributionExtension & StakingExtension & GraphExtension & RankExtension & BandwidthExtension & EnergyExtension;
 }
 
 export class CyberClient {
   private readonly tmClient: Tendermint34Client;
-  private readonly queryClient: QueryClient & AuthExtension & BankExtension & DistributionExtension & StakingExtension & GraphExtension & RankExtension & BandwidthExtension;
+  private readonly queryClient: QueryClient & AuthExtension & BankExtension & DistributionExtension & StakingExtension & GraphExtension & RankExtension & BandwidthExtension & EnergyExtension;
   private chainId: string | undefined;
 
   public static async connect(endpoint: string): Promise < CyberClient > {
@@ -98,6 +109,7 @@ export class CyberClient {
       setupGraphExtension,
       setupRankExtension,
       setupBandwidthExtension,
+      setupEnergyExtension,
     );
   }
 
@@ -118,9 +130,12 @@ export class CyberClient {
   }
 
   public async getAccount(searchAddress: string): Promise < Account | null > {
-    console.log("ACCOUNT", searchAddress)
     const account = await this.queryClient.auth.account(searchAddress);
-    console.log("ACCOUNT", account)
+    return account ? accountFromAny(account) : null;
+  }
+
+  public async getAccountUnverified(searchAddress: string): Promise<Account | null> {
+    const account = await this.queryClient.auth.unverified.account(searchAddress);
     return account ? accountFromAny(account) : null;
   }
 
@@ -158,10 +173,52 @@ export class CyberClient {
     return balance ? coinFromProto(balance) : null;
   }
 
+  public async getAllBalancesUnverified(address: string): Promise<readonly Coin[]> {
+    const balances = await this.queryClient.bank.unverified.allBalances(address);
+    return balances.map(coinFromProto);
+  }
 
   public async getTx(id: string): Promise<IndexedTx | null> {
     const results = await this.txsQuery(`tx.hash='${id}'`);
     return results[0] ?? null;
+  }
+
+  public async searchTx(query: SearchTxQuery, filter: SearchTxFilter = {}): Promise<readonly IndexedTx[]> {
+    const minHeight = filter.minHeight || 0;
+    const maxHeight = filter.maxHeight || Number.MAX_SAFE_INTEGER;
+
+    if (maxHeight < minHeight) return []; // optional optimization
+
+    function withFilters(originalQuery: string): string {
+      return `${originalQuery} AND tx.height>=${minHeight} AND tx.height<=${maxHeight}`;
+    }
+
+    let txs: readonly IndexedTx[];
+
+    if (isSearchByHeightQuery(query)) {
+      txs =
+        query.height >= minHeight && query.height <= maxHeight
+          ? await this.txsQuery(`tx.height=${query.height}`)
+          : [];
+    } else if (isSearchBySentFromOrToQuery(query)) {
+      const sentQuery = withFilters(`message.module='bank' AND transfer.sender='${query.sentFromOrTo}'`);
+      const receivedQuery = withFilters(
+        `message.module='bank' AND transfer.recipient='${query.sentFromOrTo}'`,
+      );
+      const [sent, received] = await Promise.all(
+        [sentQuery, receivedQuery].map((rawQuery) => this.txsQuery(rawQuery)),
+      );
+      const sentHashes = sent.map((t) => t.hash);
+      txs = [...sent, ...received.filter((t) => !sentHashes.includes(t.hash))];
+    } else if (isSearchByTagsQuery(query)) {
+      const rawQuery = withFilters(query.tags.map((t) => `${t.key}='${t.value}'`).join(" AND "));
+      txs = await this.txsQuery(rawQuery);
+    } else {
+      throw new Error("Unknown query type");
+    }
+
+    const filtered = txs.filter((tx) => tx.height >= minHeight && tx.height <= maxHeight);
+    return filtered;
   }
 
   public disconnect(): void {
@@ -246,6 +303,38 @@ export class CyberClient {
     return QueryAccountResponse.toJSON(response)
  }
  
+  //-------------------------
+
+  public async sourceRoutes(source: string): Promise < JsonObject > {
+    const response = await this.queryClient.unverified.energy.sourceRoutes(source);
+    return QueryRoutesResponse.toJSON(response)
+  }
+
+  public async destinationRoutes(destination: string): Promise < JsonObject > {
+    const response = await this.queryClient.unverified.energy.destinationRoutes(destination);
+    return QueryRoutesResponse.toJSON(response)
+  }
+
+  public async destinationRoutedEnergy(destination: string): Promise < JsonObject > {
+    const response = await this.queryClient.unverified.energy.destinationRoutedEnergy(destination);
+    return QueryRoutedEnergyResponse.toJSON(response)
+  }
+
+  public async sourceRoutedEnergy(source: string): Promise < JsonObject > {
+    const response = await this.queryClient.unverified.energy.sourceRoutedEnergy(source);
+    return QueryRoutedEnergyResponse.toJSON(response)
+  }
+
+  public async route(source: string, destination: string): Promise < JsonObject > {
+    const response = await this.queryClient.unverified.energy.route(source, destination);
+    return QueryRouteResponse.toJSON(response)
+  }
+
+  public async routes(): Promise < JsonObject > {
+    const response = await this.queryClient.unverified.energy.routes();
+    return QueryRoutesResponse.toJSON(response)
+  }
+
   //-------------------------
 
   private async txsQuery(query: string): Promise<readonly IndexedTx[]> {
