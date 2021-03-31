@@ -13,11 +13,11 @@ yarn postdefine-proto
 yarn build
 ```
 
-Try:
+Try workaround tests:
 ```
-node cyberlinks.js
+node txs.js
 
-node query.js
+node queries.js
 ```
 
 Note:
