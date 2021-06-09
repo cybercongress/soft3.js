@@ -1,9 +1,13 @@
 /* eslint-disable */
-import { Coin } from "../../cosmos_proto/coin";
 import Long from "long";
 import _m0 from "protobufjs/minimal";
+import { Coin } from "../../../cosmos_proto/coin";
 
 export const protobufPackage = "cyber.energy.v1beta1";
+
+export interface Params {
+  maxRoutes: number;
+}
 
 export interface Route {
   source: string;
@@ -12,10 +16,67 @@ export interface Route {
   value: Coin[];
 }
 
-/** workaround */
 export interface Value {
   value: Coin[];
 }
+
+const baseParams: object = { maxRoutes: 0 };
+
+export const Params = {
+  encode(
+    message: Params,
+    writer: _m0.Writer = _m0.Writer.create()
+  ): _m0.Writer {
+    if (message.maxRoutes !== 0) {
+      writer.uint32(8).uint32(message.maxRoutes);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): Params {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseParams } as Params;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.maxRoutes = reader.uint32();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): Params {
+    const message = { ...baseParams } as Params;
+    if (object.maxRoutes !== undefined && object.maxRoutes !== null) {
+      message.maxRoutes = Number(object.maxRoutes);
+    } else {
+      message.maxRoutes = 0;
+    }
+    return message;
+  },
+
+  toJSON(message: Params): unknown {
+    const obj: any = {};
+    message.maxRoutes !== undefined && (obj.maxRoutes = message.maxRoutes);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<Params>): Params {
+    const message = { ...baseParams } as Params;
+    if (object.maxRoutes !== undefined && object.maxRoutes !== null) {
+      message.maxRoutes = object.maxRoutes;
+    } else {
+      message.maxRoutes = 0;
+    }
+    return message;
+  },
+};
 
 const baseRoute: object = { source: "", destination: "", alias: "" };
 
@@ -37,7 +98,7 @@ export const Route = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): Route {
-    const reader = input instanceof Uint8Array ? new _m0.Reader(input) : input;
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseRoute } as Route;
     message.value = [];
@@ -142,7 +203,7 @@ export const Value = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): Value {
-    const reader = input instanceof Uint8Array ? new _m0.Reader(input) : input;
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseValue } as Value;
     message.value = [];
@@ -199,6 +260,7 @@ type Builtin =
   | Uint8Array
   | string
   | number
+  | boolean
   | undefined
   | Long;
 export type DeepPartial<T> = T extends Builtin
@@ -210,3 +272,8 @@ export type DeepPartial<T> = T extends Builtin
   : T extends {}
   ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
+
+if (_m0.util.Long !== Long) {
+  _m0.util.Long = Long as any;
+  _m0.configure();
+}

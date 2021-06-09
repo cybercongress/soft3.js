@@ -1,8 +1,11 @@
 /* eslint-disable */
-import { Params } from "../../rank/v1beta1/params";
 import Long from "long";
-import { PageRequest, PageResponse } from "../../base/query/v1beta1/pagination";
 import _m0 from "protobufjs/minimal";
+import { Params, RankedCid } from "../../../cyber/rank/v1beta1/types";
+import {
+  PageRequest,
+  PageResponse,
+} from "../../../cyber/base/query/v1beta1/pagination";
 
 export const protobufPackage = "cyber.rank.v1beta1";
 
@@ -30,11 +33,6 @@ export interface QuerySearchResponse {
   pagination?: PageResponse;
 }
 
-export interface RankedCid {
-  cid: string;
-  rank: Long;
-}
-
 export interface QueryTopRequest {}
 
 export interface QueryIsLinkExistRequest {
@@ -48,9 +46,45 @@ export interface QueryIsAnyLinkExistRequest {
   to: string;
 }
 
+/** FIXME move to bool... */
 export interface QueryLinkExistResponse {
-  /** TODO move to bool... wtf with protobuf? omitempty shit */
-  exist: number;
+  exist: boolean;
+}
+
+export interface QueryEntropyRequest {
+  cid: string;
+}
+
+export interface QueryEntropyResponse {
+  entropy: Long;
+}
+
+export interface QueryLuminosityRequest {
+  cid: string;
+}
+
+export interface QueryLuminosityResponse {
+  luminosity: Long;
+}
+
+export interface QueryKarmaRequest {
+  address: string;
+}
+
+export interface QueryKarmaResponse {
+  karma: Long;
+}
+
+export interface QueryKarmasRequest {}
+
+/** TODO experimental and debug */
+export interface QueryKarmasResponse {
+  karmas: { [key: string]: Long };
+}
+
+export interface QueryKarmasResponse_KarmasEntry {
+  key: string;
+  value: Long;
 }
 
 const baseQueryParamsRequest: object = {};
@@ -64,7 +98,7 @@ export const QueryParamsRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): QueryParamsRequest {
-    const reader = input instanceof Uint8Array ? new _m0.Reader(input) : input;
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseQueryParamsRequest } as QueryParamsRequest;
     while (reader.pos < end) {
@@ -108,7 +142,7 @@ export const QueryParamsResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): QueryParamsResponse {
-    const reader = input instanceof Uint8Array ? new _m0.Reader(input) : input;
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseQueryParamsResponse } as QueryParamsResponse;
     while (reader.pos < end) {
@@ -167,7 +201,7 @@ export const QueryRankRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): QueryRankRequest {
-    const reader = input instanceof Uint8Array ? new _m0.Reader(input) : input;
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseQueryRankRequest } as QueryRankRequest;
     while (reader.pos < end) {
@@ -225,7 +259,7 @@ export const QueryRankResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): QueryRankResponse {
-    const reader = input instanceof Uint8Array ? new _m0.Reader(input) : input;
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseQueryRankResponse } as QueryRankResponse;
     while (reader.pos < end) {
@@ -287,7 +321,7 @@ export const QuerySearchRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): QuerySearchRequest {
-    const reader = input instanceof Uint8Array ? new _m0.Reader(input) : input;
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseQuerySearchRequest } as QuerySearchRequest;
     while (reader.pos < end) {
@@ -368,7 +402,7 @@ export const QuerySearchResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): QuerySearchResponse {
-    const reader = input instanceof Uint8Array ? new _m0.Reader(input) : input;
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseQuerySearchResponse } as QuerySearchResponse;
     message.result = [];
@@ -438,82 +472,6 @@ export const QuerySearchResponse = {
   },
 };
 
-const baseRankedCid: object = { cid: "", rank: Long.UZERO };
-
-export const RankedCid = {
-  encode(
-    message: RankedCid,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
-    if (message.cid !== "") {
-      writer.uint32(10).string(message.cid);
-    }
-    if (!message.rank.isZero()) {
-      writer.uint32(16).uint64(message.rank);
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): RankedCid {
-    const reader = input instanceof Uint8Array ? new _m0.Reader(input) : input;
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseRankedCid } as RankedCid;
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.cid = reader.string();
-          break;
-        case 2:
-          message.rank = reader.uint64() as Long;
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-
-  fromJSON(object: any): RankedCid {
-    const message = { ...baseRankedCid } as RankedCid;
-    if (object.cid !== undefined && object.cid !== null) {
-      message.cid = String(object.cid);
-    } else {
-      message.cid = "";
-    }
-    if (object.rank !== undefined && object.rank !== null) {
-      message.rank = Long.fromString(object.rank);
-    } else {
-      message.rank = Long.UZERO;
-    }
-    return message;
-  },
-
-  toJSON(message: RankedCid): unknown {
-    const obj: any = {};
-    message.cid !== undefined && (obj.cid = message.cid);
-    message.rank !== undefined &&
-      (obj.rank = (message.rank || Long.UZERO).toString());
-    return obj;
-  },
-
-  fromPartial(object: DeepPartial<RankedCid>): RankedCid {
-    const message = { ...baseRankedCid } as RankedCid;
-    if (object.cid !== undefined && object.cid !== null) {
-      message.cid = object.cid;
-    } else {
-      message.cid = "";
-    }
-    if (object.rank !== undefined && object.rank !== null) {
-      message.rank = object.rank as Long;
-    } else {
-      message.rank = Long.UZERO;
-    }
-    return message;
-  },
-};
-
 const baseQueryTopRequest: object = {};
 
 export const QueryTopRequest = {
@@ -525,7 +483,7 @@ export const QueryTopRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): QueryTopRequest {
-    const reader = input instanceof Uint8Array ? new _m0.Reader(input) : input;
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseQueryTopRequest } as QueryTopRequest;
     while (reader.pos < end) {
@@ -578,7 +536,7 @@ export const QueryIsLinkExistRequest = {
     input: _m0.Reader | Uint8Array,
     length?: number
   ): QueryIsLinkExistRequest {
-    const reader = input instanceof Uint8Array ? new _m0.Reader(input) : input;
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = {
       ...baseQueryIsLinkExistRequest,
@@ -678,7 +636,7 @@ export const QueryIsAnyLinkExistRequest = {
     input: _m0.Reader | Uint8Array,
     length?: number
   ): QueryIsAnyLinkExistRequest {
-    const reader = input instanceof Uint8Array ? new _m0.Reader(input) : input;
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = {
       ...baseQueryIsAnyLinkExistRequest,
@@ -744,15 +702,15 @@ export const QueryIsAnyLinkExistRequest = {
   },
 };
 
-const baseQueryLinkExistResponse: object = { exist: 0 };
+const baseQueryLinkExistResponse: object = { exist: false };
 
 export const QueryLinkExistResponse = {
   encode(
     message: QueryLinkExistResponse,
     writer: _m0.Writer = _m0.Writer.create()
   ): _m0.Writer {
-    if (message.exist !== 0) {
-      writer.uint32(8).uint32(message.exist);
+    if (message.exist === true) {
+      writer.uint32(8).bool(message.exist);
     }
     return writer;
   },
@@ -761,14 +719,14 @@ export const QueryLinkExistResponse = {
     input: _m0.Reader | Uint8Array,
     length?: number
   ): QueryLinkExistResponse {
-    const reader = input instanceof Uint8Array ? new _m0.Reader(input) : input;
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseQueryLinkExistResponse } as QueryLinkExistResponse;
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.exist = reader.uint32();
+          message.exist = reader.bool();
           break;
         default:
           reader.skipType(tag & 7);
@@ -781,9 +739,9 @@ export const QueryLinkExistResponse = {
   fromJSON(object: any): QueryLinkExistResponse {
     const message = { ...baseQueryLinkExistResponse } as QueryLinkExistResponse;
     if (object.exist !== undefined && object.exist !== null) {
-      message.exist = Number(object.exist);
+      message.exist = Boolean(object.exist);
     } else {
-      message.exist = 0;
+      message.exist = false;
     }
     return message;
   },
@@ -801,7 +759,585 @@ export const QueryLinkExistResponse = {
     if (object.exist !== undefined && object.exist !== null) {
       message.exist = object.exist;
     } else {
-      message.exist = 0;
+      message.exist = false;
+    }
+    return message;
+  },
+};
+
+const baseQueryEntropyRequest: object = { cid: "" };
+
+export const QueryEntropyRequest = {
+  encode(
+    message: QueryEntropyRequest,
+    writer: _m0.Writer = _m0.Writer.create()
+  ): _m0.Writer {
+    if (message.cid !== "") {
+      writer.uint32(10).string(message.cid);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryEntropyRequest {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryEntropyRequest } as QueryEntropyRequest;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.cid = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryEntropyRequest {
+    const message = { ...baseQueryEntropyRequest } as QueryEntropyRequest;
+    if (object.cid !== undefined && object.cid !== null) {
+      message.cid = String(object.cid);
+    } else {
+      message.cid = "";
+    }
+    return message;
+  },
+
+  toJSON(message: QueryEntropyRequest): unknown {
+    const obj: any = {};
+    message.cid !== undefined && (obj.cid = message.cid);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<QueryEntropyRequest>): QueryEntropyRequest {
+    const message = { ...baseQueryEntropyRequest } as QueryEntropyRequest;
+    if (object.cid !== undefined && object.cid !== null) {
+      message.cid = object.cid;
+    } else {
+      message.cid = "";
+    }
+    return message;
+  },
+};
+
+const baseQueryEntropyResponse: object = { entropy: Long.UZERO };
+
+export const QueryEntropyResponse = {
+  encode(
+    message: QueryEntropyResponse,
+    writer: _m0.Writer = _m0.Writer.create()
+  ): _m0.Writer {
+    if (!message.entropy.isZero()) {
+      writer.uint32(8).uint64(message.entropy);
+    }
+    return writer;
+  },
+
+  decode(
+    input: _m0.Reader | Uint8Array,
+    length?: number
+  ): QueryEntropyResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryEntropyResponse } as QueryEntropyResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.entropy = reader.uint64() as Long;
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryEntropyResponse {
+    const message = { ...baseQueryEntropyResponse } as QueryEntropyResponse;
+    if (object.entropy !== undefined && object.entropy !== null) {
+      message.entropy = Long.fromString(object.entropy);
+    } else {
+      message.entropy = Long.UZERO;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryEntropyResponse): unknown {
+    const obj: any = {};
+    message.entropy !== undefined &&
+      (obj.entropy = (message.entropy || Long.UZERO).toString());
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<QueryEntropyResponse>): QueryEntropyResponse {
+    const message = { ...baseQueryEntropyResponse } as QueryEntropyResponse;
+    if (object.entropy !== undefined && object.entropy !== null) {
+      message.entropy = object.entropy as Long;
+    } else {
+      message.entropy = Long.UZERO;
+    }
+    return message;
+  },
+};
+
+const baseQueryLuminosityRequest: object = { cid: "" };
+
+export const QueryLuminosityRequest = {
+  encode(
+    message: QueryLuminosityRequest,
+    writer: _m0.Writer = _m0.Writer.create()
+  ): _m0.Writer {
+    if (message.cid !== "") {
+      writer.uint32(10).string(message.cid);
+    }
+    return writer;
+  },
+
+  decode(
+    input: _m0.Reader | Uint8Array,
+    length?: number
+  ): QueryLuminosityRequest {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryLuminosityRequest } as QueryLuminosityRequest;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.cid = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryLuminosityRequest {
+    const message = { ...baseQueryLuminosityRequest } as QueryLuminosityRequest;
+    if (object.cid !== undefined && object.cid !== null) {
+      message.cid = String(object.cid);
+    } else {
+      message.cid = "";
+    }
+    return message;
+  },
+
+  toJSON(message: QueryLuminosityRequest): unknown {
+    const obj: any = {};
+    message.cid !== undefined && (obj.cid = message.cid);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryLuminosityRequest>
+  ): QueryLuminosityRequest {
+    const message = { ...baseQueryLuminosityRequest } as QueryLuminosityRequest;
+    if (object.cid !== undefined && object.cid !== null) {
+      message.cid = object.cid;
+    } else {
+      message.cid = "";
+    }
+    return message;
+  },
+};
+
+const baseQueryLuminosityResponse: object = { luminosity: Long.UZERO };
+
+export const QueryLuminosityResponse = {
+  encode(
+    message: QueryLuminosityResponse,
+    writer: _m0.Writer = _m0.Writer.create()
+  ): _m0.Writer {
+    if (!message.luminosity.isZero()) {
+      writer.uint32(8).uint64(message.luminosity);
+    }
+    return writer;
+  },
+
+  decode(
+    input: _m0.Reader | Uint8Array,
+    length?: number
+  ): QueryLuminosityResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseQueryLuminosityResponse,
+    } as QueryLuminosityResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.luminosity = reader.uint64() as Long;
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryLuminosityResponse {
+    const message = {
+      ...baseQueryLuminosityResponse,
+    } as QueryLuminosityResponse;
+    if (object.luminosity !== undefined && object.luminosity !== null) {
+      message.luminosity = Long.fromString(object.luminosity);
+    } else {
+      message.luminosity = Long.UZERO;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryLuminosityResponse): unknown {
+    const obj: any = {};
+    message.luminosity !== undefined &&
+      (obj.luminosity = (message.luminosity || Long.UZERO).toString());
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryLuminosityResponse>
+  ): QueryLuminosityResponse {
+    const message = {
+      ...baseQueryLuminosityResponse,
+    } as QueryLuminosityResponse;
+    if (object.luminosity !== undefined && object.luminosity !== null) {
+      message.luminosity = object.luminosity as Long;
+    } else {
+      message.luminosity = Long.UZERO;
+    }
+    return message;
+  },
+};
+
+const baseQueryKarmaRequest: object = { address: "" };
+
+export const QueryKarmaRequest = {
+  encode(
+    message: QueryKarmaRequest,
+    writer: _m0.Writer = _m0.Writer.create()
+  ): _m0.Writer {
+    if (message.address !== "") {
+      writer.uint32(10).string(message.address);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryKarmaRequest {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryKarmaRequest } as QueryKarmaRequest;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.address = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryKarmaRequest {
+    const message = { ...baseQueryKarmaRequest } as QueryKarmaRequest;
+    if (object.address !== undefined && object.address !== null) {
+      message.address = String(object.address);
+    } else {
+      message.address = "";
+    }
+    return message;
+  },
+
+  toJSON(message: QueryKarmaRequest): unknown {
+    const obj: any = {};
+    message.address !== undefined && (obj.address = message.address);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<QueryKarmaRequest>): QueryKarmaRequest {
+    const message = { ...baseQueryKarmaRequest } as QueryKarmaRequest;
+    if (object.address !== undefined && object.address !== null) {
+      message.address = object.address;
+    } else {
+      message.address = "";
+    }
+    return message;
+  },
+};
+
+const baseQueryKarmaResponse: object = { karma: Long.UZERO };
+
+export const QueryKarmaResponse = {
+  encode(
+    message: QueryKarmaResponse,
+    writer: _m0.Writer = _m0.Writer.create()
+  ): _m0.Writer {
+    if (!message.karma.isZero()) {
+      writer.uint32(8).uint64(message.karma);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryKarmaResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryKarmaResponse } as QueryKarmaResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.karma = reader.uint64() as Long;
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryKarmaResponse {
+    const message = { ...baseQueryKarmaResponse } as QueryKarmaResponse;
+    if (object.karma !== undefined && object.karma !== null) {
+      message.karma = Long.fromString(object.karma);
+    } else {
+      message.karma = Long.UZERO;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryKarmaResponse): unknown {
+    const obj: any = {};
+    message.karma !== undefined &&
+      (obj.karma = (message.karma || Long.UZERO).toString());
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<QueryKarmaResponse>): QueryKarmaResponse {
+    const message = { ...baseQueryKarmaResponse } as QueryKarmaResponse;
+    if (object.karma !== undefined && object.karma !== null) {
+      message.karma = object.karma as Long;
+    } else {
+      message.karma = Long.UZERO;
+    }
+    return message;
+  },
+};
+
+const baseQueryKarmasRequest: object = {};
+
+export const QueryKarmasRequest = {
+  encode(
+    _: QueryKarmasRequest,
+    writer: _m0.Writer = _m0.Writer.create()
+  ): _m0.Writer {
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryKarmasRequest {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryKarmasRequest } as QueryKarmasRequest;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): QueryKarmasRequest {
+    const message = { ...baseQueryKarmasRequest } as QueryKarmasRequest;
+    return message;
+  },
+
+  toJSON(_: QueryKarmasRequest): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial(_: DeepPartial<QueryKarmasRequest>): QueryKarmasRequest {
+    const message = { ...baseQueryKarmasRequest } as QueryKarmasRequest;
+    return message;
+  },
+};
+
+const baseQueryKarmasResponse: object = {};
+
+export const QueryKarmasResponse = {
+  encode(
+    message: QueryKarmasResponse,
+    writer: _m0.Writer = _m0.Writer.create()
+  ): _m0.Writer {
+    Object.entries(message.karmas).forEach(([key, value]) => {
+      QueryKarmasResponse_KarmasEntry.encode(
+        { key: key as any, value },
+        writer.uint32(10).fork()
+      ).ldelim();
+    });
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryKarmasResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryKarmasResponse } as QueryKarmasResponse;
+    message.karmas = {};
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          const entry1 = QueryKarmasResponse_KarmasEntry.decode(
+            reader,
+            reader.uint32()
+          );
+          if (entry1.value !== undefined) {
+            message.karmas[entry1.key] = entry1.value;
+          }
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryKarmasResponse {
+    const message = { ...baseQueryKarmasResponse } as QueryKarmasResponse;
+    message.karmas = {};
+    if (object.karmas !== undefined && object.karmas !== null) {
+      Object.entries(object.karmas).forEach(([key, value]) => {
+        // message.karmas[key] = Long(value);
+      });
+    }
+    return message;
+  },
+
+  toJSON(message: QueryKarmasResponse): unknown {
+    const obj: any = {};
+    obj.karmas = {};
+    if (message.karmas) {
+      Object.entries(message.karmas).forEach(([k, v]) => {
+        obj.karmas[k] = v;
+      });
+    }
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<QueryKarmasResponse>): QueryKarmasResponse {
+    const message = { ...baseQueryKarmasResponse } as QueryKarmasResponse;
+    message.karmas = {};
+    if (object.karmas !== undefined && object.karmas !== null) {
+      Object.entries(object.karmas).forEach(([key, value]) => {
+        if (value !== undefined) {
+          // message.karmas[key] = Long(value);
+        }
+      });
+    }
+    return message;
+  },
+};
+
+const baseQueryKarmasResponse_KarmasEntry: object = {
+  key: "",
+  value: Long.UZERO,
+};
+
+export const QueryKarmasResponse_KarmasEntry = {
+  encode(
+    message: QueryKarmasResponse_KarmasEntry,
+    writer: _m0.Writer = _m0.Writer.create()
+  ): _m0.Writer {
+    if (message.key !== "") {
+      writer.uint32(10).string(message.key);
+    }
+    if (!message.value.isZero()) {
+      writer.uint32(16).uint64(message.value);
+    }
+    return writer;
+  },
+
+  decode(
+    input: _m0.Reader | Uint8Array,
+    length?: number
+  ): QueryKarmasResponse_KarmasEntry {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseQueryKarmasResponse_KarmasEntry,
+    } as QueryKarmasResponse_KarmasEntry;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.key = reader.string();
+          break;
+        case 2:
+          message.value = reader.uint64() as Long;
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryKarmasResponse_KarmasEntry {
+    const message = {
+      ...baseQueryKarmasResponse_KarmasEntry,
+    } as QueryKarmasResponse_KarmasEntry;
+    if (object.key !== undefined && object.key !== null) {
+      message.key = String(object.key);
+    } else {
+      message.key = "";
+    }
+    if (object.value !== undefined && object.value !== null) {
+      message.value = Long.fromString(object.value);
+    } else {
+      message.value = Long.UZERO;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryKarmasResponse_KarmasEntry): unknown {
+    const obj: any = {};
+    message.key !== undefined && (obj.key = message.key);
+    message.value !== undefined &&
+      (obj.value = (message.value || Long.UZERO).toString());
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryKarmasResponse_KarmasEntry>
+  ): QueryKarmasResponse_KarmasEntry {
+    const message = {
+      ...baseQueryKarmasResponse_KarmasEntry,
+    } as QueryKarmasResponse_KarmasEntry;
+    if (object.key !== undefined && object.key !== null) {
+      message.key = object.key;
+    } else {
+      message.key = "";
+    }
+    if (object.value !== undefined && object.value !== null) {
+      message.value = object.value as Long;
+    } else {
+      message.value = Long.UZERO;
     }
     return message;
   },
@@ -819,12 +1355,27 @@ export interface Query {
   IsAnyLinkExist(
     request: QueryIsAnyLinkExistRequest
   ): Promise<QueryLinkExistResponse>;
+  Entropy(request: QueryEntropyRequest): Promise<QueryEntropyResponse>;
+  Luminosity(request: QueryLuminosityRequest): Promise<QueryLuminosityResponse>;
+  Karma(request: QueryKarmaRequest): Promise<QueryKarmaResponse>;
+  Karmas(request: QueryKarmasRequest): Promise<QueryKarmasResponse>;
 }
 
 export class QueryClientImpl implements Query {
   private readonly rpc: Rpc;
   constructor(rpc: Rpc) {
     this.rpc = rpc;
+    this.Params = this.Params.bind(this);
+    this.Rank = this.Rank.bind(this);
+    this.Search = this.Search.bind(this);
+    this.Backlinks = this.Backlinks.bind(this);
+    this.Top = this.Top.bind(this);
+    this.IsLinkExist = this.IsLinkExist.bind(this);
+    this.IsAnyLinkExist = this.IsAnyLinkExist.bind(this);
+    this.Entropy = this.Entropy.bind(this);
+    this.Luminosity = this.Luminosity.bind(this);
+    this.Karma = this.Karma.bind(this);
+    this.Karmas = this.Karmas.bind(this);
   }
   Params(request: QueryParamsRequest): Promise<QueryParamsResponse> {
     const data = QueryParamsRequest.encode(request).finish();
@@ -905,6 +1456,52 @@ export class QueryClientImpl implements Query {
       QueryLinkExistResponse.decode(new _m0.Reader(data))
     );
   }
+
+  Entropy(request: QueryEntropyRequest): Promise<QueryEntropyResponse> {
+    const data = QueryEntropyRequest.encode(request).finish();
+    const promise = this.rpc.request(
+      "cyber.rank.v1beta1.Query",
+      "Entropy",
+      data
+    );
+    return promise.then((data) =>
+      QueryEntropyResponse.decode(new _m0.Reader(data))
+    );
+  }
+
+  Luminosity(
+    request: QueryLuminosityRequest
+  ): Promise<QueryLuminosityResponse> {
+    const data = QueryLuminosityRequest.encode(request).finish();
+    const promise = this.rpc.request(
+      "cyber.rank.v1beta1.Query",
+      "Luminosity",
+      data
+    );
+    return promise.then((data) =>
+      QueryLuminosityResponse.decode(new _m0.Reader(data))
+    );
+  }
+
+  Karma(request: QueryKarmaRequest): Promise<QueryKarmaResponse> {
+    const data = QueryKarmaRequest.encode(request).finish();
+    const promise = this.rpc.request("cyber.rank.v1beta1.Query", "Karma", data);
+    return promise.then((data) =>
+      QueryKarmaResponse.decode(new _m0.Reader(data))
+    );
+  }
+
+  Karmas(request: QueryKarmasRequest): Promise<QueryKarmasResponse> {
+    const data = QueryKarmasRequest.encode(request).finish();
+    const promise = this.rpc.request(
+      "cyber.rank.v1beta1.Query",
+      "Karmas",
+      data
+    );
+    return promise.then((data) =>
+      QueryKarmasResponse.decode(new _m0.Reader(data))
+    );
+  }
 }
 
 interface Rpc {
@@ -921,6 +1518,7 @@ type Builtin =
   | Uint8Array
   | string
   | number
+  | boolean
   | undefined
   | Long;
 export type DeepPartial<T> = T extends Builtin
@@ -932,3 +1530,8 @@ export type DeepPartial<T> = T extends Builtin
   : T extends {}
   ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
+
+if (_m0.util.Long !== Long) {
+  _m0.util.Long = Long as any;
+  _m0.configure();
+}

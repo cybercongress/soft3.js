@@ -8,10 +8,6 @@ export interface QueryLinksRequest {
   cid: string;
 }
 
-export interface QueryLinksParams {
-  cid: string;
-}
-
 export interface QueryLinksResponse {
   cids: string[];
 }
@@ -49,7 +45,7 @@ export const QueryLinksRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): QueryLinksRequest {
-    const reader = input instanceof Uint8Array ? new _m0.Reader(input) : input;
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseQueryLinksRequest } as QueryLinksRequest;
     while (reader.pos < end) {
@@ -93,64 +89,6 @@ export const QueryLinksRequest = {
   },
 };
 
-const baseQueryLinksParams: object = { cid: "" };
-
-export const QueryLinksParams = {
-  encode(
-    message: QueryLinksParams,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
-    if (message.cid !== "") {
-      writer.uint32(10).string(message.cid);
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): QueryLinksParams {
-    const reader = input instanceof Uint8Array ? new _m0.Reader(input) : input;
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseQueryLinksParams } as QueryLinksParams;
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.cid = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-
-  fromJSON(object: any): QueryLinksParams {
-    const message = { ...baseQueryLinksParams } as QueryLinksParams;
-    if (object.cid !== undefined && object.cid !== null) {
-      message.cid = String(object.cid);
-    } else {
-      message.cid = "";
-    }
-    return message;
-  },
-
-  toJSON(message: QueryLinksParams): unknown {
-    const obj: any = {};
-    message.cid !== undefined && (obj.cid = message.cid);
-    return obj;
-  },
-
-  fromPartial(object: DeepPartial<QueryLinksParams>): QueryLinksParams {
-    const message = { ...baseQueryLinksParams } as QueryLinksParams;
-    if (object.cid !== undefined && object.cid !== null) {
-      message.cid = object.cid;
-    } else {
-      message.cid = "";
-    }
-    return message;
-  },
-};
-
 const baseQueryLinksResponse: object = { cids: "" };
 
 export const QueryLinksResponse = {
@@ -165,7 +103,7 @@ export const QueryLinksResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): QueryLinksResponse {
-    const reader = input instanceof Uint8Array ? new _m0.Reader(input) : input;
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseQueryLinksResponse } as QueryLinksResponse;
     message.cids = [];
@@ -230,7 +168,7 @@ export const QueryLinksAmountRequest = {
     input: _m0.Reader | Uint8Array,
     length?: number
   ): QueryLinksAmountRequest {
-    const reader = input instanceof Uint8Array ? new _m0.Reader(input) : input;
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = {
       ...baseQueryLinksAmountRequest,
@@ -285,7 +223,7 @@ export const QueryLinksAmountResponse = {
     input: _m0.Reader | Uint8Array,
     length?: number
   ): QueryLinksAmountResponse {
-    const reader = input instanceof Uint8Array ? new _m0.Reader(input) : input;
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = {
       ...baseQueryLinksAmountResponse,
@@ -352,7 +290,7 @@ export const QueryCidsAmountRequest = {
     input: _m0.Reader | Uint8Array,
     length?: number
   ): QueryCidsAmountRequest {
-    const reader = input instanceof Uint8Array ? new _m0.Reader(input) : input;
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseQueryCidsAmountRequest } as QueryCidsAmountRequest;
     while (reader.pos < end) {
@@ -399,7 +337,7 @@ export const QueryCidsAmountResponse = {
     input: _m0.Reader | Uint8Array,
     length?: number
   ): QueryCidsAmountResponse {
-    const reader = input instanceof Uint8Array ? new _m0.Reader(input) : input;
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = {
       ...baseQueryCidsAmountResponse,
@@ -466,7 +404,7 @@ export const QueryGraphStatsRequest = {
     input: _m0.Reader | Uint8Array,
     length?: number
   ): QueryGraphStatsRequest {
-    const reader = input instanceof Uint8Array ? new _m0.Reader(input) : input;
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseQueryGraphStatsRequest } as QueryGraphStatsRequest;
     while (reader.pos < end) {
@@ -519,7 +457,7 @@ export const QueryGraphStatsResponse = {
     input: _m0.Reader | Uint8Array,
     length?: number
   ): QueryGraphStatsResponse {
-    const reader = input instanceof Uint8Array ? new _m0.Reader(input) : input;
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = {
       ...baseQueryGraphStatsResponse,
@@ -588,7 +526,9 @@ export const QueryGraphStatsResponse = {
 };
 
 export interface Query {
+  /** TODO add pagination on storage */
   InLinks(request: QueryLinksRequest): Promise<QueryLinksResponse>;
+  /** TODO add pagination on storage */
   OutLinks(request: QueryLinksRequest): Promise<QueryLinksResponse>;
   LinksAmount(
     request: QueryLinksAmountRequest
@@ -601,6 +541,11 @@ export class QueryClientImpl implements Query {
   private readonly rpc: Rpc;
   constructor(rpc: Rpc) {
     this.rpc = rpc;
+    this.InLinks = this.InLinks.bind(this);
+    this.OutLinks = this.OutLinks.bind(this);
+    this.LinksAmount = this.LinksAmount.bind(this);
+    this.CidsAmount = this.CidsAmount.bind(this);
+    this.GraphStats = this.GraphStats.bind(this);
   }
   InLinks(request: QueryLinksRequest): Promise<QueryLinksResponse> {
     const data = QueryLinksRequest.encode(request).finish();
@@ -683,6 +628,7 @@ type Builtin =
   | Uint8Array
   | string
   | number
+  | boolean
   | undefined
   | Long;
 export type DeepPartial<T> = T extends Builtin
@@ -694,3 +640,8 @@ export type DeepPartial<T> = T extends Builtin
   : T extends {}
   ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
+
+if (_m0.util.Long !== Long) {
+  _m0.util.Long = Long as any;
+  _m0.configure();
+}

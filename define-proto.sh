@@ -15,28 +15,30 @@ mkdir -p "$OUT_DIR"
 protoc \
   --plugin="$(yarn bin protoc-gen-ts_proto)" \
   --ts_proto_out="$OUT_DIR" \
-  --proto_path="$CYBER_PROTO_DIR/cyber" \
+  --proto_path="$CYBER_PROTO_DIR" \
   --proto_path="$THIRD_PARTY_PROTO_DIR" \
   --ts_proto_opt="esModuleInterop=true,forceLong=long,useOptionals=true" \
   "$THIRD_PARTY_PROTO_DIR/cosmos_proto/coin.proto" \
-  "$CYBER_PROTO_DIR/cyber/graph/v1beta1/graph.proto" \
-  "$CYBER_PROTO_DIR/cyber/graph/v1beta1/query.proto" \
-  "$CYBER_PROTO_DIR/cyber/bandwidth/v1beta1/params.proto" \
-  "$CYBER_PROTO_DIR/cyber/bandwidth/v1beta1/bandwidth.proto" \
-  "$CYBER_PROTO_DIR/cyber/bandwidth/v1beta1/query.proto" \
-  "$CYBER_PROTO_DIR/cyber/resources/v1beta1/tx.proto" \
-  "$CYBER_PROTO_DIR/cyber/rank/v1beta1/params.proto" \
-  "$CYBER_PROTO_DIR/cyber/rank/v1beta1/query.proto" \
+  "$THIRD_PARTY_PROTO_DIR/cosmos_proto/pagination.proto" \
   "$CYBER_PROTO_DIR/cyber/base/query/v1beta1/pagination.proto" \
+  "$CYBER_PROTO_DIR/cyber/graph/v1beta1/types.proto" \
+  "$CYBER_PROTO_DIR/cyber/graph/v1beta1/query.proto" \
+  "$CYBER_PROTO_DIR/cyber/graph/v1beta1/tx.proto" \
+  "$CYBER_PROTO_DIR/cyber/bandwidth/v1beta1/types.proto" \
+  "$CYBER_PROTO_DIR/cyber/bandwidth/v1beta1/query.proto" \
+  "$CYBER_PROTO_DIR/cyber/resources/v1beta1/types.proto" \
+  "$CYBER_PROTO_DIR/cyber/resources/v1beta1/query.proto" \
+  "$CYBER_PROTO_DIR/cyber/resources/v1beta1/tx.proto" \
+  "$CYBER_PROTO_DIR/cyber/rank/v1beta1/types.proto" \
+  "$CYBER_PROTO_DIR/cyber/rank/v1beta1/query.proto" \
+  "$CYBER_PROTO_DIR/cyber/energy/v1beta1/types.proto" \
   "$CYBER_PROTO_DIR/cyber/energy/v1beta1/query.proto" \
-  "$CYBER_PROTO_DIR/cyber/energy/v1beta1/energy.proto" \
-  "$CYBER_PROTO_DIR/cyber/energy/v1beta1/params.proto" \
   "$CYBER_PROTO_DIR/cyber/energy/v1beta1/tx.proto" \
 
-  
 
 # Remove unnecessary codec files
-# rm -rf \
+rm -rf \
   # src/codec/cosmos_proto/ \
-  # src/codec/gogoproto/ \
-  # src/codec/google/
+  src/codec/gogoproto/ \
+  src/codec/google/api/ \
+  src/codec/google/protobuf/descriptor.ts

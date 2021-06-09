@@ -11,16 +11,14 @@ import {
     QueryCidsAmountResponse,
     QueryLinksAmountRequest,
     QueryLinksAmountResponse,
-    QueryLinksParams,
+    // QueryLinksParams,
     QueryLinksRequest,
     QueryLinksResponse
-} from "../codec/graph/v1beta1/query"
+} from "../codec/cyber/graph/v1beta1/query"
 
 export interface GraphExtension {
-    readonly unverified: {
-        readonly graph: {
-            readonly graphStats: () => Promise<QueryGraphStatsResponse>;
-        }
+    readonly graph: {
+        readonly graphStats: () => Promise<QueryGraphStatsResponse>;
     }
 }
 
@@ -31,12 +29,10 @@ export function setupGraphExtension(base: QueryClient): GraphExtension {
     const queryService = new QueryClientImpl(rpc);
   
     return {
-      unverified: {
         graph: {
             graphStats: async() => {
                 return await queryService.GraphStats({});
             }
         },
-      },
     };
 }

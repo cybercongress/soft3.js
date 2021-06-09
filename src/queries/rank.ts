@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { createPagination, createProtobufRpcClient, QueryClient } from "@cosmjs/stargate";
+import { createProtobufRpcClient, QueryClient } from "@cosmjs/stargate";
 import Long from "long";
 
 import {
@@ -13,21 +13,31 @@ import {
     QueryIsAnyLinkExistRequest,
     QueryIsLinkExistRequest,
     QueryLinkExistResponse,
-} from "../codec/rank/v1beta1/query"
+} from "../codec/cyber/rank/v1beta1/query"
 import { 
     PageRequest,
     PageResponse,
-} from "../codec/base/query/v1beta1/pagination"
+} from "../codec/cyber/base/query/v1beta1/pagination"
+
+export function createPagination(page?: number, perPage?: number): PageRequest {
+    return page
+      ? {
+          page: page,
+          perPage: perPage ? perPage : 10
+        }
+      : {
+            page: 0,
+            perPage: 10
+        };
+}
 
 export interface RankExtension {
-    readonly unverified: {
-        readonly rank: {
-            readonly search: (cid: string, page?: number, perPage?: number) => Promise<QuerySearchResponse>;
-            readonly backlinks: (cid: string, page?: number, perPage?: number) => Promise<QuerySearchResponse>;
-            readonly rank: (cid: string) => Promise<QueryRankResponse>;
-            readonly isLinkExist: (from: string, to: string, agent: string) => Promise<QueryLinkExistResponse>;
-            readonly isAnyLinkExist: (from: string, to: string) => Promise<QueryLinkExistResponse>;
-        }
+    readonly rank: {
+        readonly search: (cid: string, page?: number, perPage?: number) => Promise<QuerySearchResponse>;
+        readonly backlinks: (cid: string, page?: number, perPage?: number) => Promise<QuerySearchResponse>;
+        readonly rank: (cid: string) => Promise<QueryRankResponse>;
+        readonly isLinkExist: (from: string, to: string, agent: string) => Promise<QueryLinkExistResponse>;
+        readonly isAnyLinkExist: (from: string, to: string) => Promise<QueryLinkExistResponse>;
     }
 }
 
@@ -38,13 +48,12 @@ export function setupRankExtension(base: QueryClient): RankExtension {
     const queryService = new QueryClientImpl(rpc);
   
     return {
-      unverified: {
         rank: {
             search: async(cid: string, page?: number, perPage?: number) => {
                 try {
                     const response = await queryService.Search({
                         cid: cid,
-                        // TODO pagination
+                        pagination: createPagination(page, perPage),
                     });
                     return response;
                 } catch(error) {
@@ -55,7 +64,7 @@ export function setupRankExtension(base: QueryClient): RankExtension {
                 try {
                     const response = await queryService.Backlinks({
                         cid: cid,
-                        // TODO pagination
+                        pagination: createPagination(page, perPage),
                     });
                     return response;
                 } catch(error) {
@@ -96,6 +105,5 @@ export function setupRankExtension(base: QueryClient): RankExtension {
                 }
             },
         },
-      },
     };
 }

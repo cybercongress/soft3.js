@@ -12,18 +12,16 @@ import {
     QueryRouteResponse,
     QueryRoutesRequest,
     QueryRoutesResponse
-} from "../codec/energy/v1beta1/query"
+} from "../codec/cyber/energy/v1beta1/query"
 
 export interface EnergyExtension {
-    readonly unverified: {
-        readonly energy: {
-            readonly sourceRoutes: (source: string) => Promise<QueryRoutesResponse>;
-            readonly destinationRoutes: (destination: string) => Promise<QueryRoutesResponse>;
-            readonly destinationRoutedEnergy: (destination: string) => Promise<QueryRoutedEnergyResponse>;
-            readonly sourceRoutedEnergy: (source: string) => Promise<QueryRoutedEnergyResponse>;
-            readonly route: (source: string, destination: string) => Promise<QueryRouteResponse>;
-            readonly routes: () => Promise<QueryRoutesResponse>;
-        }
+    readonly energy: {
+        readonly sourceRoutes: (source: string) => Promise<QueryRoutesResponse>;
+        readonly destinationRoutes: (destination: string) => Promise<QueryRoutesResponse>;
+        readonly destinationRoutedEnergy: (destination: string) => Promise<QueryRoutedEnergyResponse>;
+        readonly sourceRoutedEnergy: (source: string) => Promise<QueryRoutedEnergyResponse>;
+        readonly route: (source: string, destination: string) => Promise<QueryRouteResponse>;
+        readonly routes: () => Promise<QueryRoutesResponse>;
     }
 }
 
@@ -34,7 +32,6 @@ export function setupEnergyExtension(base: QueryClient): EnergyExtension {
     const queryService = new QueryClientImpl(rpc);
   
     return {
-      unverified: {
         energy: {
             sourceRoutes: async(source: string) => {
                 try {
@@ -89,6 +86,5 @@ export function setupEnergyExtension(base: QueryClient): EnergyExtension {
                 }
             },
         },
-      },
     };
 }

@@ -13,15 +13,13 @@ import {
     QueryParamsResponse,
     QueryPriceRequest,
     QueryPriceResponse,
-} from "../codec/bandwidth/v1beta1/query"
+} from "../codec/cyber/bandwidth/v1beta1/query"
 
 export interface BandwidthExtension {
-    readonly unverified: {
-        readonly bandwidth: {
-            readonly load: () => Promise<QueryLoadResponse>;
-            readonly price: () => Promise<QueryPriceResponse>;
-            readonly account: (agent: string) => Promise<QueryAccountResponse>;
-        }
+    readonly bandwidth: {
+        readonly load: () => Promise<QueryLoadResponse>;
+        readonly price: () => Promise<QueryPriceResponse>;
+        readonly account: (agent: string) => Promise<QueryAccountResponse>;
     }
 }
 
@@ -32,7 +30,6 @@ export function setupBandwidthExtension(base: QueryClient): BandwidthExtension {
     const queryService = new QueryClientImpl(rpc);
   
     return {
-      unverified: {
         bandwidth: {
             load: async() => {
                 try {
@@ -61,6 +58,5 @@ export function setupBandwidthExtension(base: QueryClient): BandwidthExtension {
                 }
             }
         },
-      },
     };
 }

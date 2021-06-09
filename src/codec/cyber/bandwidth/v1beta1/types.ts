@@ -4,6 +4,13 @@ import _m0 from "protobufjs/minimal";
 
 export const protobufPackage = "cyber.bandwidth.v1beta1";
 
+export interface Params {
+  recoveryPeriod: Long;
+  adjustPricePeriod: Long;
+  basePrice: string;
+  maxBlockBandwidth: Long;
+}
+
 export interface AccountBandwidth {
   address: string;
   remainedValue: Long;
@@ -14,6 +21,139 @@ export interface AccountBandwidth {
 export interface Price {
   price: string;
 }
+
+const baseParams: object = {
+  recoveryPeriod: Long.UZERO,
+  adjustPricePeriod: Long.UZERO,
+  basePrice: "",
+  maxBlockBandwidth: Long.UZERO,
+};
+
+export const Params = {
+  encode(
+    message: Params,
+    writer: _m0.Writer = _m0.Writer.create()
+  ): _m0.Writer {
+    if (!message.recoveryPeriod.isZero()) {
+      writer.uint32(8).uint64(message.recoveryPeriod);
+    }
+    if (!message.adjustPricePeriod.isZero()) {
+      writer.uint32(16).uint64(message.adjustPricePeriod);
+    }
+    if (message.basePrice !== "") {
+      writer.uint32(26).string(message.basePrice);
+    }
+    if (!message.maxBlockBandwidth.isZero()) {
+      writer.uint32(32).uint64(message.maxBlockBandwidth);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): Params {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseParams } as Params;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.recoveryPeriod = reader.uint64() as Long;
+          break;
+        case 2:
+          message.adjustPricePeriod = reader.uint64() as Long;
+          break;
+        case 3:
+          message.basePrice = reader.string();
+          break;
+        case 4:
+          message.maxBlockBandwidth = reader.uint64() as Long;
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): Params {
+    const message = { ...baseParams } as Params;
+    if (object.recoveryPeriod !== undefined && object.recoveryPeriod !== null) {
+      message.recoveryPeriod = Long.fromString(object.recoveryPeriod);
+    } else {
+      message.recoveryPeriod = Long.UZERO;
+    }
+    if (
+      object.adjustPricePeriod !== undefined &&
+      object.adjustPricePeriod !== null
+    ) {
+      message.adjustPricePeriod = Long.fromString(object.adjustPricePeriod);
+    } else {
+      message.adjustPricePeriod = Long.UZERO;
+    }
+    if (object.basePrice !== undefined && object.basePrice !== null) {
+      message.basePrice = String(object.basePrice);
+    } else {
+      message.basePrice = "";
+    }
+    if (
+      object.maxBlockBandwidth !== undefined &&
+      object.maxBlockBandwidth !== null
+    ) {
+      message.maxBlockBandwidth = Long.fromString(object.maxBlockBandwidth);
+    } else {
+      message.maxBlockBandwidth = Long.UZERO;
+    }
+    return message;
+  },
+
+  toJSON(message: Params): unknown {
+    const obj: any = {};
+    message.recoveryPeriod !== undefined &&
+      (obj.recoveryPeriod = (message.recoveryPeriod || Long.UZERO).toString());
+    message.adjustPricePeriod !== undefined &&
+      (obj.adjustPricePeriod = (
+        message.adjustPricePeriod || Long.UZERO
+      ).toString());
+    message.basePrice !== undefined && (obj.basePrice = message.basePrice);
+    message.maxBlockBandwidth !== undefined &&
+      (obj.maxBlockBandwidth = (
+        message.maxBlockBandwidth || Long.UZERO
+      ).toString());
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<Params>): Params {
+    const message = { ...baseParams } as Params;
+    if (object.recoveryPeriod !== undefined && object.recoveryPeriod !== null) {
+      message.recoveryPeriod = object.recoveryPeriod as Long;
+    } else {
+      message.recoveryPeriod = Long.UZERO;
+    }
+    if (
+      object.adjustPricePeriod !== undefined &&
+      object.adjustPricePeriod !== null
+    ) {
+      message.adjustPricePeriod = object.adjustPricePeriod as Long;
+    } else {
+      message.adjustPricePeriod = Long.UZERO;
+    }
+    if (object.basePrice !== undefined && object.basePrice !== null) {
+      message.basePrice = object.basePrice;
+    } else {
+      message.basePrice = "";
+    }
+    if (
+      object.maxBlockBandwidth !== undefined &&
+      object.maxBlockBandwidth !== null
+    ) {
+      message.maxBlockBandwidth = object.maxBlockBandwidth as Long;
+    } else {
+      message.maxBlockBandwidth = Long.UZERO;
+    }
+    return message;
+  },
+};
 
 const baseAccountBandwidth: object = {
   address: "",
@@ -43,7 +183,7 @@ export const AccountBandwidth = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): AccountBandwidth {
-    const reader = input instanceof Uint8Array ? new _m0.Reader(input) : input;
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseAccountBandwidth } as AccountBandwidth;
     while (reader.pos < end) {
@@ -151,7 +291,7 @@ export const Price = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): Price {
-    const reader = input instanceof Uint8Array ? new _m0.Reader(input) : input;
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...basePrice } as Price;
     while (reader.pos < end) {
@@ -201,6 +341,7 @@ type Builtin =
   | Uint8Array
   | string
   | number
+  | boolean
   | undefined
   | Long;
 export type DeepPartial<T> = T extends Builtin
@@ -212,3 +353,8 @@ export type DeepPartial<T> = T extends Builtin
   : T extends {}
   ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
+
+if (_m0.util.Long !== Long) {
+  _m0.util.Long = Long as any;
+  _m0.configure();
+}

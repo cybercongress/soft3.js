@@ -17,18 +17,22 @@
     "postdefine-proto": "prettier --write \"src/codec/**/*.ts\""
   },
   "dependencies": {
-    "@cosmjs/amino": "^0.25.0-alpha.1",
-    "@cosmjs/crypto": "^0.25.0-alpha.1",
-    "@cosmjs/proto-signing": "^0.25.0-alpha.1",
-    "@cosmjs/stargate": "^0.25.0-alpha.1",
-    "@cosmjs/tendermint-rpc": "^0.25.0-alpha.1",
-    "@cosmjs/cosmwasm-stargate": "^0.25.0-alpha.1",
-    "@cosmjs/cosmwasm-launchpad": "^0.25.0-alpha.1",
+    "@cosmjs/amino": "0.25.4",
+    "@cosmjs/cosmwasm-launchpad": "0.25.4",
+    "@cosmjs/cosmwasm-stargate": "0.25.4",
+    "@cosmjs/crypto": "0.25.4",
+    "@cosmjs/math": "0.25.4",
+    "@cosmjs/proto-signing": "0.25.4",
+    "@cosmjs/stargate": "0.25.4",
+    "@cosmjs/tendermint-rpc": "0.25.4",
+    "@cosmjs/utils": "0.25.4",
     "long": "^4.0.0",
+    "pako": "^2.0.3",
     "process": "^0.11.10",
     "protobufjs": "~6.10.2"
   },
   "devDependencies": {
-    "ts-proto": "^1.74.0"
+    "@types/pako": "^1.0.1",
+    "ts-proto": "^1.81.1"
   }
 }

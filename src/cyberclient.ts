@@ -1,49 +1,42 @@
 import {
-  Coin,
-  Block,
-  isSearchByHeightQuery,
-  isSearchBySentFromOrToQuery,
-  isSearchByTagsQuery,
-  SearchTxFilter,
-  SearchTxQuery,
-} from "@cosmjs/launchpad";
-import {
+  Code,
+  CodeDetails,
+  Contract,
+  ContractCodeHistoryEntry,
   JsonObject,
 } from "@cosmjs/cosmwasm-launchpad";
 import {
-  createPagination,
   Account,
   accountFromAny,
   AuthExtension,
   BankExtension,
-  DistributionExtension,
-  StakingExtension,
+  Block,
   BroadcastTxResponse,
-  coinFromProto,
+  Coin,
   IndexedTx,
+  isSearchByHeightQuery,
+  isSearchBySentFromOrToQuery,
+  isSearchByTagsQuery,
   QueryClient,
+  SearchTxFilter,
+  SearchTxQuery,
   SequenceResponse,
   setupAuthExtension,
   setupBankExtension,
   setupDistributionExtension,
   setupStakingExtension,
+  DistributionExtension,
+  StakingExtension,
+  TimeoutError,
 } from "@cosmjs/stargate";
-import {
-  fromAscii,
-  toHex
-} from "@cosmjs/encoding";
+import { fromAscii, toHex } from "@cosmjs/encoding";
 import { Uint53 } from "@cosmjs/math";
-import {
-  broadcastTxCommitSuccess,
-  Tendermint34Client,
-  toRfc3339WithNanoseconds,
-} from "@cosmjs/tendermint-rpc";
-import {
-  TxMsgData
-} from "@cosmjs/stargate/build/codec/cosmos/base/abci/v1beta1/abci";
-import {
-  QueryGraphStatsResponse
-} from "./codec/graph/v1beta1/query";
+import { Tendermint34Client, toRfc3339WithNanoseconds } from "@cosmjs/tendermint-rpc";
+import { assert, sleep } from "@cosmjs/utils";
+import { CodeInfoResponse } from "@cosmjs/cosmwasm-stargate/build/codec/cosmwasm/wasm/v1beta1/query";
+import { ContractCodeHistoryOperationType } from "@cosmjs/cosmwasm-stargate/build/codec/cosmwasm/wasm/v1beta1/types";
+import { setupWasmExtension, WasmExtension } from "@cosmjs/cosmwasm-stargate/build/queries";
+import { QueryGraphStatsResponse} from "./codec/cyber/graph/v1beta1/query";
 import {
   Query,
   QueryClientImpl,
@@ -55,12 +48,12 @@ import {
   QueryIsAnyLinkExistRequest,
   QueryIsLinkExistRequest,
   QueryLinkExistResponse,
-} from "./codec/rank/v1beta1/query";
+} from "./codec/cyber/rank/v1beta1/query";
 import {
   QueryLoadResponse,
   QueryAccountResponse,
   QueryPriceResponse,
-} from "./codec/bandwidth/v1beta1/query"
+} from "./codec/cyber/bandwidth/v1beta1/query"
 import {
   QuerySourceRequest,
   QueryDestinationRequest,
@@ -69,7 +62,7 @@ import {
   QueryRouteRequest,
   QueryRoutedEnergyResponse,
   QueryRoutesResponse,
-} from "./codec/energy/v1beta1/query"
+} from "./codec/cyber/energy/v1beta1/query"
 import {
   GraphExtension,
   RankExtension,
@@ -81,41 +74,76 @@ import {
   setupEnergyExtension,
 } from "./queries/index";
 
+export {
+  Code, // returned by CosmWasmClient.getCode
+  CodeDetails, // returned by CosmWasmClient.getCodeDetails
+  Contract, // returned by CosmWasmClient.getContract
+  ContractCodeHistoryEntry, // returned by CosmWasmClient.getContractCodeHistory
+  JsonObject, // returned by CosmWasmClient.queryContractSmart
+};
 
 
 export interface PrivateCyberClient {
-  readonly tmClient: Tendermint34Client;
-  readonly queryClient: QueryClient & AuthExtension & BankExtension & DistributionExtension & StakingExtension & GraphExtension & RankExtension & BandwidthExtension & EnergyExtension;
+  readonly tmClient: Tendermint34Client | undefined;
+  readonly queryClient: (QueryClient & AuthExtension & BankExtension & DistributionExtension & StakingExtension & GraphExtension & RankExtension & BandwidthExtension & EnergyExtension & WasmExtension) | undefined;
 }
 
 export class CyberClient {
-  private readonly tmClient: Tendermint34Client;
-  private readonly queryClient: QueryClient & AuthExtension & BankExtension & DistributionExtension & StakingExtension & GraphExtension & RankExtension & BandwidthExtension & EnergyExtension;
+  private readonly tmClient: Tendermint34Client | undefined;
+  private readonly queryClient: (QueryClient & AuthExtension & BankExtension & DistributionExtension & StakingExtension & GraphExtension & RankExtension & BandwidthExtension & EnergyExtension & WasmExtension) | undefined;
+  private readonly codesCache = new Map<number, CodeDetails>();
   private chainId: string | undefined;
 
-  public static async connect(endpoint: string): Promise < CyberClient > {
+  public static async connect(endpoint: string): Promise<CyberClient> {
     const tmClient = await Tendermint34Client.connect(endpoint);
     return new CyberClient(tmClient);
   }
 
-  protected constructor(tmClient: Tendermint34Client) {
-    this.tmClient = tmClient;
-    this.queryClient = QueryClient.withExtensions(
-      tmClient,
-      setupAuthExtension,
-      setupBankExtension,
-      setupDistributionExtension,
-      setupStakingExtension,
-      setupGraphExtension,
-      setupRankExtension,
-      setupBandwidthExtension,
-      setupEnergyExtension,
-    );
+  protected constructor(tmClient: Tendermint34Client | undefined) {
+      if (tmClient) {
+        this.tmClient = tmClient;
+        this.queryClient = QueryClient.withExtensions(
+        tmClient,
+        setupAuthExtension,
+        setupBankExtension,
+        setupDistributionExtension,
+        setupStakingExtension,
+        setupGraphExtension,
+        setupRankExtension,
+        setupBandwidthExtension,
+        setupEnergyExtension,
+        setupWasmExtension,
+      );
+    }
   }
 
-  public async getChainId(): Promise < string > {
+  protected getTmClient(): Tendermint34Client | undefined {
+    return this.tmClient;
+  }
+
+  protected forceGetTmClient(): Tendermint34Client {
+    if (!this.tmClient) {
+      throw new Error(
+        "Tendermint client not available. You cannot use online functionality in offline mode.",
+      );
+    }
+    return this.tmClient;
+  }
+
+  protected getQueryClient(): (QueryClient & AuthExtension & BankExtension & DistributionExtension & StakingExtension & GraphExtension & RankExtension & BandwidthExtension & EnergyExtension & WasmExtension) | undefined {
+    return this.queryClient;
+  }
+
+  protected forceGetQueryClient(): QueryClient & AuthExtension & BankExtension & DistributionExtension & StakingExtension & GraphExtension & RankExtension & BandwidthExtension & EnergyExtension & WasmExtension {
+    if (!this.queryClient) {
+      throw new Error("Query client not available. You cannot use online functionality in offline mode.");
+    }
+    return this.queryClient;
+  }
+
+  public async getChainId(): Promise<string> {
     if (!this.chainId) {
-      const response = await this.tmClient.status();
+      const response = await this.forceGetTmClient().status();
       const chainId = response.nodeInfo.network;
       if (!chainId) throw new Error("Chain ID must not be empty");
       this.chainId = chainId;
@@ -125,34 +153,37 @@ export class CyberClient {
   }
 
   public async getHeight(): Promise<number> {
-    const status = await this.tmClient.status();
+    const status = await this.forceGetTmClient().status();
     return status.syncInfo.latestBlockHeight;
   }
 
-  public async getAccount(searchAddress: string): Promise < Account | null > {
-    const account = await this.queryClient.auth.account(searchAddress);
-    return account ? accountFromAny(account) : null;
-  }
-
-  public async getAccountUnverified(searchAddress: string): Promise<Account | null> {
-    const account = await this.queryClient.auth.unverified.account(searchAddress);
-    return account ? accountFromAny(account) : null;
-  }
-
-  public async getSequence(address: string): Promise<SequenceResponse | null> {
-    const account = await this.getAccount(address);
-    if (account) {
-      return {
-        accountNumber: account.accountNumber,
-        sequence: account.sequence,
-      };
-    } else {
-      return null;
+  public async getAccount(searchAddress: string): Promise<Account | null> {
+    try {
+      const account = await this.forceGetQueryClient().auth.account(searchAddress);
+      return account ? accountFromAny(account) : null;
+    } catch (error) {
+      if (/rpc error: code = NotFound/i.test(error)) {
+        return null;
+      }
+      throw error;
     }
   }
 
+  public async getSequence(address: string): Promise<SequenceResponse> {
+    const account = await this.getAccount(address);
+    if (!account) {
+      throw new Error(
+        "Account does not exist on chain. Send some tokens there before trying to query sequence.",
+      );
+    }
+    return {
+      accountNumber: account.accountNumber,
+      sequence: account.sequence,
+    };
+  }
+
   public async getBlock(height?: number): Promise<Block> {
-    const response = await this.tmClient.block(height);
+    const response = await this.forceGetTmClient().block(height);
     return {
       id: toHex(response.blockId.hash).toUpperCase(),
       header: {
@@ -168,14 +199,18 @@ export class CyberClient {
     };
   }
 
-  public async getBalance(address: string, searchDenom: string): Promise<Coin | null> {
-    const balance = await this.queryClient.bank.balance(address, searchDenom);
-    return balance ? coinFromProto(balance) : null;
+  public async getBalance(address: string, searchDenom: string): Promise<Coin> {
+    return this.forceGetQueryClient().bank.balance(address, searchDenom);
   }
 
-  public async getAllBalancesUnverified(address: string): Promise<readonly Coin[]> {
-    const balances = await this.queryClient.bank.unverified.allBalances(address);
-    return balances.map(coinFromProto);
+    /**
+   * Queries all balances for all denoms that belong to this address.
+   *
+   * Uses the grpc queries (which iterates over the store internally), and we cannot get
+   * proofs from such a method.
+   */
+  public async getAllBalances(address: string): Promise<readonly Coin[]> {
+    return this.forceGetQueryClient().bank.allBalances(address);
   }
 
   public async getTx(id: string): Promise<IndexedTx | null> {
@@ -222,123 +257,283 @@ export class CyberClient {
   }
 
   public disconnect(): void {
-    this.tmClient.disconnect();
+    if (this.tmClient) this.tmClient.disconnect();
   }
 
-  public async broadcastTx(tx: Uint8Array): Promise<BroadcastTxResponse> {
-    const response = await this.tmClient.broadcastTxCommit({ tx });
-    if (broadcastTxCommitSuccess(response)) {
-      return {
-        height: response.height,
-        transactionHash: toHex(response.hash).toUpperCase(),
-        rawLog: response.deliverTx?.log,
-        data: response.deliverTx?.data ? TxMsgData.decode(response.deliverTx?.data).data : undefined,
-      };
+  /**
+   * Broadcasts a signed transaction to the network and monitors its inclusion in a block.
+   *
+   * If broadcasting is rejected by the node for some reason (e.g. because of a CheckTx failure),
+   * an error is thrown.
+   *
+   * If the transaction is not included in a block before the provided timeout, this errors with a `TimeoutError`.
+   *
+   * If the transaction is included in a block, a `BroadcastTxResponse` is returned. The caller then
+   * usually needs to check for execution success or failure.
+   */
+  // NOTE: This method is tested against slow chains and timeouts in the @cosmjs/stargate package.
+  // Make sure it is kept in sync!
+  public async broadcastTx(
+    tx: Uint8Array,
+    timeoutMs = 60_000,
+    pollIntervalMs = 3_000,
+  ): Promise<BroadcastTxResponse> {
+    let timedOut = false;
+    const txPollTimeout = setTimeout(() => {
+      timedOut = true;
+    }, timeoutMs);
+
+    const pollForTx = async (txId: string): Promise<BroadcastTxResponse> => {
+      if (timedOut) {
+        throw new TimeoutError(
+          `Transaction with ID ${txId} was submitted but was not yet found on the chain. You might want to check later.`,
+          txId,
+        );
+      }
+      await sleep(pollIntervalMs);
+      const result = await this.getTx(txId);
+      return result
+        ? {
+            code: result.code,
+            height: result.height,
+            rawLog: result.rawLog,
+            transactionHash: txId,
+            gasUsed: result.gasUsed,
+            gasWanted: result.gasWanted,
+          }
+        : pollForTx(txId);
+    };
+
+    const broadcasted = await this.forceGetTmClient().broadcastTxSync({ tx });
+    if (broadcasted.code) {
+      throw new Error(
+        `Broadcasting transaction failed with code ${broadcasted.code} (codespace: ${broadcasted.codeSpace}). Log: ${broadcasted.log}`,
+      );
     }
-    return response.checkTx.code !== 0
-      ? {
-          height: response.height,
-          code: response.checkTx.code,
-          transactionHash: toHex(response.hash).toUpperCase(),
-          rawLog: response.checkTx.log,
-          data: response.checkTx.data ? TxMsgData.decode(response.checkTx.data).data : undefined,
-        }
-      : {
-          height: response.height,
-          code: response.deliverTx?.code,
-          transactionHash: toHex(response.hash).toUpperCase(),
-          rawLog: response.deliverTx?.log,
-          data: response.deliverTx?.data ? TxMsgData.decode(response.deliverTx?.data).data : undefined,
-        };
+    const transactionId = toHex(broadcasted.hash).toUpperCase();
+    return new Promise((resolve, reject) =>
+      pollForTx(transactionId).then(
+        (value) => {
+          clearTimeout(txPollTimeout);
+          resolve(value);
+        },
+        (error) => {
+          clearTimeout(txPollTimeout);
+          reject(error);
+        },
+      ),
+    );
   }
 
-  //-------------------------
+  // Graph module
 
   public async graphStats(): Promise < JsonObject > {
-    const response =  await this.queryClient.unverified.graph.graphStats();
+    const response =  await this.forceGetQueryClient().graph.graphStats();
     return QueryGraphStatsResponse.toJSON(response)
   }
 
-  //-------------------------
+  // Rank module
 
   public async search(cid: string, page?: number, perPage?: number): Promise < JsonObject > {
-    const response = await this.queryClient.unverified.rank.search(cid, page, perPage);
+    const response = await this.forceGetQueryClient().rank.search(cid, page, perPage);
     return QuerySearchResponse.toJSON(response)
   }
 
   public async backlinks(cid: string, page?: number, perPage?: number): Promise < JsonObject > {
-    const response = await this.queryClient.unverified.rank.backlinks(cid, page, perPage);
+    const response = await this.forceGetQueryClient().rank.backlinks(cid, page, perPage);
     return QuerySearchResponse.toJSON(response)
   }
 
   public async rank(cid: string): Promise < JsonObject > {
-    const response = await this.queryClient.unverified.rank.rank(cid);
+    const response = await this.forceGetQueryClient().rank.rank(cid);
     return QueryRankResponse.toJSON(response)
   }
 
   public async isLinkExist(from: string, to: string, agent: string): Promise < JsonObject > {
-    const response = await this.queryClient.unverified.rank.isLinkExist(from, to, agent);
+    const response = await this.forceGetQueryClient().rank.isLinkExist(from, to, agent);
     return QueryLinkExistResponse.toJSON(response)
   }
 
   public async isAnyLinkExist(from: string, to: string, agent: string): Promise < JsonObject > {
-     const response = await this.queryClient.unverified.rank.isAnyLinkExist(from, to);
+     const response = await this.forceGetQueryClient().rank.isAnyLinkExist(from, to);
      return QueryLinkExistResponse.toJSON(response)
   }
-  
-  //-------------------------
+
+  // Bandwidth module
 
   public async load(): Promise < JsonObject > {
-    const response = await this.queryClient.unverified.bandwidth.load();
+    const response = await this.forceGetQueryClient().bandwidth.load();
     return QueryLoadResponse.toJSON(response)
- }
+  }
 
   public async price(): Promise < JsonObject > {
-    const response = await this.queryClient.unverified.bandwidth.price();
+    const response = await this.forceGetQueryClient().bandwidth.price();
     return QueryPriceResponse.toJSON(response)
   }
 
   public async account(agent: string): Promise < JsonObject > {
-    const response = await this.queryClient.unverified.bandwidth.account(agent);
+    const response = await this.forceGetQueryClient().bandwidth.account(agent);
     return QueryAccountResponse.toJSON(response)
- }
- 
-  //-------------------------
+  }
+
+  // Energy module
 
   public async sourceRoutes(source: string): Promise < JsonObject > {
-    const response = await this.queryClient.unverified.energy.sourceRoutes(source);
+    const response = await this.forceGetQueryClient().energy.sourceRoutes(source);
     return QueryRoutesResponse.toJSON(response)
   }
 
   public async destinationRoutes(destination: string): Promise < JsonObject > {
-    const response = await this.queryClient.unverified.energy.destinationRoutes(destination);
+    const response = await this.forceGetQueryClient().energy.destinationRoutes(destination);
     return QueryRoutesResponse.toJSON(response)
   }
 
   public async destinationRoutedEnergy(destination: string): Promise < JsonObject > {
-    const response = await this.queryClient.unverified.energy.destinationRoutedEnergy(destination);
+    const response = await this.forceGetQueryClient().energy.destinationRoutedEnergy(destination);
     return QueryRoutedEnergyResponse.toJSON(response)
   }
 
   public async sourceRoutedEnergy(source: string): Promise < JsonObject > {
-    const response = await this.queryClient.unverified.energy.sourceRoutedEnergy(source);
+    const response = await this.forceGetQueryClient().energy.sourceRoutedEnergy(source);
     return QueryRoutedEnergyResponse.toJSON(response)
   }
 
   public async route(source: string, destination: string): Promise < JsonObject > {
-    const response = await this.queryClient.unverified.energy.route(source, destination);
+    const response = await this.forceGetQueryClient().energy.route(source, destination);
     return QueryRouteResponse.toJSON(response)
   }
 
   public async routes(): Promise < JsonObject > {
-    const response = await this.queryClient.unverified.energy.routes();
+    const response = await this.forceGetQueryClient().energy.routes();
     return QueryRoutesResponse.toJSON(response)
   }
 
-  //-------------------------
+  // Wasm module
+
+  public async getCodes(): Promise<readonly Code[]> {
+    const { codeInfos } = await this.forceGetQueryClient().wasm.listCodeInfo();
+    return (codeInfos || []).map(
+      (entry: CodeInfoResponse): Code => {
+        assert(entry.creator && entry.codeId && entry.dataHash, "entry incomplete");
+        return {
+          id: entry.codeId.toNumber(),
+          creator: entry.creator,
+          checksum: toHex(entry.dataHash),
+          source: entry.source || undefined,
+          builder: entry.builder || undefined,
+        };
+      },
+    );
+  }
+
+  public async getCodeDetails(codeId: number): Promise<CodeDetails> {
+    const cached = this.codesCache.get(codeId);
+    if (cached) return cached;
+
+    const { codeInfo, data } = await this.forceGetQueryClient().wasm.getCode(codeId);
+    assert(
+      codeInfo && codeInfo.codeId && codeInfo.creator && codeInfo.dataHash && data,
+      "codeInfo missing or incomplete",
+    );
+    const codeDetails: CodeDetails = {
+      id: codeInfo.codeId.toNumber(),
+      creator: codeInfo.creator,
+      checksum: toHex(codeInfo.dataHash),
+      source: codeInfo.source || undefined,
+      builder: codeInfo.builder || undefined,
+      data: data,
+    };
+    this.codesCache.set(codeId, codeDetails);
+    return codeDetails;
+  }
+
+  public async getContracts(codeId: number): Promise<readonly string[]> {
+    // TODO: handle pagination - accept as arg or auto-loop
+    const { contracts } = await this.forceGetQueryClient().wasm.listContractsByCodeId(codeId);
+    return contracts;
+  }
+
+  /**
+   * Throws an error if no contract was found at the address
+   */
+  public async getContract(address: string): Promise<Contract> {
+    const { address: retrievedAddress, contractInfo } = await this.forceGetQueryClient().wasm.getContractInfo(
+      address,
+    );
+    if (!contractInfo) throw new Error(`No contract found at address "${address}"`);
+    assert(retrievedAddress, "address missing");
+    assert(contractInfo.codeId && contractInfo.creator && contractInfo.label, "contractInfo incomplete");
+    return {
+      address: retrievedAddress,
+      codeId: contractInfo.codeId.toNumber(),
+      creator: contractInfo.creator,
+      admin: contractInfo.admin || undefined,
+      label: contractInfo.label,
+    };
+  }
+
+  /**
+   * Throws an error if no contract was found at the address
+   */
+  public async getContractCodeHistory(address: string): Promise<readonly ContractCodeHistoryEntry[]> {
+    const result = await this.forceGetQueryClient().wasm.getContractCodeHistory(address);
+    if (!result) throw new Error(`No contract history found for address "${address}"`);
+    const operations: Record<number, "Init" | "Genesis" | "Migrate"> = {
+      [ContractCodeHistoryOperationType.CONTRACT_CODE_HISTORY_OPERATION_TYPE_INIT]: "Init",
+      [ContractCodeHistoryOperationType.CONTRACT_CODE_HISTORY_OPERATION_TYPE_GENESIS]: "Genesis",
+      [ContractCodeHistoryOperationType.CONTRACT_CODE_HISTORY_OPERATION_TYPE_MIGRATE]: "Migrate",
+    };
+    return (result.entries || []).map(
+      (entry): ContractCodeHistoryEntry => {
+        assert(entry.operation && entry.codeId && entry.msg);
+        return {
+          operation: operations[entry.operation],
+          codeId: entry.codeId.toNumber(),
+          msg: JSON.parse(fromAscii(entry.msg)),
+        };
+      },
+    );
+  }
+
+  /**
+   * Returns the data at the key if present (raw contract dependent storage data)
+   * or null if no data at this key.
+   *
+   * Promise is rejected when contract does not exist.
+   */
+  public async queryContractRaw(address: string, key: Uint8Array): Promise<Uint8Array | null> {
+    // just test contract existence
+    await this.getContract(address);
+
+    const { data } = await this.forceGetQueryClient().wasm.queryContractRaw(address, key);
+    return data ?? null;
+  }
+
+  /**
+   * Makes a smart query on the contract, returns the parsed JSON document.
+   *
+   * Promise is rejected when contract does not exist.
+   * Promise is rejected for invalid query format.
+   * Promise is rejected for invalid response format.
+   */
+  public async queryContractSmart(address: string, queryMsg: Record<string, unknown>): Promise<JsonObject> {
+    try {
+      return await this.forceGetQueryClient().wasm.queryContractSmart(address, queryMsg);
+    } catch (error) {
+      if (error instanceof Error) {
+        if (error.message.startsWith("not found: contract")) {
+          throw new Error(`No contract found at address "${address}"`);
+        } else {
+          throw error;
+        }
+      } else {
+        throw error;
+      }
+    }
+  }
 
   private async txsQuery(query: string): Promise<readonly IndexedTx[]> {
-    const results = await this.tmClient.txSearchAll({ query: query });
+    const results = await this.forceGetTmClient().txSearchAll({ query: query });
     return results.txs.map((tx) => {
       return {
         height: tx.height,
@@ -346,6 +541,8 @@ export class CyberClient {
         code: tx.result.code,
         rawLog: tx.result.log || "",
         tx: tx.tx,
+        gasUsed: tx.result.gasUsed,
+        gasWanted: tx.result.gasWanted,
       };
     });
   }

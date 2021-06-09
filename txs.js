@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 const { DirectSecp256k1HdWallet, Registry } = require("@cosmjs/proto-signing");
-// const { defaultRegistryTypes, SigningStargateClient } = require("@cosmjs/stargate");
 const {stringToPath} = require("@cosmjs/crypto");
 const { SigningCyberClient } = require("./build/index");
+const { GasPrice } = require("@cosmjs/stargate");
 
 const mnemonic =
   "diet tragic tell acquire one wash fiber reopen surprise duty discover inner kind ketchup guilt exit three elegant sausage utility slab banner yellow asset";
@@ -14,38 +14,35 @@ const hdPath = stringToPath("m/44'/118'/0'/0/0")
 
 async function main() {
 
-  const signer = await DirectSecp256k1HdWallet.fromMnemonic(
-    mnemonic,
-    hdPath,
-    prefix,
-  );
-
-  const client = await SigningCyberClient.connectWithSigner(rpcUrl, signer);
-  const pk = Buffer.from(signer.pubkey).toString('hex');
+  const signer = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic, { hdPath: hdPath, prefix: prefix} );
+  const options = { prefix: prefix, gasPrice: GasPrice.fromString("0.02nick") };
+  const client = await SigningCyberClient.connectWithSigner(rpcUrl, signer, options);
 
   const myAddress = "cyber15vyqaz9fzqn0maywf20z5etw99k6xpp426mm2g";
 
-  console.log("Convert Resources - Volt\n")
-  var response = await client.convertResources(
+  // TODO add staking
+
+  console.log("Investmint Resources - Volt\n")
+  var response = await client.investmint(
     myAddress,
     {
-      denom: "nick",
-      amount: "1000000"
+      denom: "stboot",
+      amount: "100000000"
     },
     "volt",
-    10000
+    100
   )
   console.log(JSON.stringify(response, null, 4));
 
-  console.log("Convert Resources - Amper\n")
-  var response = await client.convertResources(
+  console.log("Investmint Resources - Amper\n")
+  var response = await client.investmint(
     myAddress,
     {
-      denom: "nick",
-      amount: "1000000"
+      denom: "stboot",
+      amount: "100000000"
     },
     "amper",
-    10000
+    100
   )
   console.log(JSON.stringify(response, null, 4));
 
@@ -135,7 +132,7 @@ async function main() {
       "cyber1njj4p35u8pggm7nypg3y66rypgvk2atjcy7ngp",
       [{
         denom: "nick",
-        amount: "1000"
+        amount: "8"
       }]
     )
     console.log(JSON.stringify(response, null, 4));
@@ -150,7 +147,7 @@ async function main() {
       "cyber1njj4p35u8pggm7nypg3y66rypgvk2atjcy7ngp",
       [{
         denom: "volt",
-        amount: "1000"
+        amount: "8"
       }]
     )
     console.log(JSON.stringify(response, null, 4));

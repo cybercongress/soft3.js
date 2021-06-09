@@ -1,9 +1,11 @@
 /* eslint-disable */
-import { DecProto } from "../../cosmos_proto/coin";
-import { AccountBandwidth } from "../../bandwidth/v1beta1/bandwidth";
-import { Params } from "../../bandwidth/v1beta1/params";
-import _m0 from "protobufjs/minimal";
 import Long from "long";
+import _m0 from "protobufjs/minimal";
+import { DecProto } from "../../../cosmos_proto/coin";
+import {
+  AccountBandwidth,
+  Params,
+} from "../../../cyber/bandwidth/v1beta1/types";
 
 export const protobufPackage = "cyber.bandwidth.v1beta1";
 
@@ -17,6 +19,12 @@ export interface QueryPriceRequest {}
 
 export interface QueryPriceResponse {
   price?: DecProto;
+}
+
+export interface QueryDesirableBandwidthRequest {}
+
+export interface QueryDesirableBandwidthResponse {
+  desirableBandwidth: Long;
 }
 
 export interface QueryAccountRequest {
@@ -44,7 +52,7 @@ export const QueryLoadRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): QueryLoadRequest {
-    const reader = input instanceof Uint8Array ? new _m0.Reader(input) : input;
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseQueryLoadRequest } as QueryLoadRequest;
     while (reader.pos < end) {
@@ -88,7 +96,7 @@ export const QueryLoadResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): QueryLoadResponse {
-    const reader = input instanceof Uint8Array ? new _m0.Reader(input) : input;
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseQueryLoadResponse } as QueryLoadResponse;
     while (reader.pos < end) {
@@ -144,7 +152,7 @@ export const QueryPriceRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): QueryPriceRequest {
-    const reader = input instanceof Uint8Array ? new _m0.Reader(input) : input;
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseQueryPriceRequest } as QueryPriceRequest;
     while (reader.pos < end) {
@@ -188,7 +196,7 @@ export const QueryPriceResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): QueryPriceResponse {
-    const reader = input instanceof Uint8Array ? new _m0.Reader(input) : input;
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseQueryPriceResponse } as QueryPriceResponse;
     while (reader.pos < end) {
@@ -233,6 +241,138 @@ export const QueryPriceResponse = {
   },
 };
 
+const baseQueryDesirableBandwidthRequest: object = {};
+
+export const QueryDesirableBandwidthRequest = {
+  encode(
+    _: QueryDesirableBandwidthRequest,
+    writer: _m0.Writer = _m0.Writer.create()
+  ): _m0.Writer {
+    return writer;
+  },
+
+  decode(
+    input: _m0.Reader | Uint8Array,
+    length?: number
+  ): QueryDesirableBandwidthRequest {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseQueryDesirableBandwidthRequest,
+    } as QueryDesirableBandwidthRequest;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): QueryDesirableBandwidthRequest {
+    const message = {
+      ...baseQueryDesirableBandwidthRequest,
+    } as QueryDesirableBandwidthRequest;
+    return message;
+  },
+
+  toJSON(_: QueryDesirableBandwidthRequest): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial(
+    _: DeepPartial<QueryDesirableBandwidthRequest>
+  ): QueryDesirableBandwidthRequest {
+    const message = {
+      ...baseQueryDesirableBandwidthRequest,
+    } as QueryDesirableBandwidthRequest;
+    return message;
+  },
+};
+
+const baseQueryDesirableBandwidthResponse: object = {
+  desirableBandwidth: Long.UZERO,
+};
+
+export const QueryDesirableBandwidthResponse = {
+  encode(
+    message: QueryDesirableBandwidthResponse,
+    writer: _m0.Writer = _m0.Writer.create()
+  ): _m0.Writer {
+    if (!message.desirableBandwidth.isZero()) {
+      writer.uint32(8).uint64(message.desirableBandwidth);
+    }
+    return writer;
+  },
+
+  decode(
+    input: _m0.Reader | Uint8Array,
+    length?: number
+  ): QueryDesirableBandwidthResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseQueryDesirableBandwidthResponse,
+    } as QueryDesirableBandwidthResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.desirableBandwidth = reader.uint64() as Long;
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryDesirableBandwidthResponse {
+    const message = {
+      ...baseQueryDesirableBandwidthResponse,
+    } as QueryDesirableBandwidthResponse;
+    if (
+      object.desirableBandwidth !== undefined &&
+      object.desirableBandwidth !== null
+    ) {
+      message.desirableBandwidth = Long.fromString(object.desirableBandwidth);
+    } else {
+      message.desirableBandwidth = Long.UZERO;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryDesirableBandwidthResponse): unknown {
+    const obj: any = {};
+    message.desirableBandwidth !== undefined &&
+      (obj.desirableBandwidth = (
+        message.desirableBandwidth || Long.UZERO
+      ).toString());
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryDesirableBandwidthResponse>
+  ): QueryDesirableBandwidthResponse {
+    const message = {
+      ...baseQueryDesirableBandwidthResponse,
+    } as QueryDesirableBandwidthResponse;
+    if (
+      object.desirableBandwidth !== undefined &&
+      object.desirableBandwidth !== null
+    ) {
+      message.desirableBandwidth = object.desirableBandwidth as Long;
+    } else {
+      message.desirableBandwidth = Long.UZERO;
+    }
+    return message;
+  },
+};
+
 const baseQueryAccountRequest: object = { address: "" };
 
 export const QueryAccountRequest = {
@@ -247,7 +387,7 @@ export const QueryAccountRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): QueryAccountRequest {
-    const reader = input instanceof Uint8Array ? new _m0.Reader(input) : input;
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseQueryAccountRequest } as QueryAccountRequest;
     while (reader.pos < end) {
@@ -311,7 +451,7 @@ export const QueryAccountResponse = {
     input: _m0.Reader | Uint8Array,
     length?: number
   ): QueryAccountResponse {
-    const reader = input instanceof Uint8Array ? new _m0.Reader(input) : input;
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseQueryAccountResponse } as QueryAccountResponse;
     while (reader.pos < end) {
@@ -382,7 +522,7 @@ export const QueryParamsRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): QueryParamsRequest {
-    const reader = input instanceof Uint8Array ? new _m0.Reader(input) : input;
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseQueryParamsRequest } as QueryParamsRequest;
     while (reader.pos < end) {
@@ -426,7 +566,7 @@ export const QueryParamsResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): QueryParamsResponse {
-    const reader = input instanceof Uint8Array ? new _m0.Reader(input) : input;
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseQueryParamsResponse } as QueryParamsResponse;
     while (reader.pos < end) {
@@ -474,6 +614,9 @@ export const QueryParamsResponse = {
 export interface Query {
   Load(request: QueryLoadRequest): Promise<QueryLoadResponse>;
   Price(request: QueryPriceRequest): Promise<QueryPriceResponse>;
+  DesirableBandwidth(
+    request: QueryDesirableBandwidthRequest
+  ): Promise<QueryDesirableBandwidthResponse>;
   Account(request: QueryAccountRequest): Promise<QueryAccountResponse>;
   Params(request: QueryParamsRequest): Promise<QueryParamsResponse>;
 }
@@ -482,6 +625,11 @@ export class QueryClientImpl implements Query {
   private readonly rpc: Rpc;
   constructor(rpc: Rpc) {
     this.rpc = rpc;
+    this.Load = this.Load.bind(this);
+    this.Price = this.Price.bind(this);
+    this.DesirableBandwidth = this.DesirableBandwidth.bind(this);
+    this.Account = this.Account.bind(this);
+    this.Params = this.Params.bind(this);
   }
   Load(request: QueryLoadRequest): Promise<QueryLoadResponse> {
     const data = QueryLoadRequest.encode(request).finish();
@@ -504,6 +652,20 @@ export class QueryClientImpl implements Query {
     );
     return promise.then((data) =>
       QueryPriceResponse.decode(new _m0.Reader(data))
+    );
+  }
+
+  DesirableBandwidth(
+    request: QueryDesirableBandwidthRequest
+  ): Promise<QueryDesirableBandwidthResponse> {
+    const data = QueryDesirableBandwidthRequest.encode(request).finish();
+    const promise = this.rpc.request(
+      "cyber.bandwidth.v1beta1.Query",
+      "DesirableBandwidth",
+      data
+    );
+    return promise.then((data) =>
+      QueryDesirableBandwidthResponse.decode(new _m0.Reader(data))
     );
   }
 
@@ -546,6 +708,7 @@ type Builtin =
   | Uint8Array
   | string
   | number
+  | boolean
   | undefined
   | Long;
 export type DeepPartial<T> = T extends Builtin
@@ -557,3 +720,8 @@ export type DeepPartial<T> = T extends Builtin
   : T extends {}
   ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
+
+if (_m0.util.Long !== Long) {
+  _m0.util.Long = Long as any;
+  _m0.configure();
+}

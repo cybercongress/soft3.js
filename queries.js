@@ -33,12 +33,12 @@ async function main() {
     console.log(queryResult)
 
     console.log("Get All Balances")
-    var queryResult = await queryClient.getAllBalancesUnverified("cyber15vyqaz9fzqn0maywf20z5etw99k6xpp426mm2g")
+    var queryResult = await queryClient.getAllBalances("cyber15vyqaz9fzqn0maywf20z5etw99k6xpp426mm2g")
     console.log(queryResult)
 
     console.log("Search")
     try {
-      var queryResult = await queryClient.search("QmRX8qYgeZoYM3M5zzQaWEpVFdpin6FvVXvp6RPQK3oufV")
+      var queryResult = await queryClient.search("QmRX8qYgeZoYM3M5zzQaWEpVFdpin6FvVXvp6RPQK3oufV", 0, 10)
       console.log(queryResult)
     } catch(error) {
       console.log(error)
@@ -46,7 +46,7 @@ async function main() {
 
     console.log("Backlinks")
     try {
-      var queryResult = await queryClient.backlinks("QmUX9mt8ftaHcn9Nc6SR4j9MsKkYfkcZqkfPTmMmBgeTe4")
+      var queryResult = await queryClient.backlinks("QmUX9mt8ftaHcn9Nc6SR4j9MsKkYfkcZqkfPTmMmBgeTe4", 0, 10)
       console.log(queryResult)
     } catch(error) {
       console.log(error)

@@ -1,24 +1,34 @@
 /* eslint-disable */
-import { Coin } from "../../cosmos_proto/coin";
 import Long from "long";
 import _m0 from "protobufjs/minimal";
+import { Coin } from "../../../cosmos_proto/coin";
 
 export const protobufPackage = "cyber.resources.v1beta1";
 
-export interface MsgConvert {
+export interface MsgInvestmint {
   agent: string;
   amount?: Coin;
   resource: string;
-  endTime: Long;
+  length: Long;
 }
 
-export interface MsgConvertResponse {}
+/**
+ * cosmos.base.v1beta1.Coin investmint_resource = 1 [
+ *        (gogoproto.moretags) = "yaml:\"investmint_resource\"",
+ *        (gogoproto.nullable) = false
+ *    ];
+ */
+export interface MsgInvestmintResponse {}
 
-const baseMsgConvert: object = { agent: "", resource: "", endTime: Long.UZERO };
+const baseMsgInvestmint: object = {
+  agent: "",
+  resource: "",
+  length: Long.UZERO,
+};
 
-export const MsgConvert = {
+export const MsgInvestmint = {
   encode(
-    message: MsgConvert,
+    message: MsgInvestmint,
     writer: _m0.Writer = _m0.Writer.create()
   ): _m0.Writer {
     if (message.agent !== "") {
@@ -30,16 +40,16 @@ export const MsgConvert = {
     if (message.resource !== "") {
       writer.uint32(26).string(message.resource);
     }
-    if (!message.endTime.isZero()) {
-      writer.uint32(32).uint64(message.endTime);
+    if (!message.length.isZero()) {
+      writer.uint32(32).uint64(message.length);
     }
     return writer;
   },
 
-  decode(input: _m0.Reader | Uint8Array, length?: number): MsgConvert {
-    const reader = input instanceof Uint8Array ? new _m0.Reader(input) : input;
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgInvestmint {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseMsgConvert } as MsgConvert;
+    const message = { ...baseMsgInvestmint } as MsgInvestmint;
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -53,7 +63,7 @@ export const MsgConvert = {
           message.resource = reader.string();
           break;
         case 4:
-          message.endTime = reader.uint64() as Long;
+          message.length = reader.uint64() as Long;
           break;
         default:
           reader.skipType(tag & 7);
@@ -63,8 +73,8 @@ export const MsgConvert = {
     return message;
   },
 
-  fromJSON(object: any): MsgConvert {
-    const message = { ...baseMsgConvert } as MsgConvert;
+  fromJSON(object: any): MsgInvestmint {
+    const message = { ...baseMsgInvestmint } as MsgInvestmint;
     if (object.agent !== undefined && object.agent !== null) {
       message.agent = String(object.agent);
     } else {
@@ -80,27 +90,27 @@ export const MsgConvert = {
     } else {
       message.resource = "";
     }
-    if (object.endTime !== undefined && object.endTime !== null) {
-      message.endTime = Long.fromString(object.endTime);
+    if (object.length !== undefined && object.length !== null) {
+      message.length = Long.fromString(object.length);
     } else {
-      message.endTime = Long.UZERO;
+      message.length = Long.UZERO;
     }
     return message;
   },
 
-  toJSON(message: MsgConvert): unknown {
+  toJSON(message: MsgInvestmint): unknown {
     const obj: any = {};
     message.agent !== undefined && (obj.agent = message.agent);
     message.amount !== undefined &&
       (obj.amount = message.amount ? Coin.toJSON(message.amount) : undefined);
     message.resource !== undefined && (obj.resource = message.resource);
-    message.endTime !== undefined &&
-      (obj.endTime = (message.endTime || Long.UZERO).toString());
+    message.length !== undefined &&
+      (obj.length = (message.length || Long.UZERO).toString());
     return obj;
   },
 
-  fromPartial(object: DeepPartial<MsgConvert>): MsgConvert {
-    const message = { ...baseMsgConvert } as MsgConvert;
+  fromPartial(object: DeepPartial<MsgInvestmint>): MsgInvestmint {
+    const message = { ...baseMsgInvestmint } as MsgInvestmint;
     if (object.agent !== undefined && object.agent !== null) {
       message.agent = object.agent;
     } else {
@@ -116,29 +126,32 @@ export const MsgConvert = {
     } else {
       message.resource = "";
     }
-    if (object.endTime !== undefined && object.endTime !== null) {
-      message.endTime = object.endTime as Long;
+    if (object.length !== undefined && object.length !== null) {
+      message.length = object.length as Long;
     } else {
-      message.endTime = Long.UZERO;
+      message.length = Long.UZERO;
     }
     return message;
   },
 };
 
-const baseMsgConvertResponse: object = {};
+const baseMsgInvestmintResponse: object = {};
 
-export const MsgConvertResponse = {
+export const MsgInvestmintResponse = {
   encode(
-    _: MsgConvertResponse,
+    _: MsgInvestmintResponse,
     writer: _m0.Writer = _m0.Writer.create()
   ): _m0.Writer {
     return writer;
   },
 
-  decode(input: _m0.Reader | Uint8Array, length?: number): MsgConvertResponse {
-    const reader = input instanceof Uint8Array ? new _m0.Reader(input) : input;
+  decode(
+    input: _m0.Reader | Uint8Array,
+    length?: number
+  ): MsgInvestmintResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseMsgConvertResponse } as MsgConvertResponse;
+    const message = { ...baseMsgInvestmintResponse } as MsgInvestmintResponse;
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -150,44 +163,41 @@ export const MsgConvertResponse = {
     return message;
   },
 
-  fromJSON(_: any): MsgConvertResponse {
-    const message = { ...baseMsgConvertResponse } as MsgConvertResponse;
+  fromJSON(_: any): MsgInvestmintResponse {
+    const message = { ...baseMsgInvestmintResponse } as MsgInvestmintResponse;
     return message;
   },
 
-  toJSON(_: MsgConvertResponse): unknown {
+  toJSON(_: MsgInvestmintResponse): unknown {
     const obj: any = {};
     return obj;
   },
 
-  fromPartial(_: DeepPartial<MsgConvertResponse>): MsgConvertResponse {
-    const message = { ...baseMsgConvertResponse } as MsgConvertResponse;
+  fromPartial(_: DeepPartial<MsgInvestmintResponse>): MsgInvestmintResponse {
+    const message = { ...baseMsgInvestmintResponse } as MsgInvestmintResponse;
     return message;
   },
 };
 
 export interface Msg {
-  /**
-   * rpc CreateResource(MsgCreateResource) returns (MsgCreateResourceResponse);
-   * rpc RedeemResource(MsgRedeemResource) returns (MsgRedeemResourceResponse);
-   */
-  Convert(request: MsgConvert): Promise<MsgConvertResponse>;
+  Investmint(request: MsgInvestmint): Promise<MsgInvestmintResponse>;
 }
 
 export class MsgClientImpl implements Msg {
   private readonly rpc: Rpc;
   constructor(rpc: Rpc) {
     this.rpc = rpc;
+    this.Investmint = this.Investmint.bind(this);
   }
-  Convert(request: MsgConvert): Promise<MsgConvertResponse> {
-    const data = MsgConvert.encode(request).finish();
+  Investmint(request: MsgInvestmint): Promise<MsgInvestmintResponse> {
+    const data = MsgInvestmint.encode(request).finish();
     const promise = this.rpc.request(
       "cyber.resources.v1beta1.Msg",
-      "Convert",
+      "Investmint",
       data
     );
     return promise.then((data) =>
-      MsgConvertResponse.decode(new _m0.Reader(data))
+      MsgInvestmintResponse.decode(new _m0.Reader(data))
     );
   }
 }
@@ -206,6 +216,7 @@ type Builtin =
   | Uint8Array
   | string
   | number
+  | boolean
   | undefined
   | Long;
 export type DeepPartial<T> = T extends Builtin
@@ -217,3 +228,8 @@ export type DeepPartial<T> = T extends Builtin
   : T extends {}
   ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
+
+if (_m0.util.Long !== Long) {
+  _m0.util.Long = Long as any;
+  _m0.configure();
+}

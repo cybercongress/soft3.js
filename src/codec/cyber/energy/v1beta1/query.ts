@@ -1,9 +1,12 @@
 /* eslint-disable */
-import { Params } from "../../energy/v1beta1/params";
-import { Route } from "../../energy/v1beta1/energy";
-import { Coin } from "../../cosmos_proto/coin";
-import _m0 from "protobufjs/minimal";
 import Long from "long";
+import _m0 from "protobufjs/minimal";
+import { Params, Route } from "../../../cyber/energy/v1beta1/types";
+import {
+  PageRequest,
+  PageResponse,
+} from "../../../cosmos/base/query/v1beta1/pagination";
+import { Coin } from "../../../cosmos_proto/coin";
 
 export const protobufPackage = "cyber.energy.v1beta1";
 
@@ -21,23 +24,26 @@ export interface QueryDestinationRequest {
   destination: string;
 }
 
+export interface QueryRoutedEnergyResponse {
+  value: Coin[];
+}
+
 export interface QueryRouteRequest {
   source: string;
   destination: string;
 }
 
-export interface QueryRoutesRequest {}
-
 export interface QueryRouteResponse {
   route?: Route;
 }
 
-export interface QueryRoutesResponse {
-  routes: Route[];
+export interface QueryRoutesRequest {
+  pagination?: PageRequest;
 }
 
-export interface QueryRoutedEnergyResponse {
-  value: Coin[];
+export interface QueryRoutesResponse {
+  routes: Route[];
+  pagination?: PageResponse;
 }
 
 const baseQueryParamsRequest: object = {};
@@ -51,7 +57,7 @@ export const QueryParamsRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): QueryParamsRequest {
-    const reader = input instanceof Uint8Array ? new _m0.Reader(input) : input;
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseQueryParamsRequest } as QueryParamsRequest;
     while (reader.pos < end) {
@@ -95,7 +101,7 @@ export const QueryParamsResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): QueryParamsResponse {
-    const reader = input instanceof Uint8Array ? new _m0.Reader(input) : input;
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseQueryParamsResponse } as QueryParamsResponse;
     while (reader.pos < end) {
@@ -154,7 +160,7 @@ export const QuerySourceRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): QuerySourceRequest {
-    const reader = input instanceof Uint8Array ? new _m0.Reader(input) : input;
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseQuerySourceRequest } as QuerySourceRequest;
     while (reader.pos < end) {
@@ -215,7 +221,7 @@ export const QueryDestinationRequest = {
     input: _m0.Reader | Uint8Array,
     length?: number
   ): QueryDestinationRequest {
-    const reader = input instanceof Uint8Array ? new _m0.Reader(input) : input;
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = {
       ...baseQueryDestinationRequest,
@@ -268,247 +274,6 @@ export const QueryDestinationRequest = {
   },
 };
 
-const baseQueryRouteRequest: object = { source: "", destination: "" };
-
-export const QueryRouteRequest = {
-  encode(
-    message: QueryRouteRequest,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
-    if (message.source !== "") {
-      writer.uint32(10).string(message.source);
-    }
-    if (message.destination !== "") {
-      writer.uint32(18).string(message.destination);
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): QueryRouteRequest {
-    const reader = input instanceof Uint8Array ? new _m0.Reader(input) : input;
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseQueryRouteRequest } as QueryRouteRequest;
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.source = reader.string();
-          break;
-        case 2:
-          message.destination = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-
-  fromJSON(object: any): QueryRouteRequest {
-    const message = { ...baseQueryRouteRequest } as QueryRouteRequest;
-    if (object.source !== undefined && object.source !== null) {
-      message.source = String(object.source);
-    } else {
-      message.source = "";
-    }
-    if (object.destination !== undefined && object.destination !== null) {
-      message.destination = String(object.destination);
-    } else {
-      message.destination = "";
-    }
-    return message;
-  },
-
-  toJSON(message: QueryRouteRequest): unknown {
-    const obj: any = {};
-    message.source !== undefined && (obj.source = message.source);
-    message.destination !== undefined &&
-      (obj.destination = message.destination);
-    return obj;
-  },
-
-  fromPartial(object: DeepPartial<QueryRouteRequest>): QueryRouteRequest {
-    const message = { ...baseQueryRouteRequest } as QueryRouteRequest;
-    if (object.source !== undefined && object.source !== null) {
-      message.source = object.source;
-    } else {
-      message.source = "";
-    }
-    if (object.destination !== undefined && object.destination !== null) {
-      message.destination = object.destination;
-    } else {
-      message.destination = "";
-    }
-    return message;
-  },
-};
-
-const baseQueryRoutesRequest: object = {};
-
-export const QueryRoutesRequest = {
-  encode(
-    _: QueryRoutesRequest,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): QueryRoutesRequest {
-    const reader = input instanceof Uint8Array ? new _m0.Reader(input) : input;
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseQueryRoutesRequest } as QueryRoutesRequest;
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-
-  fromJSON(_: any): QueryRoutesRequest {
-    const message = { ...baseQueryRoutesRequest } as QueryRoutesRequest;
-    return message;
-  },
-
-  toJSON(_: QueryRoutesRequest): unknown {
-    const obj: any = {};
-    return obj;
-  },
-
-  fromPartial(_: DeepPartial<QueryRoutesRequest>): QueryRoutesRequest {
-    const message = { ...baseQueryRoutesRequest } as QueryRoutesRequest;
-    return message;
-  },
-};
-
-const baseQueryRouteResponse: object = {};
-
-export const QueryRouteResponse = {
-  encode(
-    message: QueryRouteResponse,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
-    if (message.route !== undefined) {
-      Route.encode(message.route, writer.uint32(10).fork()).ldelim();
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): QueryRouteResponse {
-    const reader = input instanceof Uint8Array ? new _m0.Reader(input) : input;
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseQueryRouteResponse } as QueryRouteResponse;
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.route = Route.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-
-  fromJSON(object: any): QueryRouteResponse {
-    const message = { ...baseQueryRouteResponse } as QueryRouteResponse;
-    if (object.route !== undefined && object.route !== null) {
-      message.route = Route.fromJSON(object.route);
-    } else {
-      message.route = undefined;
-    }
-    return message;
-  },
-
-  toJSON(message: QueryRouteResponse): unknown {
-    const obj: any = {};
-    message.route !== undefined &&
-      (obj.route = message.route ? Route.toJSON(message.route) : undefined);
-    return obj;
-  },
-
-  fromPartial(object: DeepPartial<QueryRouteResponse>): QueryRouteResponse {
-    const message = { ...baseQueryRouteResponse } as QueryRouteResponse;
-    if (object.route !== undefined && object.route !== null) {
-      message.route = Route.fromPartial(object.route);
-    } else {
-      message.route = undefined;
-    }
-    return message;
-  },
-};
-
-const baseQueryRoutesResponse: object = {};
-
-export const QueryRoutesResponse = {
-  encode(
-    message: QueryRoutesResponse,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
-    for (const v of message.routes) {
-      Route.encode(v!, writer.uint32(10).fork()).ldelim();
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): QueryRoutesResponse {
-    const reader = input instanceof Uint8Array ? new _m0.Reader(input) : input;
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseQueryRoutesResponse } as QueryRoutesResponse;
-    message.routes = [];
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.routes.push(Route.decode(reader, reader.uint32()));
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-
-  fromJSON(object: any): QueryRoutesResponse {
-    const message = { ...baseQueryRoutesResponse } as QueryRoutesResponse;
-    message.routes = [];
-    if (object.routes !== undefined && object.routes !== null) {
-      for (const e of object.routes) {
-        message.routes.push(Route.fromJSON(e));
-      }
-    }
-    return message;
-  },
-
-  toJSON(message: QueryRoutesResponse): unknown {
-    const obj: any = {};
-    if (message.routes) {
-      obj.routes = message.routes.map((e) => (e ? Route.toJSON(e) : undefined));
-    } else {
-      obj.routes = [];
-    }
-    return obj;
-  },
-
-  fromPartial(object: DeepPartial<QueryRoutesResponse>): QueryRoutesResponse {
-    const message = { ...baseQueryRoutesResponse } as QueryRoutesResponse;
-    message.routes = [];
-    if (object.routes !== undefined && object.routes !== null) {
-      for (const e of object.routes) {
-        message.routes.push(Route.fromPartial(e));
-      }
-    }
-    return message;
-  },
-};
-
 const baseQueryRoutedEnergyResponse: object = {};
 
 export const QueryRoutedEnergyResponse = {
@@ -526,7 +291,7 @@ export const QueryRoutedEnergyResponse = {
     input: _m0.Reader | Uint8Array,
     length?: number
   ): QueryRoutedEnergyResponse {
-    const reader = input instanceof Uint8Array ? new _m0.Reader(input) : input;
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = {
       ...baseQueryRoutedEnergyResponse,
@@ -585,6 +350,290 @@ export const QueryRoutedEnergyResponse = {
   },
 };
 
+const baseQueryRouteRequest: object = { source: "", destination: "" };
+
+export const QueryRouteRequest = {
+  encode(
+    message: QueryRouteRequest,
+    writer: _m0.Writer = _m0.Writer.create()
+  ): _m0.Writer {
+    if (message.source !== "") {
+      writer.uint32(10).string(message.source);
+    }
+    if (message.destination !== "") {
+      writer.uint32(18).string(message.destination);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryRouteRequest {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryRouteRequest } as QueryRouteRequest;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.source = reader.string();
+          break;
+        case 2:
+          message.destination = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryRouteRequest {
+    const message = { ...baseQueryRouteRequest } as QueryRouteRequest;
+    if (object.source !== undefined && object.source !== null) {
+      message.source = String(object.source);
+    } else {
+      message.source = "";
+    }
+    if (object.destination !== undefined && object.destination !== null) {
+      message.destination = String(object.destination);
+    } else {
+      message.destination = "";
+    }
+    return message;
+  },
+
+  toJSON(message: QueryRouteRequest): unknown {
+    const obj: any = {};
+    message.source !== undefined && (obj.source = message.source);
+    message.destination !== undefined &&
+      (obj.destination = message.destination);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<QueryRouteRequest>): QueryRouteRequest {
+    const message = { ...baseQueryRouteRequest } as QueryRouteRequest;
+    if (object.source !== undefined && object.source !== null) {
+      message.source = object.source;
+    } else {
+      message.source = "";
+    }
+    if (object.destination !== undefined && object.destination !== null) {
+      message.destination = object.destination;
+    } else {
+      message.destination = "";
+    }
+    return message;
+  },
+};
+
+const baseQueryRouteResponse: object = {};
+
+export const QueryRouteResponse = {
+  encode(
+    message: QueryRouteResponse,
+    writer: _m0.Writer = _m0.Writer.create()
+  ): _m0.Writer {
+    if (message.route !== undefined) {
+      Route.encode(message.route, writer.uint32(10).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryRouteResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryRouteResponse } as QueryRouteResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.route = Route.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryRouteResponse {
+    const message = { ...baseQueryRouteResponse } as QueryRouteResponse;
+    if (object.route !== undefined && object.route !== null) {
+      message.route = Route.fromJSON(object.route);
+    } else {
+      message.route = undefined;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryRouteResponse): unknown {
+    const obj: any = {};
+    message.route !== undefined &&
+      (obj.route = message.route ? Route.toJSON(message.route) : undefined);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<QueryRouteResponse>): QueryRouteResponse {
+    const message = { ...baseQueryRouteResponse } as QueryRouteResponse;
+    if (object.route !== undefined && object.route !== null) {
+      message.route = Route.fromPartial(object.route);
+    } else {
+      message.route = undefined;
+    }
+    return message;
+  },
+};
+
+const baseQueryRoutesRequest: object = {};
+
+export const QueryRoutesRequest = {
+  encode(
+    message: QueryRoutesRequest,
+    writer: _m0.Writer = _m0.Writer.create()
+  ): _m0.Writer {
+    if (message.pagination !== undefined) {
+      PageRequest.encode(message.pagination, writer.uint32(10).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryRoutesRequest {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryRoutesRequest } as QueryRoutesRequest;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.pagination = PageRequest.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryRoutesRequest {
+    const message = { ...baseQueryRoutesRequest } as QueryRoutesRequest;
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageRequest.fromJSON(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryRoutesRequest): unknown {
+    const obj: any = {};
+    message.pagination !== undefined &&
+      (obj.pagination = message.pagination
+        ? PageRequest.toJSON(message.pagination)
+        : undefined);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<QueryRoutesRequest>): QueryRoutesRequest {
+    const message = { ...baseQueryRoutesRequest } as QueryRoutesRequest;
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageRequest.fromPartial(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+};
+
+const baseQueryRoutesResponse: object = {};
+
+export const QueryRoutesResponse = {
+  encode(
+    message: QueryRoutesResponse,
+    writer: _m0.Writer = _m0.Writer.create()
+  ): _m0.Writer {
+    for (const v of message.routes) {
+      Route.encode(v!, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.pagination !== undefined) {
+      PageResponse.encode(
+        message.pagination,
+        writer.uint32(18).fork()
+      ).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryRoutesResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryRoutesResponse } as QueryRoutesResponse;
+    message.routes = [];
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.routes.push(Route.decode(reader, reader.uint32()));
+          break;
+        case 2:
+          message.pagination = PageResponse.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryRoutesResponse {
+    const message = { ...baseQueryRoutesResponse } as QueryRoutesResponse;
+    message.routes = [];
+    if (object.routes !== undefined && object.routes !== null) {
+      for (const e of object.routes) {
+        message.routes.push(Route.fromJSON(e));
+      }
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageResponse.fromJSON(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryRoutesResponse): unknown {
+    const obj: any = {};
+    if (message.routes) {
+      obj.routes = message.routes.map((e) => (e ? Route.toJSON(e) : undefined));
+    } else {
+      obj.routes = [];
+    }
+    message.pagination !== undefined &&
+      (obj.pagination = message.pagination
+        ? PageResponse.toJSON(message.pagination)
+        : undefined);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<QueryRoutesResponse>): QueryRoutesResponse {
+    const message = { ...baseQueryRoutesResponse } as QueryRoutesResponse;
+    message.routes = [];
+    if (object.routes !== undefined && object.routes !== null) {
+      for (const e of object.routes) {
+        message.routes.push(Route.fromPartial(e));
+      }
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageResponse.fromPartial(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+};
+
 export interface Query {
   Params(request: QueryParamsRequest): Promise<QueryParamsResponse>;
   SourceRoutes(request: QuerySourceRequest): Promise<QueryRoutesResponse>;
@@ -605,6 +654,13 @@ export class QueryClientImpl implements Query {
   private readonly rpc: Rpc;
   constructor(rpc: Rpc) {
     this.rpc = rpc;
+    this.Params = this.Params.bind(this);
+    this.SourceRoutes = this.SourceRoutes.bind(this);
+    this.DestinationRoutes = this.DestinationRoutes.bind(this);
+    this.DestinationRoutedEnergy = this.DestinationRoutedEnergy.bind(this);
+    this.SourceRoutedEnergy = this.SourceRoutedEnergy.bind(this);
+    this.Route = this.Route.bind(this);
+    this.Routes = this.Routes.bind(this);
   }
   Params(request: QueryParamsRequest): Promise<QueryParamsResponse> {
     const data = QueryParamsRequest.encode(request).finish();
@@ -711,6 +767,7 @@ type Builtin =
   | Uint8Array
   | string
   | number
+  | boolean
   | undefined
   | Long;
 export type DeepPartial<T> = T extends Builtin
@@ -722,3 +779,8 @@ export type DeepPartial<T> = T extends Builtin
   : T extends {}
   ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
+
+if (_m0.util.Long !== Long) {
+  _m0.util.Long = Long as any;
+  _m0.configure();
+}

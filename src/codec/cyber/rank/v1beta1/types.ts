@@ -10,6 +10,11 @@ export interface Params {
   tolerance: string;
 }
 
+export interface RankedCid {
+  cid: string;
+  rank: Long;
+}
+
 const baseParams: object = {
   calculationPeriod: Long.ZERO,
   dampingFactor: "",
@@ -34,7 +39,7 @@ export const Params = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): Params {
-    const reader = input instanceof Uint8Array ? new _m0.Reader(input) : input;
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseParams } as Params;
     while (reader.pos < end) {
@@ -116,12 +121,89 @@ export const Params = {
   },
 };
 
+const baseRankedCid: object = { cid: "", rank: Long.UZERO };
+
+export const RankedCid = {
+  encode(
+    message: RankedCid,
+    writer: _m0.Writer = _m0.Writer.create()
+  ): _m0.Writer {
+    if (message.cid !== "") {
+      writer.uint32(10).string(message.cid);
+    }
+    if (!message.rank.isZero()) {
+      writer.uint32(16).uint64(message.rank);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): RankedCid {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseRankedCid } as RankedCid;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.cid = reader.string();
+          break;
+        case 2:
+          message.rank = reader.uint64() as Long;
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): RankedCid {
+    const message = { ...baseRankedCid } as RankedCid;
+    if (object.cid !== undefined && object.cid !== null) {
+      message.cid = String(object.cid);
+    } else {
+      message.cid = "";
+    }
+    if (object.rank !== undefined && object.rank !== null) {
+      message.rank = Long.fromString(object.rank);
+    } else {
+      message.rank = Long.UZERO;
+    }
+    return message;
+  },
+
+  toJSON(message: RankedCid): unknown {
+    const obj: any = {};
+    message.cid !== undefined && (obj.cid = message.cid);
+    message.rank !== undefined &&
+      (obj.rank = (message.rank || Long.UZERO).toString());
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<RankedCid>): RankedCid {
+    const message = { ...baseRankedCid } as RankedCid;
+    if (object.cid !== undefined && object.cid !== null) {
+      message.cid = object.cid;
+    } else {
+      message.cid = "";
+    }
+    if (object.rank !== undefined && object.rank !== null) {
+      message.rank = object.rank as Long;
+    } else {
+      message.rank = Long.UZERO;
+    }
+    return message;
+  },
+};
+
 type Builtin =
   | Date
   | Function
   | Uint8Array
   | string
   | number
+  | boolean
   | undefined
   | Long;
 export type DeepPartial<T> = T extends Builtin
@@ -133,3 +215,8 @@ export type DeepPartial<T> = T extends Builtin
   : T extends {}
   ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
+
+if (_m0.util.Long !== Long) {
+  _m0.util.Long = Long as any;
+  _m0.configure();
+}
