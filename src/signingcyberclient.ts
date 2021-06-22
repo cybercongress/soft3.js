@@ -113,7 +113,7 @@ function prepareBuilder(builder: string | undefined): string {
   }
 }
 
-export const defaultGasPrice = GasPrice.fromString("0.01nick");
+export const defaultGasPrice = GasPrice.fromString("0.01boot");
 
 export const defaultGasLimits: GasLimits<CyberFeeTable> = {
   ...defaultStargateGasLimits,
