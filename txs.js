@@ -5,7 +5,7 @@ const { SigningCyberClient } = require("./build/index");
 const { GasPrice } = require("@cosmjs/stargate");
 
 const mnemonic =
-  "diet tragic tell acquire one wash fiber reopen surprise duty discover inner kind ketchup guilt exit three elegant sausage utility slab banner yellow asset";
+  "pudding actor cactus garden sadness cotton sign denial patch shell silly extend tube way unlock vocal famous actor danger mean acoustic garment medal fatigue";
 const rpcUrl = "http://localhost:26657"
 const prefix = "cyber"
 const tokenDenom = "nick"
@@ -15,10 +15,10 @@ const hdPath = stringToPath("m/44'/118'/0'/0/0")
 async function main() {
 
   const signer = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic, { hdPath: hdPath, prefix: prefix} );
-  const options = { prefix: prefix, gasPrice: GasPrice.fromString("0.02nick") };
+  const options = { prefix: prefix, gasPrice: GasPrice.fromString("0.02boot") };
   const client = await SigningCyberClient.connectWithSigner(rpcUrl, signer, options);
 
-  const myAddress = "cyber15vyqaz9fzqn0maywf20z5etw99k6xpp426mm2g";
+  const myAddress = "cyber1frk9k38pvp70vheezhdfd4nvqnlsm9dw425vga";
 
   // TODO add staking
 
@@ -26,19 +26,19 @@ async function main() {
   var response = await client.investmint(
     myAddress,
     {
-      denom: "stboot",
-      amount: "100000000"
+      denom: "sboot",
+      amount: "100000000",
     },
     "volt",
     100
-  )
+  );
   console.log(JSON.stringify(response, null, 4));
 
   console.log("Investmint Resources - Amper\n")
   var response = await client.investmint(
     myAddress,
     {
-      denom: "stboot",
+      denom: "sboot",
       amount: "100000000"
     },
     "amper",
