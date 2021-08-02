@@ -297,6 +297,10 @@ export class CyberClient {
     return this.forceGetQueryClient().bank.allBalances(address);
   }
 
+  public async totalSupply(): Promise<readonly Coin[]> {
+    return this.forceGetQueryClient().bank.totalSupply();
+  }
+
   public async getTx(id: string): Promise<IndexedTx | null> {
     const results = await this.txsQuery(`tx.hash='${id}'`);
     return results[0] ?? null;
@@ -371,51 +375,61 @@ export class CyberClient {
     timeoutMs = 60_000,
     pollIntervalMs = 3_000
   ): Promise<BroadcastTxResponse> {
-    let timedOut = false;
-    const txPollTimeout = setTimeout(() => {
-      timedOut = true;
-    }, timeoutMs);
+    // let timedOut = false;
+    // const txPollTimeout = setTimeout(() => {
+    //   timedOut = true;
+    // }, timeoutMs);
 
-    const pollForTx = async (txId: string): Promise<BroadcastTxResponse> => {
-      if (timedOut) {
-        throw new TimeoutError(
-          `Transaction with ID ${txId} was submitted but was not yet found on the chain. You might want to check later.`,
-          txId
-        );
-      }
-      await sleep(pollIntervalMs);
-      const result = await this.getTx(txId);
-      return result
-        ? {
-            code: result.code,
-            height: result.height,
-            rawLog: result.rawLog,
-            transactionHash: txId,
-            gasUsed: result.gasUsed,
-            gasWanted: result.gasWanted,
-          }
-        : pollForTx(txId);
-    };
+    // const pollForTx = async (txId: string): Promise<BroadcastTxResponse> => {
+    //   // if (timedOut) {
+    //   //   throw new TimeoutError(
+    //   //     `Transaction with ID ${txId} was submitted but was not yet found on the chain. You might want to check later.`,
+    //   //     txId
+    //   //   );
+    //   // }
+    //   // await sleep(pollIntervalMs);
+    //   const result = await this.getTx(txId);
+    //   return result
+    //     ? {
+    //         code: result.code,
+    //         height: result.height,
+    //         rawLog: result.rawLog,
+    //         transactionHash: txId,
+    //         gasUsed: result.gasUsed,
+    //         gasWanted: result.gasWanted,
+    //       }
+    //     : pollForTx(txId);
+    // };
 
     const broadcasted = await this.forceGetTmClient().broadcastTxSync({ tx });
-    if (broadcasted.code) {
-      throw new Error(
-        `Broadcasting transaction failed with code ${broadcasted.code} (codespace: ${broadcasted.codeSpace}). Log: ${broadcasted.log}`
-      );
-    }
+    console.log(`broadcasted`, broadcasted)
+    // if (broadcasted.code) {
+    //   throw new Error(
+    //     `Broadcasting transaction failed with code ${broadcasted.code} (codespace: ${broadcasted.codeSpace}). Log: ${broadcasted.log}`
+    //   );
+    // }
     const transactionId = toHex(broadcasted.hash).toUpperCase();
-    return new Promise((resolve, reject) =>
-      pollForTx(transactionId).then(
-        (value) => {
-          clearTimeout(txPollTimeout);
-          resolve(value);
-        },
-        (error) => {
-          clearTimeout(txPollTimeout);
-          reject(error);
-        }
-      )
-    );
+    return {
+      code: broadcasted.code,
+      height: 0,
+      rawLog: broadcasted.log,
+      transactionHash: transactionId,
+      gasUsed: broadcasted.gasUsed,
+      gasWanted: broadcasted.gasWanted,
+    };
+    // console.log(`transactionId`, transactionId)
+    // return new Promise((resolve, reject) =>
+    //   pollForTx(transactionId).then(
+    //     (value) => {
+    //       // clearTimeout(txPollTimeout);
+    //       resolve(value);
+    //     },
+    //     (error) => {
+    //       // clearTimeout(txPollTimeout);
+    //       reject(error);
+    //     }
+    //   )
+    // );
   }
 
   // Graph module
