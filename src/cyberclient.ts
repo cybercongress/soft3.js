@@ -1,10 +1,12 @@
+import { fromAscii, toHex } from "@cosmjs/encoding";
+import { Uint53 } from "@cosmjs/math";
 import {
   Code,
   CodeDetails,
   Contract,
   ContractCodeHistoryEntry,
-  JsonObject,
-} from "@cosmjs/cosmwasm-launchpad";
+  JsonObject
+} from "@cosmjs/cosmwasm-stargate";
 import {
   Account,
   accountFromAny,
@@ -29,19 +31,11 @@ import {
   StakingExtension,
   TimeoutError,
 } from "@cosmjs/stargate";
-import { fromAscii, toHex } from "@cosmjs/encoding";
-import { Uint53 } from "@cosmjs/math";
-import {
-  Tendermint34Client,
-  toRfc3339WithNanoseconds,
-} from "@cosmjs/tendermint-rpc";
+import { Tendermint34Client, toRfc3339WithNanoseconds } from "@cosmjs/tendermint-rpc";
 import { assert, sleep } from "@cosmjs/utils";
-import { CodeInfoResponse } from "@cosmjs/cosmwasm-stargate/build/codec/cosmwasm/wasm/v1beta1/query";
-import { ContractCodeHistoryOperationType } from "@cosmjs/cosmwasm-stargate/build/codec/cosmwasm/wasm/v1beta1/types";
-import {
-  setupWasmExtension,
-  WasmExtension,
-} from "@cosmjs/cosmwasm-stargate/build/queries";
+import { CodeInfoResponse } from "cosmjs-types/cosmwasm/wasm/v1/query";
+import { ContractCodeHistoryOperationType } from "cosmjs-types/cosmwasm/wasm/v1/types";
+import { setupWasmExtension, WasmExtension } from "@cosmjs/cosmwasm-stargate/build/queries";
 import { QueryGraphStatsResponse } from "./codec/cyber/graph/v1beta1/query";
 import {
   Query,
@@ -84,7 +78,7 @@ import {
   QueryValidatorResponse,
   QueryValidatorsResponse,
   QueryValidatorUnbondingDelegationsResponse,
-} from "@cosmjs/stargate/build/codec/cosmos/staking/v1beta1/query";
+} from "cosmjs-types/cosmos/staking/v1beta1/query";
 import {
   QueryCommunityPoolResponse,
   QueryDelegationRewardsResponse,
@@ -95,8 +89,8 @@ import {
   QueryValidatorCommissionResponse,
   QueryValidatorOutstandingRewardsResponse,
   QueryValidatorSlashesResponse,
-} from "@cosmjs/stargate/build/codec//cosmos/distribution/v1beta1/query";
-import { BondStatus } from "@cosmjs/stargate/build/codec/cosmos/staking/v1beta1/staking";
+} from "cosmjs-types/cosmos/distribution/v1beta1/query";
+import { BondStatus } from "cosmjs-types/cosmos/staking/v1beta1/staking";
 import {
   GraphExtension,
   RankExtension,
@@ -118,8 +112,9 @@ export {
 
 export interface PrivateCyberClient {
   readonly tmClient: Tendermint34Client | undefined;
-  readonly queryClient:
-    | (QueryClient &
+  readonly queryClient: 
+    (
+        QueryClient &
         AuthExtension &
         BankExtension &
         DistributionExtension &
@@ -128,8 +123,8 @@ export interface PrivateCyberClient {
         RankExtension &
         BandwidthExtension &
         EnergyExtension &
-        WasmExtension)
-    | undefined;
+        WasmExtension
+    ) | undefined;
 }
 
 export declare type BondStatusString = Exclude<
@@ -140,7 +135,8 @@ export declare type BondStatusString = Exclude<
 export class CyberClient {
   private readonly tmClient: Tendermint34Client | undefined;
   private readonly queryClient:
-    | (QueryClient &
+    (
+        QueryClient &
         AuthExtension &
         BankExtension &
         DistributionExtension &
@@ -149,8 +145,8 @@ export class CyberClient {
         RankExtension &
         BandwidthExtension &
         EnergyExtension &
-        WasmExtension)
-    | undefined;
+        WasmExtension
+    ) | undefined;
   private readonly codesCache = new Map<number, CodeDetails>();
   private chainId: string | undefined;
 
@@ -191,7 +187,8 @@ export class CyberClient {
   }
 
   protected getQueryClient():
-    | (QueryClient &
+    (
+        QueryClient &
         AuthExtension &
         BankExtension &
         DistributionExtension &
@@ -200,12 +197,13 @@ export class CyberClient {
         RankExtension &
         BandwidthExtension &
         EnergyExtension &
-        WasmExtension)
-    | undefined {
+        WasmExtension
+    ) | undefined {
     return this.queryClient;
   }
 
-  protected forceGetQueryClient(): QueryClient &
+  protected forceGetQueryClient(): 
+    QueryClient &
     AuthExtension &
     BankExtension &
     DistributionExtension &
@@ -287,12 +285,6 @@ export class CyberClient {
     return this.forceGetQueryClient().bank.balance(address, searchDenom);
   }
 
-  /**
-   * Queries all balances for all denoms that belong to this address.
-   *
-   * Uses the grpc queries (which iterates over the store internally), and we cannot get
-   * proofs from such a method.
-   */
   public async getAllBalances(address: string): Promise<readonly Coin[]> {
     return this.forceGetQueryClient().bank.allBalances(address);
   }
@@ -800,16 +792,11 @@ export class CyberClient {
   public async getCodes(): Promise<readonly Code[]> {
     const { codeInfos } = await this.forceGetQueryClient().wasm.listCodeInfo();
     return (codeInfos || []).map((entry: CodeInfoResponse): Code => {
-      assert(
-        entry.creator && entry.codeId && entry.dataHash,
-        "entry incomplete"
-      );
+      assert(entry.creator && entry.codeId && entry.dataHash, "entry incomplete");
       return {
         id: entry.codeId.toNumber(),
         creator: entry.creator,
         checksum: toHex(entry.dataHash),
-        source: entry.source || undefined,
-        builder: entry.builder || undefined,
       };
     });
   }
@@ -818,23 +805,15 @@ export class CyberClient {
     const cached = this.codesCache.get(codeId);
     if (cached) return cached;
 
-    const { codeInfo, data } = await this.forceGetQueryClient().wasm.getCode(
-      codeId
-    );
+    const { codeInfo, data } = await this.forceGetQueryClient().wasm.getCode(codeId);
     assert(
-      codeInfo &&
-        codeInfo.codeId &&
-        codeInfo.creator &&
-        codeInfo.dataHash &&
-        data,
-      "codeInfo missing or incomplete"
+      codeInfo && codeInfo.codeId && codeInfo.creator && codeInfo.dataHash && data,
+      "codeInfo missing or incomplete",
     );
     const codeDetails: CodeDetails = {
       id: codeInfo.codeId.toNumber(),
       creator: codeInfo.creator,
       checksum: toHex(codeInfo.dataHash),
-      source: codeInfo.source || undefined,
-      builder: codeInfo.builder || undefined,
       data: data,
     };
     this.codesCache.set(codeId, codeDetails);
@@ -843,8 +822,7 @@ export class CyberClient {
 
   public async getContracts(codeId: number): Promise<readonly string[]> {
     // TODO: handle pagination - accept as arg or auto-loop
-    const { contracts } =
-      await this.forceGetQueryClient().wasm.listContractsByCodeId(codeId);
+    const { contracts } = await this.forceGetQueryClient().wasm.listContractsByCodeId(codeId);
     return contracts;
   }
 
@@ -852,42 +830,32 @@ export class CyberClient {
    * Throws an error if no contract was found at the address
    */
   public async getContract(address: string): Promise<Contract> {
-    const { address: retrievedAddress, contractInfo } =
-      await this.forceGetQueryClient().wasm.getContractInfo(address);
-    if (!contractInfo)
-      throw new Error(`No contract found at address "${address}"`);
-    assert(retrievedAddress, "address missing");
-    assert(
-      contractInfo.codeId && contractInfo.creator && contractInfo.label,
-      "contractInfo incomplete"
+    const { address: retrievedAddress, contractInfo } = await this.forceGetQueryClient().wasm.getContractInfo(
+      address,
     );
+    if (!contractInfo) throw new Error(`No contract found at address "${address}"`);
+    assert(retrievedAddress, "address missing");
+    assert(contractInfo.codeId && contractInfo.creator && contractInfo.label, "contractInfo incomplete");
     return {
       address: retrievedAddress,
       codeId: contractInfo.codeId.toNumber(),
       creator: contractInfo.creator,
       admin: contractInfo.admin || undefined,
       label: contractInfo.label,
+      ibcPortId: contractInfo.ibcPortId || undefined,
     };
   }
 
   /**
    * Throws an error if no contract was found at the address
    */
-  public async getContractCodeHistory(
-    address: string
-  ): Promise<readonly ContractCodeHistoryEntry[]> {
-    const result = await this.forceGetQueryClient().wasm.getContractCodeHistory(
-      address
-    );
-    if (!result)
-      throw new Error(`No contract history found for address "${address}"`);
+  public async getContractCodeHistory(address: string): Promise<readonly ContractCodeHistoryEntry[]> {
+    const result = await this.forceGetQueryClient().wasm.getContractCodeHistory(address);
+    if (!result) throw new Error(`No contract history found for address "${address}"`);
     const operations: Record<number, "Init" | "Genesis" | "Migrate"> = {
-      [ContractCodeHistoryOperationType.CONTRACT_CODE_HISTORY_OPERATION_TYPE_INIT]:
-        "Init",
-      [ContractCodeHistoryOperationType.CONTRACT_CODE_HISTORY_OPERATION_TYPE_GENESIS]:
-        "Genesis",
-      [ContractCodeHistoryOperationType.CONTRACT_CODE_HISTORY_OPERATION_TYPE_MIGRATE]:
-        "Migrate",
+      [ContractCodeHistoryOperationType.CONTRACT_CODE_HISTORY_OPERATION_TYPE_INIT]: "Init",
+      [ContractCodeHistoryOperationType.CONTRACT_CODE_HISTORY_OPERATION_TYPE_GENESIS]: "Genesis",
+      [ContractCodeHistoryOperationType.CONTRACT_CODE_HISTORY_OPERATION_TYPE_MIGRATE]: "Migrate",
     };
     return (result.entries || []).map((entry): ContractCodeHistoryEntry => {
       assert(entry.operation && entry.codeId && entry.msg);
@@ -905,17 +873,11 @@ export class CyberClient {
    *
    * Promise is rejected when contract does not exist.
    */
-  public async queryContractRaw(
-    address: string,
-    key: Uint8Array
-  ): Promise<Uint8Array | null> {
+  public async queryContractRaw(address: string, key: Uint8Array): Promise<Uint8Array | null> {
     // just test contract existence
     await this.getContract(address);
 
-    const { data } = await this.forceGetQueryClient().wasm.queryContractRaw(
-      address,
-      key
-    );
+    const { data } = await this.forceGetQueryClient().wasm.queryContractRaw(address, key);
     return data ?? null;
   }
 
@@ -926,15 +888,9 @@ export class CyberClient {
    * Promise is rejected for invalid query format.
    * Promise is rejected for invalid response format.
    */
-  public async queryContractSmart(
-    address: string,
-    queryMsg: Record<string, unknown>
-  ): Promise<JsonObject> {
+  public async queryContractSmart(address: string, queryMsg: Record<string, unknown>): Promise<JsonObject> {
     try {
-      return await this.forceGetQueryClient().wasm.queryContractSmart(
-        address,
-        queryMsg
-      );
+      return await this.forceGetQueryClient().wasm.queryContractSmart(address, queryMsg);
     } catch (error) {
       if (error instanceof Error) {
         if (error.message.startsWith("not found: contract")) {

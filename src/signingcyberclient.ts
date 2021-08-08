@@ -17,11 +17,8 @@ import {
   AminoTypes,
   BroadcastTxFailure,
   BroadcastTxResponse,
-  buildFeeTable,
   Coin,
-  defaultGasLimits as defaultStargateGasLimits,
   defaultRegistryTypes,
-  GasLimits,
   GasPrice,
   isBroadcastTxFailure,
   logs,
@@ -44,14 +41,14 @@ import {
   MsgEditRouteAlias,
 } from "./codec/cyber/energy/v1beta1/tx";
 import { CyberClient } from "./cyberclient";
-import { MsgWithdrawDelegatorReward } from "@cosmjs/stargate/build/codec/cosmos/distribution/v1beta1/tx";
+import { MsgWithdrawDelegatorReward } from "cosmjs-types/cosmos/distribution/v1beta1/tx";
 import {
   MsgBeginRedelegate,
   MsgDelegate,
   MsgUndelegate,
-} from "@cosmjs/stargate/build/codec/cosmos/staking/v1beta1/tx";
-import { SignMode } from "@cosmjs/stargate/build/codec/cosmos/tx/signing/v1beta1/signing";
-import { TxRaw } from "@cosmjs/stargate/build/codec/cosmos/tx/v1beta1/tx";
+} from "cosmjs-types/cosmos/staking/v1beta1/tx";
+import { SignMode } from "cosmjs-types/cosmos/tx/signing/v1beta1/signing";
+import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 import { Tendermint34Client } from "@cosmjs/tendermint-rpc";
 import { assert } from "@cosmjs/utils";
 import {
@@ -61,14 +58,11 @@ import {
   MsgMigrateContractEncodeObject,
   MsgStoreCodeEncodeObject,
   MsgUpdateAdminEncodeObject,
-  defaultGasLimits as defaultCosmWasmGasLimits,
   ChangeAdminResult,
-  CosmWasmFeeTable, // part of SigningCosmWasmClientOptions
   ExecuteResult,
   InstantiateOptions,
   InstantiateResult,
   MigrateResult,
-  UploadMeta,
   UploadResult,
   cosmWasmTypes,
 } from "@cosmjs/cosmwasm-stargate";
@@ -79,12 +73,12 @@ import {
   MsgMigrateContract,
   MsgStoreCode,
   MsgUpdateAdmin,
-} from "@cosmjs/cosmwasm-stargate/build/codec/cosmwasm/wasm/v1beta1/tx";
+} from "cosmjs-types/cosmwasm/wasm/v1/tx";
 import { isValidBuilder } from "@cosmjs/cosmwasm-launchpad";
 import pako from "pako";
 import Long from "long";
-import { MsgTransfer } from "@cosmjs/stargate/build/codec/ibc/applications/transfer/v1/tx";
-import { Height } from "@cosmjs/stargate/build/codec/ibc/core/client/v1/client";
+import { MsgTransfer } from "cosmjs-types/ibc/applications/transfer/v1/tx";
+import { Height } from "cosmjs-types/ibc/core/client/v1/client";
 import {
   MsgBeginRedelegateEncodeObject,
   isMsgBeginRedelegateEncodeObject,
@@ -101,38 +95,6 @@ import {
   MsgInvestmintEncodeObject,
   isMsgInvestmintEncodeObject,
 } from "./encodeobjects";
-
-export interface CyberFeeTable extends CosmWasmFeeTable {
-  readonly cyberlink: StdFee;
-  readonly investmint: StdFee;
-  readonly createRoute: StdFee;
-  readonly editRoute: StdFee;
-  readonly editRouteAlias: StdFee;
-  readonly deleteRoute: StdFee;
-}
-
-function prepareBuilder(builder: string | undefined): string {
-  if (builder === undefined) {
-    return ""; // normalization needed by backend
-  } else {
-    if (!isValidBuilder(builder))
-      throw new Error("The builder (Docker Hub image with tag) is not valid");
-    return builder;
-  }
-}
-
-export const defaultGasPrice = GasPrice.fromString("0.001boot");
-
-export const defaultGasLimits: GasLimits<CyberFeeTable> = {
-  ...defaultStargateGasLimits,
-  ...defaultCosmWasmGasLimits,
-  cyberlink: 256000,
-  investmint: 160000,
-  createRoute: 128000,
-  editRoute: 128000,
-  editRouteAlias: 128000,
-  deleteRoute: 128000,
-};
 
 export interface CyberlinkResult {
   readonly logs: readonly logs.Log[];
@@ -190,14 +152,11 @@ export interface SigningCyberClientOptions {
   readonly registry?: Registry;
   readonly aminoTypes?: AminoTypes;
   readonly prefix?: string;
-  readonly gasPrice?: GasPrice;
-  readonly gasLimits?: Partial<GasLimits<CyberFeeTable>>;
   readonly broadcastTimeoutMs?: number;
   readonly broadcastPollIntervalMs?: number;
 }
 
 export class SigningCyberClient extends CyberClient {
-  public readonly fees: CyberFeeTable;
   public readonly registry: Registry;
   public readonly broadcastTimeoutMs: number | undefined;
   public readonly broadcastPollIntervalMs: number | undefined;
@@ -243,14 +202,7 @@ export class SigningCyberClient extends CyberClient {
         additions: cosmWasmTypes,
         prefix: options.prefix,
       }),
-      gasPrice = defaultGasPrice,
-      gasLimits = {},
     } = options;
-    this.fees = buildFeeTable<CyberFeeTable>(
-      gasPrice,
-      defaultGasLimits,
-      gasLimits
-    );
     this.registry = registry;
     this.aminoTypes = aminoTypes;
     this.signer = signer;
@@ -262,6 +214,7 @@ export class SigningCyberClient extends CyberClient {
     senderAddress: string,
     from: string,
     to: string,
+    fee: StdFee,
     memo = ""
   ): Promise<BroadcastTxResponse> {
     const cyberlinkMsg: MsgCyberlinkEncodeObject = {
@@ -280,7 +233,7 @@ export class SigningCyberClient extends CyberClient {
     return this.signAndBroadcast(
       senderAddress,
       [cyberlinkMsg],
-      this.fees.cyberlink,
+      fee,
       memo
     );
   }
@@ -290,6 +243,7 @@ export class SigningCyberClient extends CyberClient {
     amount: Coin,
     resource: string,
     length: number,
+    fee: StdFee,
     memo = ""
   ): Promise<BroadcastTxResponse> {
     const investmintMsg: MsgInvestmintEncodeObject = {
@@ -304,7 +258,7 @@ export class SigningCyberClient extends CyberClient {
     return this.signAndBroadcast(
       senderAddress,
       [investmintMsg],
-      this.fees.investmint,
+      fee,
       memo
     );
   }
@@ -313,6 +267,7 @@ export class SigningCyberClient extends CyberClient {
     senderAddress: string,
     destination: string,
     alias: string,
+    fee: StdFee,
     memo = ""
   ): Promise<BroadcastTxResponse> {
     const createEnergyRouteMsg: MsgCreateRouteEncodeObject = {
@@ -326,7 +281,7 @@ export class SigningCyberClient extends CyberClient {
     return this.signAndBroadcast(
       senderAddress,
       [createEnergyRouteMsg],
-      this.fees.createRoute,
+      fee,
       memo
     );
   }
@@ -335,6 +290,7 @@ export class SigningCyberClient extends CyberClient {
     senderAddress: string,
     destination: string,
     value: Coin,
+    fee: StdFee,
     memo = ""
   ): Promise<BroadcastTxResponse> {
     const editEnergyRouteMsg: MsgEditRouteEncodeObject = {
@@ -348,7 +304,7 @@ export class SigningCyberClient extends CyberClient {
     return this.signAndBroadcast(
       senderAddress,
       [editEnergyRouteMsg],
-      this.fees.editRoute,
+      fee,
       memo
     );
   }
@@ -356,6 +312,7 @@ export class SigningCyberClient extends CyberClient {
   public async deleteEnergyRoute(
     senderAddress: string,
     destination: string,
+    fee: StdFee,
     memo = ""
   ): Promise<BroadcastTxResponse> {
     const deleteEnergyRouteMsg: MsgDeleteRouteEncodeObject = {
@@ -368,7 +325,7 @@ export class SigningCyberClient extends CyberClient {
     return this.signAndBroadcast(
       senderAddress,
       [deleteEnergyRouteMsg],
-      this.fees.deleteRoute,
+      fee,
       memo
     );
   }
@@ -377,6 +334,7 @@ export class SigningCyberClient extends CyberClient {
     senderAddress: string,
     destination: string,
     alias: string,
+    fee: StdFee,
     memo = ""
   ): Promise<BroadcastTxResponse> {
     const editEnergyRouteAliasMsg: MsgEditRouteAliasEncodeObject = {
@@ -391,7 +349,7 @@ export class SigningCyberClient extends CyberClient {
     return this.signAndBroadcast(
       senderAddress,
       [editEnergyRouteAliasMsg],
-      this.fees.editRouteAlias,
+      fee,
       memo
     );
   }
@@ -400,28 +358,19 @@ export class SigningCyberClient extends CyberClient {
   public async upload(
     senderAddress: string,
     wasmCode: Uint8Array,
-    meta: UploadMeta = {},
-    memo = ""
+    fee: StdFee,
+    memo = "",
   ): Promise<UploadResult> {
-    const source = meta.source || "";
-    const builder = prepareBuilder(meta.builder);
     const compressed = pako.gzip(wasmCode, { level: 9 });
     const storeCodeMsg: MsgStoreCodeEncodeObject = {
-      typeUrl: "/cosmwasm.wasm.v1beta1.MsgStoreCode",
+      typeUrl: "/cosmwasm.wasm.v1.MsgStoreCode",
       value: MsgStoreCode.fromPartial({
         sender: senderAddress,
         wasmByteCode: compressed,
-        source: source,
-        builder: builder,
       }),
     };
 
-    const result = await this.signAndBroadcast(
-      senderAddress,
-      [storeCodeMsg],
-      this.fees.upload,
-      memo
-    );
+    const result = await this.signAndBroadcast(senderAddress, [storeCodeMsg], fee, memo);
     if (isBroadcastTxFailure(result)) {
       throw new Error(createBroadcastTxErrorMessage(result));
     }
@@ -443,34 +392,26 @@ export class SigningCyberClient extends CyberClient {
     codeId: number,
     msg: Record<string, unknown>,
     label: string,
-    options: InstantiateOptions = {}
+    fee: StdFee,
+    options: InstantiateOptions = {},
   ): Promise<InstantiateResult> {
     const instantiateContractMsg: MsgInstantiateContractEncodeObject = {
-      typeUrl: "/cosmwasm.wasm.v1beta1.MsgInstantiateContract",
+      typeUrl: "/cosmwasm.wasm.v1.MsgInstantiateContract",
       value: MsgInstantiateContract.fromPartial({
         sender: senderAddress,
         codeId: Long.fromString(new Uint53(codeId).toString()),
         label: label,
-        initMsg: toUtf8(JSON.stringify(msg)),
-        funds: [...(options.transferAmount || [])],
+        msg: toUtf8(JSON.stringify(msg)),
+        funds: [...(options.funds || [])],
         admin: options.admin,
       }),
     };
-    const result = await this.signAndBroadcast(
-      senderAddress,
-      [instantiateContractMsg],
-      this.fees.init,
-      options.memo
-    );
+    const result = await this.signAndBroadcast(senderAddress, [instantiateContractMsg], fee, options.memo);
     if (isBroadcastTxFailure(result)) {
       throw new Error(createBroadcastTxErrorMessage(result));
     }
     const parsedLogs = logs.parseRawLog(result.rawLog);
-    const contractAddressAttr = logs.findAttribute(
-      parsedLogs,
-      "message",
-      "contract_address"
-    );
+    const contractAddressAttr = logs.findAttribute(parsedLogs, "message", "_contract_address");
     return {
       contractAddress: contractAddressAttr.value,
       logs: parsedLogs,
@@ -482,22 +423,18 @@ export class SigningCyberClient extends CyberClient {
     senderAddress: string,
     contractAddress: string,
     newAdmin: string,
-    memo = ""
+    fee: StdFee,
+    memo = "",
   ): Promise<ChangeAdminResult> {
     const updateAdminMsg: MsgUpdateAdminEncodeObject = {
-      typeUrl: "/cosmwasm.wasm.v1beta1.MsgUpdateAdmin",
+      typeUrl: "/cosmwasm.wasm.v1.MsgUpdateAdmin",
       value: MsgUpdateAdmin.fromPartial({
         sender: senderAddress,
         contract: contractAddress,
         newAdmin: newAdmin,
       }),
     };
-    const result = await this.signAndBroadcast(
-      senderAddress,
-      [updateAdminMsg],
-      this.fees.changeAdmin,
-      memo
-    );
+    const result = await this.signAndBroadcast(senderAddress, [updateAdminMsg], fee, memo);
     if (isBroadcastTxFailure(result)) {
       throw new Error(createBroadcastTxErrorMessage(result));
     }
@@ -510,21 +447,17 @@ export class SigningCyberClient extends CyberClient {
   public async clearAdmin(
     senderAddress: string,
     contractAddress: string,
-    memo = ""
+    fee: StdFee,
+    memo = "",
   ): Promise<ChangeAdminResult> {
     const clearAdminMsg: MsgClearAdminEncodeObject = {
-      typeUrl: "/cosmwasm.wasm.v1beta1.MsgClearAdmin",
+      typeUrl: "/cosmwasm.wasm.v1.MsgClearAdmin",
       value: MsgClearAdmin.fromPartial({
         sender: senderAddress,
         contract: contractAddress,
       }),
     };
-    const result = await this.signAndBroadcast(
-      senderAddress,
-      [clearAdminMsg],
-      this.fees.changeAdmin,
-      memo
-    );
+    const result = await this.signAndBroadcast(senderAddress, [clearAdminMsg], fee, memo);
     if (isBroadcastTxFailure(result)) {
       throw new Error(createBroadcastTxErrorMessage(result));
     }
@@ -539,23 +472,19 @@ export class SigningCyberClient extends CyberClient {
     contractAddress: string,
     codeId: number,
     migrateMsg: Record<string, unknown>,
-    memo = ""
+    fee: StdFee,
+    memo = "",
   ): Promise<MigrateResult> {
     const migrateContractMsg: MsgMigrateContractEncodeObject = {
-      typeUrl: "/cosmwasm.wasm.v1beta1.MsgMigrateContract",
+      typeUrl: "/cosmwasm.wasm.v1.MsgMigrateContract",
       value: MsgMigrateContract.fromPartial({
         sender: senderAddress,
         contract: contractAddress,
         codeId: Long.fromString(new Uint53(codeId).toString()),
-        migrateMsg: toUtf8(JSON.stringify(migrateMsg)),
+        msg: toUtf8(JSON.stringify(migrateMsg)),
       }),
     };
-    const result = await this.signAndBroadcast(
-      senderAddress,
-      [migrateContractMsg],
-      this.fees.migrate,
-      memo
-    );
+    const result = await this.signAndBroadcast(senderAddress, [migrateContractMsg], fee, memo);
     if (isBroadcastTxFailure(result)) {
       throw new Error(createBroadcastTxErrorMessage(result));
     }
@@ -569,11 +498,12 @@ export class SigningCyberClient extends CyberClient {
     senderAddress: string,
     contractAddress: string,
     msg: Record<string, unknown>,
+    fee: StdFee,
     memo = "",
-    funds?: readonly Coin[]
+    funds?: readonly Coin[],
   ): Promise<ExecuteResult> {
     const executeContractMsg: MsgExecuteContractEncodeObject = {
-      typeUrl: "/cosmwasm.wasm.v1beta1.MsgExecuteContract",
+      typeUrl: "/cosmwasm.wasm.v1.MsgExecuteContract",
       value: MsgExecuteContract.fromPartial({
         sender: senderAddress,
         contract: contractAddress,
@@ -581,12 +511,7 @@ export class SigningCyberClient extends CyberClient {
         funds: [...(funds || [])],
       }),
     };
-    const result = await this.signAndBroadcast(
-      senderAddress,
-      [executeContractMsg],
-      this.fees.exec,
-      memo
-    );
+    const result = await this.signAndBroadcast(senderAddress, [executeContractMsg], fee, memo);
     if (isBroadcastTxFailure(result)) {
       throw new Error(createBroadcastTxErrorMessage(result));
     }
@@ -600,6 +525,7 @@ export class SigningCyberClient extends CyberClient {
     senderAddress: string,
     recipientAddress: string,
     amount: readonly Coin[],
+    fee: StdFee,
     memo = ""
   ): Promise<BroadcastTxResponse> {
     const sendMsg: MsgSendEncodeObject = {
@@ -610,11 +536,11 @@ export class SigningCyberClient extends CyberClient {
         amount: [...amount],
       },
     };
-    console.log(`this.fees.send,`, this.fees.send);
+    // console.log(`this.fees.send,`, fee);
     return this.signAndBroadcast(
       senderAddress,
       [sendMsg],
-      this.fees.send,
+      fee,
       memo
     );
   }
@@ -623,6 +549,7 @@ export class SigningCyberClient extends CyberClient {
     delegatorAddress: string,
     validatorAddress: string,
     amount: Coin,
+    fee: StdFee,
     memo = ""
   ): Promise<BroadcastTxResponse> {
     const delegateMsg: MsgDelegateEncodeObject = {
@@ -636,7 +563,7 @@ export class SigningCyberClient extends CyberClient {
     return this.signAndBroadcast(
       delegatorAddress,
       [delegateMsg],
-      this.fees.delegate,
+      fee,
       memo
     );
   }
@@ -646,6 +573,7 @@ export class SigningCyberClient extends CyberClient {
     validatorSrcAddress: string,
     validatorDstAddress: string,
     amount: Coin,
+    fee: StdFee,
     memo = ""
   ): Promise<BroadcastTxResponse> {
     const redelegateMsg: MsgBeginRedelegateEncodeObject = {
@@ -660,7 +588,7 @@ export class SigningCyberClient extends CyberClient {
     return this.signAndBroadcast(
       delegatorAddress,
       [redelegateMsg],
-      this.fees.delegate,
+      fee,
       memo
     );
   }
@@ -669,6 +597,7 @@ export class SigningCyberClient extends CyberClient {
     delegatorAddress: string,
     validatorAddress: string,
     amount: Coin,
+    fee: StdFee,
     memo = ""
   ): Promise<BroadcastTxResponse> {
     const undelegateMsg: MsgUndelegateEncodeObject = {
@@ -682,14 +611,28 @@ export class SigningCyberClient extends CyberClient {
     return this.signAndBroadcast(
       delegatorAddress,
       [undelegateMsg],
-      this.fees.undelegate,
+      fee,
       memo
     );
   }
 
   public async withdrawRewards(
     delegatorAddress: string,
+    validatorAddress: string,
+    fee: StdFee,
+    memo = "",
+  ): Promise<BroadcastTxResponse> {
+    const withdrawDelegatorRewardMsg: MsgWithdrawDelegatorRewardEncodeObject = {
+      typeUrl: "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward",
+      value: MsgWithdrawDelegatorReward.fromPartial({ delegatorAddress: delegatorAddress, validatorAddress }),
+    };
+    return this.signAndBroadcast(delegatorAddress, [withdrawDelegatorRewardMsg], fee, memo);
+  }
+
+  public async withdrawAllRewards(
+    delegatorAddress: string,
     validatorAddresses: string[],
+    fee: StdFee,
     memo = ""
   ): Promise<BroadcastTxResponse> {
     const msgs = validatorAddresses.map((validatorAddress) => {
@@ -701,18 +644,11 @@ export class SigningCyberClient extends CyberClient {
         },
       };
     });
-    // const withdrawDelegatorRewardMsg: MsgWithdrawDelegatorRewardEncodeObject = {
-    //   typeUrl: "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward",
-    //   value: MsgWithdrawDelegatorReward.fromPartial({
-    //     delegatorAddress: delegatorAddress,
-    //     validatorAddress,
-    //   }),
-    // };
 
     return this.signAndBroadcast(
       delegatorAddress,
       msgs,
-      this.fees.withdraw,
+      fee,
       memo
     );
   }
@@ -726,6 +662,7 @@ export class SigningCyberClient extends CyberClient {
     timeoutHeight: Height | undefined,
     /** timeout in seconds */
     timeoutTimestamp: number | undefined,
+    fee: StdFee,
     memo = ""
   ): Promise<BroadcastTxResponse> {
     const timeoutTimestampNanoseconds = timeoutTimestamp
@@ -746,12 +683,10 @@ export class SigningCyberClient extends CyberClient {
     return this.signAndBroadcast(
       senderAddress,
       [transferMsg],
-      this.fees.transfer,
+      fee,
       memo
     );
   }
-
-  // -------------------------------------------------------- //
 
   /**
    * Creates a transaction with the given messages, fee and memo. Then signs and broadcasts the transaction.
@@ -765,15 +700,11 @@ export class SigningCyberClient extends CyberClient {
     signerAddress: string,
     messages: readonly EncodeObject[],
     fee: StdFee,
-    memo = ""
+    memo = "",
   ): Promise<BroadcastTxResponse> {
     const txRaw = await this.sign(signerAddress, messages, fee, memo);
     const txBytes = TxRaw.encode(txRaw).finish();
-    return this.broadcastTx(
-      txBytes,
-      this.broadcastTimeoutMs,
-      this.broadcastPollIntervalMs
-    );
+    return this.broadcastTx(txBytes, this.broadcastTimeoutMs, this.broadcastPollIntervalMs);
   }
 
   public async sign(
@@ -781,7 +712,7 @@ export class SigningCyberClient extends CyberClient {
     messages: readonly EncodeObject[],
     fee: StdFee,
     memo: string,
-    explicitSignerData?: SignerData
+    explicitSignerData?: SignerData,
   ): Promise<TxRaw> {
     let signerData: SignerData;
     if (explicitSignerData) {
@@ -806,32 +737,20 @@ export class SigningCyberClient extends CyberClient {
     messages: readonly EncodeObject[],
     fee: StdFee,
     memo: string,
-    { accountNumber, sequence, chainId }: SignerData
+    { accountNumber, sequence, chainId }: SignerData,
   ): Promise<TxRaw> {
     assert(!isOfflineDirectSigner(this.signer));
     const accountFromSigner = (await this.signer.getAccounts()).find(
-      (account) => account.address === signerAddress
+      (account) => account.address === signerAddress,
     );
     if (!accountFromSigner) {
       throw new Error("Failed to retrieve account from signer");
     }
-    const pubkey = encodePubkey(
-      encodeSecp256k1Pubkey(accountFromSigner.pubkey)
-    );
+    const pubkey = encodePubkey(encodeSecp256k1Pubkey(accountFromSigner.pubkey));
     const signMode = SignMode.SIGN_MODE_LEGACY_AMINO_JSON;
     const msgs = messages.map((msg) => this.aminoTypes.toAmino(msg));
-    const signDoc = makeSignDocAmino(
-      msgs,
-      fee,
-      chainId,
-      memo,
-      accountNumber,
-      sequence
-    );
-    const { signature, signed } = await this.signer.signAmino(
-      signerAddress,
-      signDoc
-    );
+    const signDoc = makeSignDocAmino(msgs, fee, chainId, memo, accountNumber, sequence);
+    const { signature, signed } = await this.signer.signAmino(signerAddress, signDoc);
     const signedTxBody: TxBodyEncodeObject = {
       typeUrl: "/cosmos.tx.v1beta1.TxBody",
       value: {
@@ -843,11 +762,10 @@ export class SigningCyberClient extends CyberClient {
     const signedGasLimit = Int53.fromString(signed.fee.gas).toNumber();
     const signedSequence = Int53.fromString(signed.sequence).toNumber();
     const signedAuthInfoBytes = makeAuthInfoBytes(
-      [pubkey],
+      [{ pubkey, sequence: signedSequence }],
       signed.fee.amount,
       signedGasLimit,
-      signedSequence,
-      signMode
+      signMode,
     );
     return TxRaw.fromPartial({
       bodyBytes: signedTxBodyBytes,
@@ -861,18 +779,16 @@ export class SigningCyberClient extends CyberClient {
     messages: readonly EncodeObject[],
     fee: StdFee,
     memo: string,
-    { accountNumber, sequence, chainId }: SignerData
+    { accountNumber, sequence, chainId }: SignerData,
   ): Promise<TxRaw> {
     assert(isOfflineDirectSigner(this.signer));
     const accountFromSigner = (await this.signer.getAccounts()).find(
-      (account) => account.address === signerAddress
+      (account) => account.address === signerAddress,
     );
     if (!accountFromSigner) {
       throw new Error("Failed to retrieve account from signer");
     }
-    const pubkey = encodePubkey(
-      encodeSecp256k1Pubkey(accountFromSigner.pubkey)
-    );
+    const pubkey = encodePubkey(encodeSecp256k1Pubkey(accountFromSigner.pubkey));
     const txBody: TxBodyEncodeObject = {
       typeUrl: "/cosmos.tx.v1beta1.TxBody",
       value: {
@@ -882,22 +798,9 @@ export class SigningCyberClient extends CyberClient {
     };
     const txBodyBytes = this.registry.encode(txBody);
     const gasLimit = Int53.fromString(fee.gas).toNumber();
-    const authInfoBytes = makeAuthInfoBytes(
-      [pubkey],
-      fee.amount,
-      gasLimit,
-      sequence
-    );
-    const signDoc = makeSignDoc(
-      txBodyBytes,
-      authInfoBytes,
-      chainId,
-      accountNumber
-    );
-    const { signature, signed } = await this.signer.signDirect(
-      signerAddress,
-      signDoc
-    );
+    const authInfoBytes = makeAuthInfoBytes([{ pubkey, sequence }], fee.amount, gasLimit);
+    const signDoc = makeSignDoc(txBodyBytes, authInfoBytes, chainId, accountNumber);
+    const { signature, signed } = await this.signer.signDirect(signerAddress, signDoc);
     return TxRaw.fromPartial({
       bodyBytes: signed.bodyBytes,
       authInfoBytes: signed.authInfoBytes,
