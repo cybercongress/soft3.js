@@ -94,10 +94,7 @@ const baseCompactLink: object = {
 };
 
 export const CompactLink = {
-  encode(
-    message: CompactLink,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: CompactLink, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (!message.from.isZero()) {
       writer.uint32(8).uint64(message.from);
     }
@@ -156,12 +153,9 @@ export const CompactLink = {
 
   toJSON(message: CompactLink): unknown {
     const obj: any = {};
-    message.from !== undefined &&
-      (obj.from = (message.from || Long.UZERO).toString());
-    message.to !== undefined &&
-      (obj.to = (message.to || Long.UZERO).toString());
-    message.account !== undefined &&
-      (obj.account = (message.account || Long.UZERO).toString());
+    message.from !== undefined && (obj.from = (message.from || Long.UZERO).toString());
+    message.to !== undefined && (obj.to = (message.to || Long.UZERO).toString());
+    message.account !== undefined && (obj.account = (message.account || Long.UZERO).toString());
     return obj;
   },
 
@@ -186,15 +180,7 @@ export const CompactLink = {
   },
 };
 
-type Builtin =
-  | Date
-  | Function
-  | Uint8Array
-  | string
-  | number
-  | boolean
-  | undefined
-  | Long;
+type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined | Long;
 export type DeepPartial<T> = T extends Builtin
   ? T
   : T extends Array<infer U>

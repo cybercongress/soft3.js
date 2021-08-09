@@ -22,10 +22,7 @@ const baseParams: object = {
 };
 
 export const Params = {
-  encode(
-    message: Params,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: Params, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (!message.calculationPeriod.isZero()) {
       writer.uint32(8).int64(message.calculationPeriod);
     }
@@ -64,10 +61,7 @@ export const Params = {
 
   fromJSON(object: any): Params {
     const message = { ...baseParams } as Params;
-    if (
-      object.calculationPeriod !== undefined &&
-      object.calculationPeriod !== null
-    ) {
+    if (object.calculationPeriod !== undefined && object.calculationPeriod !== null) {
       message.calculationPeriod = Long.fromString(object.calculationPeriod);
     } else {
       message.calculationPeriod = Long.ZERO;
@@ -88,21 +82,15 @@ export const Params = {
   toJSON(message: Params): unknown {
     const obj: any = {};
     message.calculationPeriod !== undefined &&
-      (obj.calculationPeriod = (
-        message.calculationPeriod || Long.ZERO
-      ).toString());
-    message.dampingFactor !== undefined &&
-      (obj.dampingFactor = message.dampingFactor);
+      (obj.calculationPeriod = (message.calculationPeriod || Long.ZERO).toString());
+    message.dampingFactor !== undefined && (obj.dampingFactor = message.dampingFactor);
     message.tolerance !== undefined && (obj.tolerance = message.tolerance);
     return obj;
   },
 
   fromPartial(object: DeepPartial<Params>): Params {
     const message = { ...baseParams } as Params;
-    if (
-      object.calculationPeriod !== undefined &&
-      object.calculationPeriod !== null
-    ) {
+    if (object.calculationPeriod !== undefined && object.calculationPeriod !== null) {
       message.calculationPeriod = object.calculationPeriod as Long;
     } else {
       message.calculationPeriod = Long.ZERO;
@@ -124,10 +112,7 @@ export const Params = {
 const baseRankedCid: object = { cid: "", rank: Long.UZERO };
 
 export const RankedCid = {
-  encode(
-    message: RankedCid,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: RankedCid, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.cid !== "") {
       writer.uint32(10).string(message.cid);
     }
@@ -176,8 +161,7 @@ export const RankedCid = {
   toJSON(message: RankedCid): unknown {
     const obj: any = {};
     message.cid !== undefined && (obj.cid = message.cid);
-    message.rank !== undefined &&
-      (obj.rank = (message.rank || Long.UZERO).toString());
+    message.rank !== undefined && (obj.rank = (message.rank || Long.UZERO).toString());
     return obj;
   },
 
@@ -197,15 +181,7 @@ export const RankedCid = {
   },
 };
 
-type Builtin =
-  | Date
-  | Function
-  | Uint8Array
-  | string
-  | number
-  | boolean
-  | undefined
-  | Long;
+type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined | Long;
 export type DeepPartial<T> = T extends Builtin
   ? T
   : T extends Array<infer U>

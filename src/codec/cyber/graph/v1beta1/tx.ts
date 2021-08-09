@@ -15,10 +15,7 @@ export interface MsgCyberlinkResponse {}
 const baseMsgCyberlink: object = { address: "" };
 
 export const MsgCyberlink = {
-  encode(
-    message: MsgCyberlink,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: MsgCyberlink, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.address !== "") {
       writer.uint32(10).string(message.address);
     }
@@ -97,17 +94,11 @@ export const MsgCyberlink = {
 const baseMsgCyberlinkResponse: object = {};
 
 export const MsgCyberlinkResponse = {
-  encode(
-    _: MsgCyberlinkResponse,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(_: MsgCyberlinkResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     return writer;
   },
 
-  decode(
-    input: _m0.Reader | Uint8Array,
-    length?: number
-  ): MsgCyberlinkResponse {
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgCyberlinkResponse {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseMsgCyberlinkResponse } as MsgCyberlinkResponse;
@@ -150,34 +141,16 @@ export class MsgClientImpl implements Msg {
   }
   Cyberlink(request: MsgCyberlink): Promise<MsgCyberlinkResponse> {
     const data = MsgCyberlink.encode(request).finish();
-    const promise = this.rpc.request(
-      "cyber.graph.v1beta1.Msg",
-      "Cyberlink",
-      data
-    );
-    return promise.then((data) =>
-      MsgCyberlinkResponse.decode(new _m0.Reader(data))
-    );
+    const promise = this.rpc.request("cyber.graph.v1beta1.Msg", "Cyberlink", data);
+    return promise.then((data) => MsgCyberlinkResponse.decode(new _m0.Reader(data)));
   }
 }
 
 interface Rpc {
-  request(
-    service: string,
-    method: string,
-    data: Uint8Array
-  ): Promise<Uint8Array>;
+  request(service: string, method: string, data: Uint8Array): Promise<Uint8Array>;
 }
 
-type Builtin =
-  | Date
-  | Function
-  | Uint8Array
-  | string
-  | number
-  | boolean
-  | undefined
-  | Long;
+type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined | Long;
 export type DeepPartial<T> = T extends Builtin
   ? T
   : T extends Array<infer U>

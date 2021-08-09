@@ -5,6 +5,11 @@ import {
   ContractCodeHistoryEntry,
   JsonObject,
 } from "@cosmjs/cosmwasm-launchpad";
+import { CodeInfoResponse } from "@cosmjs/cosmwasm-stargate/build/codec/cosmwasm/wasm/v1beta1/query";
+import { ContractCodeHistoryOperationType } from "@cosmjs/cosmwasm-stargate/build/codec/cosmwasm/wasm/v1beta1/types";
+import { setupWasmExtension, WasmExtension } from "@cosmjs/cosmwasm-stargate/build/queries";
+import { fromAscii, toHex } from "@cosmjs/encoding";
+import { Uint53 } from "@cosmjs/math";
 import {
   Account,
   accountFromAny,
@@ -13,6 +18,7 @@ import {
   Block,
   BroadcastTxResponse,
   Coin,
+  DistributionExtension,
   IndexedTx,
   isSearchByHeightQuery,
   isSearchBySentFromOrToQuery,
@@ -25,50 +31,19 @@ import {
   setupBankExtension,
   setupDistributionExtension,
   setupStakingExtension,
-  DistributionExtension,
   StakingExtension,
-  TimeoutError,
 } from "@cosmjs/stargate";
-import { fromAscii, toHex } from "@cosmjs/encoding";
-import { Uint53 } from "@cosmjs/math";
 import {
-  Tendermint34Client,
-  toRfc3339WithNanoseconds,
-} from "@cosmjs/tendermint-rpc";
-import { assert, sleep } from "@cosmjs/utils";
-import { CodeInfoResponse } from "@cosmjs/cosmwasm-stargate/build/codec/cosmwasm/wasm/v1beta1/query";
-import { ContractCodeHistoryOperationType } from "@cosmjs/cosmwasm-stargate/build/codec/cosmwasm/wasm/v1beta1/types";
-import {
-  setupWasmExtension,
-  WasmExtension,
-} from "@cosmjs/cosmwasm-stargate/build/queries";
-import { QueryGraphStatsResponse } from "./codec/cyber/graph/v1beta1/query";
-import {
-  Query,
-  QueryClientImpl,
-  QuerySearchRequest,
-  QuerySearchResponse,
-  QueryRankRequest,
-  QueryRankResponse,
-  QueryTopRequest,
-  QueryIsAnyLinkExistRequest,
-  QueryIsLinkExistRequest,
-  QueryLinkExistResponse,
-} from "./codec/cyber/rank/v1beta1/query";
-import {
-  QueryLoadResponse,
-  QueryAccountResponse,
-  QueryPriceResponse,
-} from "./codec/cyber/bandwidth/v1beta1/query";
-import {
-  QuerySourceRequest,
-  QueryDestinationRequest,
-  QueryRouteResponse,
-  QueryRoutesRequest,
-  QueryRouteRequest,
-  QueryRoutedEnergyResponse,
-  QueryRoutesResponse,
-} from "./codec/cyber/energy/v1beta1/query";
+  QueryCommunityPoolResponse,
+  QueryDelegationRewardsResponse,
+  QueryDelegationTotalRewardsResponse,
+  QueryDelegatorValidatorsResponse as QueryDelegatorValidatorsResponseDistribution,
+  QueryDelegatorWithdrawAddressResponse,
+  QueryParamsResponse as QueryParamsResponseDistribution,
+  QueryValidatorCommissionResponse,
+  QueryValidatorOutstandingRewardsResponse,
+  QueryValidatorSlashesResponse,
+} from "@cosmjs/stargate/build/codec//cosmos/distribution/v1beta1/query";
 import {
   QueryDelegationResponse,
   QueryDelegatorDelegationsResponse,
@@ -85,27 +60,35 @@ import {
   QueryValidatorsResponse,
   QueryValidatorUnbondingDelegationsResponse,
 } from "@cosmjs/stargate/build/codec/cosmos/staking/v1beta1/query";
-import {
-  QueryCommunityPoolResponse,
-  QueryDelegationRewardsResponse,
-  QueryDelegationTotalRewardsResponse,
-  QueryDelegatorValidatorsResponse as QueryDelegatorValidatorsResponseDistribution,
-  QueryDelegatorWithdrawAddressResponse,
-  QueryParamsResponse as QueryParamsResponseDistribution,
-  QueryValidatorCommissionResponse,
-  QueryValidatorOutstandingRewardsResponse,
-  QueryValidatorSlashesResponse,
-} from "@cosmjs/stargate/build/codec//cosmos/distribution/v1beta1/query";
 import { BondStatus } from "@cosmjs/stargate/build/codec/cosmos/staking/v1beta1/staking";
+import { Tendermint34Client, toRfc3339WithNanoseconds } from "@cosmjs/tendermint-rpc";
+import { assert } from "@cosmjs/utils";
+
 import {
-  GraphExtension,
-  RankExtension,
+  QueryAccountResponse,
+  QueryLoadResponse,
+  QueryPriceResponse,
+} from "./codec/cyber/bandwidth/v1beta1/query";
+import {
+  QueryRoutedEnergyResponse,
+  QueryRouteResponse,
+  QueryRoutesResponse,
+} from "./codec/cyber/energy/v1beta1/query";
+import { QueryGraphStatsResponse } from "./codec/cyber/graph/v1beta1/query";
+import {
+  QueryLinkExistResponse,
+  QueryRankResponse,
+  QuerySearchResponse,
+} from "./codec/cyber/rank/v1beta1/query";
+import {
   BandwidthExtension,
   EnergyExtension,
-  setupGraphExtension,
-  setupRankExtension,
+  GraphExtension,
+  RankExtension,
   setupBandwidthExtension,
   setupEnergyExtension,
+  setupGraphExtension,
+  setupRankExtension,
 } from "./queries/index";
 
 export {
@@ -132,10 +115,7 @@ export interface PrivateCyberClient {
     | undefined;
 }
 
-export declare type BondStatusString = Exclude<
-  keyof typeof BondStatus,
-  "BOND_STATUS_UNSPECIFIED"
->;
+export declare type BondStatusString = Exclude<keyof typeof BondStatus, "BOND_STATUS_UNSPECIFIED">;
 
 export class CyberClient {
   private readonly tmClient: Tendermint34Client | undefined;
@@ -172,7 +152,7 @@ export class CyberClient {
         setupRankExtension,
         setupBandwidthExtension,
         setupEnergyExtension,
-        setupWasmExtension
+        setupWasmExtension,
       );
     }
   }
@@ -184,7 +164,7 @@ export class CyberClient {
   protected forceGetTmClient(): Tendermint34Client {
     if (!this.tmClient) {
       throw new Error(
-        "Tendermint client not available. You cannot use online functionality in offline mode."
+        "Tendermint client not available. You cannot use online functionality in offline mode.",
       );
     }
     return this.tmClient;
@@ -216,9 +196,7 @@ export class CyberClient {
     EnergyExtension &
     WasmExtension {
     if (!this.queryClient) {
-      throw new Error(
-        "Query client not available. You cannot use online functionality in offline mode."
-      );
+      throw new Error("Query client not available. You cannot use online functionality in offline mode.");
     }
     return this.queryClient;
   }
@@ -241,9 +219,7 @@ export class CyberClient {
 
   public async getAccount(searchAddress: string): Promise<Account | null> {
     try {
-      const account = await this.forceGetQueryClient().auth.account(
-        searchAddress
-      );
+      const account = await this.forceGetQueryClient().auth.account(searchAddress);
       return account ? accountFromAny(account) : null;
     } catch (error) {
       if (/rpc error: code = NotFound/i.test(error)) {
@@ -257,7 +233,7 @@ export class CyberClient {
     const account = await this.getAccount(address);
     if (!account) {
       throw new Error(
-        "Account does not exist on chain. Send some tokens there before trying to query sequence."
+        "Account does not exist on chain. Send some tokens there before trying to query sequence.",
       );
     }
     return {
@@ -306,10 +282,7 @@ export class CyberClient {
     return results[0] ?? null;
   }
 
-  public async searchTx(
-    query: SearchTxQuery,
-    filter: SearchTxFilter = {}
-  ): Promise<readonly IndexedTx[]> {
+  public async searchTx(query: SearchTxQuery, filter: SearchTxFilter = {}): Promise<readonly IndexedTx[]> {
     const minHeight = filter.minHeight || 0;
     const maxHeight = filter.maxHeight || Number.MAX_SAFE_INTEGER;
 
@@ -327,29 +300,23 @@ export class CyberClient {
           ? await this.txsQuery(`tx.height=${query.height}`)
           : [];
     } else if (isSearchBySentFromOrToQuery(query)) {
-      const sentQuery = withFilters(
-        `message.module='bank' AND transfer.sender='${query.sentFromOrTo}'`
-      );
+      const sentQuery = withFilters(`message.module='bank' AND transfer.sender='${query.sentFromOrTo}'`);
       const receivedQuery = withFilters(
-        `message.module='bank' AND transfer.recipient='${query.sentFromOrTo}'`
+        `message.module='bank' AND transfer.recipient='${query.sentFromOrTo}'`,
       );
       const [sent, received] = await Promise.all(
-        [sentQuery, receivedQuery].map((rawQuery) => this.txsQuery(rawQuery))
+        [sentQuery, receivedQuery].map((rawQuery) => this.txsQuery(rawQuery)),
       );
       const sentHashes = sent.map((t) => t.hash);
       txs = [...sent, ...received.filter((t) => !sentHashes.includes(t.hash))];
     } else if (isSearchByTagsQuery(query)) {
-      const rawQuery = withFilters(
-        query.tags.map((t) => `${t.key}='${t.value}'`).join(" AND ")
-      );
+      const rawQuery = withFilters(query.tags.map((t) => `${t.key}='${t.value}'`).join(" AND "));
       txs = await this.txsQuery(rawQuery);
     } else {
       throw new Error("Unknown query type");
     }
 
-    const filtered = txs.filter(
-      (tx) => tx.height >= minHeight && tx.height <= maxHeight
-    );
+    const filtered = txs.filter((tx) => tx.height >= minHeight && tx.height <= maxHeight);
     return filtered;
   }
 
@@ -373,7 +340,7 @@ export class CyberClient {
   public async broadcastTx(
     tx: Uint8Array,
     timeoutMs = 60_000,
-    pollIntervalMs = 3_000
+    pollIntervalMs = 3_000,
   ): Promise<BroadcastTxResponse> {
     // let timedOut = false;
     // const txPollTimeout = setTimeout(() => {
@@ -402,7 +369,7 @@ export class CyberClient {
     // };
 
     const broadcasted = await this.forceGetTmClient().broadcastTxSync({ tx });
-    console.log(`broadcasted`, broadcasted)
+    console.log(`broadcasted`, broadcasted);
     // if (broadcasted.code) {
     //   throw new Error(
     //     `Broadcasting transaction failed with code ${broadcasted.code} (codespace: ${broadcasted.codeSpace}). Log: ${broadcasted.log}`
@@ -441,29 +408,13 @@ export class CyberClient {
 
   // Rank module
 
-  public async search(
-    cid: string,
-    page?: number,
-    perPage?: number
-  ): Promise<JsonObject> {
-    const response = await this.forceGetQueryClient().rank.search(
-      cid,
-      page,
-      perPage
-    );
+  public async search(cid: string, page?: number, perPage?: number): Promise<JsonObject> {
+    const response = await this.forceGetQueryClient().rank.search(cid, page, perPage);
     return QuerySearchResponse.toJSON(response);
   }
 
-  public async backlinks(
-    cid: string,
-    page?: number,
-    perPage?: number
-  ): Promise<JsonObject> {
-    const response = await this.forceGetQueryClient().rank.backlinks(
-      cid,
-      page,
-      perPage
-    );
+  public async backlinks(cid: string, page?: number, perPage?: number): Promise<JsonObject> {
+    const response = await this.forceGetQueryClient().rank.backlinks(cid, page, perPage);
     return QuerySearchResponse.toJSON(response);
   }
 
@@ -472,28 +423,13 @@ export class CyberClient {
     return QueryRankResponse.toJSON(response);
   }
 
-  public async isLinkExist(
-    from: string,
-    to: string,
-    agent: string
-  ): Promise<JsonObject> {
-    const response = await this.forceGetQueryClient().rank.isLinkExist(
-      from,
-      to,
-      agent
-    );
+  public async isLinkExist(from: string, to: string, agent: string): Promise<JsonObject> {
+    const response = await this.forceGetQueryClient().rank.isLinkExist(from, to, agent);
     return QueryLinkExistResponse.toJSON(response);
   }
 
-  public async isAnyLinkExist(
-    from: string,
-    to: string,
-    agent: string
-  ): Promise<JsonObject> {
-    const response = await this.forceGetQueryClient().rank.isAnyLinkExist(
-      from,
-      to
-    );
+  public async isAnyLinkExist(from: string, to: string, agent: string): Promise<JsonObject> {
+    const response = await this.forceGetQueryClient().rank.isAnyLinkExist(from, to);
     return QueryLinkExistResponse.toJSON(response);
   }
 
@@ -516,69 +452,54 @@ export class CyberClient {
 
   // Staking module
 
-  public async delegation(
-    delegatorAddress: string,
-    validatorAddress: string
-  ): Promise<JsonObject> {
-    const response = await this.forceGetQueryClient().staking.delegation(
-      delegatorAddress,
-      validatorAddress
-    );
+  public async delegation(delegatorAddress: string, validatorAddress: string): Promise<JsonObject> {
+    const response = await this.forceGetQueryClient().staking.delegation(delegatorAddress, validatorAddress);
     return QueryDelegationResponse.toJSON(response);
   }
 
   public async delegatorDelegations(
     delegatorAddress: string,
-    paginationKey?: Uint8Array
+    paginationKey?: Uint8Array,
   ): Promise<JsonObject> {
-    const response =
-      await this.forceGetQueryClient().staking.delegatorDelegations(
-        delegatorAddress,
-        paginationKey
-      );
+    const response = await this.forceGetQueryClient().staking.delegatorDelegations(
+      delegatorAddress,
+      paginationKey,
+    );
     return QueryDelegatorDelegationsResponse.toJSON(response);
   }
 
   public async delegatorUnbondingDelegations(
     delegatorAddress: string,
-    paginationKey?: Uint8Array
+    paginationKey?: Uint8Array,
   ): Promise<JsonObject> {
-    const response =
-      await this.forceGetQueryClient().staking.delegatorUnbondingDelegations(
-        delegatorAddress,
-        paginationKey
-      );
+    const response = await this.forceGetQueryClient().staking.delegatorUnbondingDelegations(
+      delegatorAddress,
+      paginationKey,
+    );
     return QueryDelegatorUnbondingDelegationsResponse.toJSON(response);
   }
 
-  public async delegatorValidator(
-    delegatorAddress: string,
-    validatorAddress: string
-  ): Promise<JsonObject> {
-    const response =
-      await this.forceGetQueryClient().staking.delegatorValidator(
-        delegatorAddress,
-        validatorAddress
-      );
+  public async delegatorValidator(delegatorAddress: string, validatorAddress: string): Promise<JsonObject> {
+    const response = await this.forceGetQueryClient().staking.delegatorValidator(
+      delegatorAddress,
+      validatorAddress,
+    );
     return QueryDelegatorValidatorResponse.toJSON(response);
   }
 
   public async delegatorValidators(
     delegatorAddress: string,
-    paginationKey?: Uint8Array
+    paginationKey?: Uint8Array,
   ): Promise<JsonObject> {
-    const response =
-      await this.forceGetQueryClient().staking.delegatorValidators(
-        delegatorAddress,
-        paginationKey
-      );
+    const response = await this.forceGetQueryClient().staking.delegatorValidators(
+      delegatorAddress,
+      paginationKey,
+    );
     return QueryDelegatorValidatorsResponse.toJSON(response);
   }
 
   public async historicalInfo(height: number): Promise<JsonObject> {
-    const response = await this.forceGetQueryClient().staking.historicalInfo(
-      height
-    );
+    const response = await this.forceGetQueryClient().staking.historicalInfo(height);
     return QueryHistoricalInfoResponse.toJSON(response);
   }
 
@@ -596,115 +517,81 @@ export class CyberClient {
     delegatorAddress: string,
     sourceValidatorAddress: string,
     destinationValidatorAddress: string,
-    paginationKey?: Uint8Array
+    paginationKey?: Uint8Array,
   ): Promise<JsonObject> {
     const response = await this.forceGetQueryClient().staking.redelegations(
       delegatorAddress,
       sourceValidatorAddress,
       destinationValidatorAddress,
-      paginationKey
+      paginationKey,
     );
     return QueryRedelegationsResponse.toJSON(response);
   }
-  public async unbondingDelegation(
-    delegatorAddress: string,
-    validatorAddress: string
-  ): Promise<JsonObject> {
-    const response =
-      await this.forceGetQueryClient().staking.unbondingDelegation(
-        delegatorAddress,
-        validatorAddress
-      );
+  public async unbondingDelegation(delegatorAddress: string, validatorAddress: string): Promise<JsonObject> {
+    const response = await this.forceGetQueryClient().staking.unbondingDelegation(
+      delegatorAddress,
+      validatorAddress,
+    );
     return QueryUnbondingDelegationResponse.toJSON(response);
   }
   public async validator(validatorAddress: string): Promise<JsonObject> {
-    const response = await this.forceGetQueryClient().staking.validator(
-      validatorAddress
-    );
+    const response = await this.forceGetQueryClient().staking.validator(validatorAddress);
     return QueryValidatorResponse.toJSON(response);
   }
   public async validatorDelegations(
     validatorAddress: string,
-    paginationKey?: Uint8Array
+    paginationKey?: Uint8Array,
   ): Promise<JsonObject> {
-    const response =
-      await this.forceGetQueryClient().staking.validatorDelegations(
-        validatorAddress,
-        paginationKey
-      );
+    const response = await this.forceGetQueryClient().staking.validatorDelegations(
+      validatorAddress,
+      paginationKey,
+    );
     return QueryValidatorDelegationsResponse.toJSON(response);
   }
 
-  public async validators(
-    status: BondStatusString,
-    paginationKey?: Uint8Array
-  ): Promise<JsonObject> {
-    const response = await this.forceGetQueryClient().staking.validators(
-      status,
-      paginationKey
-    );
+  public async validators(status: BondStatusString, paginationKey?: Uint8Array): Promise<JsonObject> {
+    const response = await this.forceGetQueryClient().staking.validators(status, paginationKey);
     return QueryValidatorsResponse.toJSON(response);
   }
 
   public async validatorUnbondingDelegations(
     validatorAddress: string,
-    paginationKey?: Uint8Array
+    paginationKey?: Uint8Array,
   ): Promise<JsonObject> {
-    const response =
-      await this.forceGetQueryClient().staking.validatorUnbondingDelegations(
-        validatorAddress,
-        paginationKey
-      );
+    const response = await this.forceGetQueryClient().staking.validatorUnbondingDelegations(
+      validatorAddress,
+      paginationKey,
+    );
     return QueryValidatorUnbondingDelegationsResponse.toJSON(response);
   }
 
   // Distribution module
 
   public async communityPool(): Promise<JsonObject> {
-    const response =
-      await this.forceGetQueryClient().distribution.communityPool();
+    const response = await this.forceGetQueryClient().distribution.communityPool();
     return QueryCommunityPoolResponse.toJSON(response);
   }
 
-  public async delegationRewards(
-    delegatorAddress: string,
-    validatorAddress: string
-  ): Promise<JsonObject> {
-    const response =
-      await this.forceGetQueryClient().distribution.delegationRewards(
-        delegatorAddress,
-        validatorAddress
-      );
+  public async delegationRewards(delegatorAddress: string, validatorAddress: string): Promise<JsonObject> {
+    const response = await this.forceGetQueryClient().distribution.delegationRewards(
+      delegatorAddress,
+      validatorAddress,
+    );
     return QueryDelegationRewardsResponse.toJSON(response);
   }
 
-  public async delegationTotalRewards(
-    delegatorAddress: string
-  ): Promise<JsonObject> {
-    const response =
-      await this.forceGetQueryClient().distribution.delegationTotalRewards(
-        delegatorAddress
-      );
+  public async delegationTotalRewards(delegatorAddress: string): Promise<JsonObject> {
+    const response = await this.forceGetQueryClient().distribution.delegationTotalRewards(delegatorAddress);
     return QueryDelegationTotalRewardsResponse.toJSON(response);
   }
 
-  public async delegatorValidatorsDistribution(
-    delegatorAddress: string
-  ): Promise<JsonObject> {
-    const response =
-      await this.forceGetQueryClient().distribution.delegatorValidators(
-        delegatorAddress
-      );
+  public async delegatorValidatorsDistribution(delegatorAddress: string): Promise<JsonObject> {
+    const response = await this.forceGetQueryClient().distribution.delegatorValidators(delegatorAddress);
     return QueryDelegatorValidatorsResponseDistribution.toJSON(response);
   }
 
-  public async delegatorWithdrawAddress(
-    delegatorAddress: string
-  ): Promise<JsonObject> {
-    const response =
-      await this.forceGetQueryClient().distribution.delegatorWithdrawAddress(
-        delegatorAddress
-      );
+  public async delegatorWithdrawAddress(delegatorAddress: string): Promise<JsonObject> {
+    const response = await this.forceGetQueryClient().distribution.delegatorWithdrawAddress(delegatorAddress);
     return QueryDelegatorWithdrawAddressResponse.toJSON(response);
   }
 
@@ -713,23 +600,15 @@ export class CyberClient {
     return QueryParamsResponseDistribution.toJSON(response);
   }
 
-  public async validatorCommission(
-    validatorAddress: string
-  ): Promise<JsonObject> {
-    const response =
-      await this.forceGetQueryClient().distribution.validatorCommission(
-        validatorAddress
-      );
+  public async validatorCommission(validatorAddress: string): Promise<JsonObject> {
+    const response = await this.forceGetQueryClient().distribution.validatorCommission(validatorAddress);
     return QueryValidatorCommissionResponse.toJSON(response);
   }
 
-  public async validatorOutstandingRewards(
-    validatorAddress: string
-  ): Promise<JsonObject> {
-    const response =
-      await this.forceGetQueryClient().distribution.validatorOutstandingRewards(
-        validatorAddress
-      );
+  public async validatorOutstandingRewards(validatorAddress: string): Promise<JsonObject> {
+    const response = await this.forceGetQueryClient().distribution.validatorOutstandingRewards(
+      validatorAddress,
+    );
     return QueryValidatorOutstandingRewardsResponse.toJSON(response);
   }
 
@@ -737,56 +616,41 @@ export class CyberClient {
     validatorAddress: string,
     startingHeight: number,
     endingHeight: number,
-    paginationKey?: Uint8Array
+    paginationKey?: Uint8Array,
   ): Promise<JsonObject> {
-    const response =
-      await this.forceGetQueryClient().distribution.validatorSlashes(
-        validatorAddress,
-        startingHeight,
-        endingHeight,
-        paginationKey
-      );
+    const response = await this.forceGetQueryClient().distribution.validatorSlashes(
+      validatorAddress,
+      startingHeight,
+      endingHeight,
+      paginationKey,
+    );
     return QueryValidatorSlashesResponse.toJSON(response);
   }
 
   // Energy module
 
   public async sourceRoutes(source: string): Promise<JsonObject> {
-    const response = await this.forceGetQueryClient().energy.sourceRoutes(
-      source
-    );
+    const response = await this.forceGetQueryClient().energy.sourceRoutes(source);
     return QueryRoutesResponse.toJSON(response);
   }
 
   public async destinationRoutes(destination: string): Promise<JsonObject> {
-    const response = await this.forceGetQueryClient().energy.destinationRoutes(
-      destination
-    );
+    const response = await this.forceGetQueryClient().energy.destinationRoutes(destination);
     return QueryRoutesResponse.toJSON(response);
   }
 
-  public async destinationRoutedEnergy(
-    destination: string
-  ): Promise<JsonObject> {
-    const response =
-      await this.forceGetQueryClient().energy.destinationRoutedEnergy(
-        destination
-      );
+  public async destinationRoutedEnergy(destination: string): Promise<JsonObject> {
+    const response = await this.forceGetQueryClient().energy.destinationRoutedEnergy(destination);
     return QueryRoutedEnergyResponse.toJSON(response);
   }
 
   public async sourceRoutedEnergy(source: string): Promise<JsonObject> {
-    const response = await this.forceGetQueryClient().energy.sourceRoutedEnergy(
-      source
-    );
+    const response = await this.forceGetQueryClient().energy.sourceRoutedEnergy(source);
     return QueryRoutedEnergyResponse.toJSON(response);
   }
 
   public async route(source: string, destination: string): Promise<JsonObject> {
-    const response = await this.forceGetQueryClient().energy.route(
-      source,
-      destination
-    );
+    const response = await this.forceGetQueryClient().energy.route(source, destination);
     return QueryRouteResponse.toJSON(response);
   }
 
@@ -800,10 +664,7 @@ export class CyberClient {
   public async getCodes(): Promise<readonly Code[]> {
     const { codeInfos } = await this.forceGetQueryClient().wasm.listCodeInfo();
     return (codeInfos || []).map((entry: CodeInfoResponse): Code => {
-      assert(
-        entry.creator && entry.codeId && entry.dataHash,
-        "entry incomplete"
-      );
+      assert(entry.creator && entry.codeId && entry.dataHash, "entry incomplete");
       return {
         id: entry.codeId.toNumber(),
         creator: entry.creator,
@@ -818,16 +679,10 @@ export class CyberClient {
     const cached = this.codesCache.get(codeId);
     if (cached) return cached;
 
-    const { codeInfo, data } = await this.forceGetQueryClient().wasm.getCode(
-      codeId
-    );
+    const { codeInfo, data } = await this.forceGetQueryClient().wasm.getCode(codeId);
     assert(
-      codeInfo &&
-        codeInfo.codeId &&
-        codeInfo.creator &&
-        codeInfo.dataHash &&
-        data,
-      "codeInfo missing or incomplete"
+      codeInfo && codeInfo.codeId && codeInfo.creator && codeInfo.dataHash && data,
+      "codeInfo missing or incomplete",
     );
     const codeDetails: CodeDetails = {
       id: codeInfo.codeId.toNumber(),
@@ -843,8 +698,7 @@ export class CyberClient {
 
   public async getContracts(codeId: number): Promise<readonly string[]> {
     // TODO: handle pagination - accept as arg or auto-loop
-    const { contracts } =
-      await this.forceGetQueryClient().wasm.listContractsByCodeId(codeId);
+    const { contracts } = await this.forceGetQueryClient().wasm.listContractsByCodeId(codeId);
     return contracts;
   }
 
@@ -852,15 +706,12 @@ export class CyberClient {
    * Throws an error if no contract was found at the address
    */
   public async getContract(address: string): Promise<Contract> {
-    const { address: retrievedAddress, contractInfo } =
-      await this.forceGetQueryClient().wasm.getContractInfo(address);
-    if (!contractInfo)
-      throw new Error(`No contract found at address "${address}"`);
-    assert(retrievedAddress, "address missing");
-    assert(
-      contractInfo.codeId && contractInfo.creator && contractInfo.label,
-      "contractInfo incomplete"
+    const { address: retrievedAddress, contractInfo } = await this.forceGetQueryClient().wasm.getContractInfo(
+      address,
     );
+    if (!contractInfo) throw new Error(`No contract found at address "${address}"`);
+    assert(retrievedAddress, "address missing");
+    assert(contractInfo.codeId && contractInfo.creator && contractInfo.label, "contractInfo incomplete");
     return {
       address: retrievedAddress,
       codeId: contractInfo.codeId.toNumber(),
@@ -873,21 +724,13 @@ export class CyberClient {
   /**
    * Throws an error if no contract was found at the address
    */
-  public async getContractCodeHistory(
-    address: string
-  ): Promise<readonly ContractCodeHistoryEntry[]> {
-    const result = await this.forceGetQueryClient().wasm.getContractCodeHistory(
-      address
-    );
-    if (!result)
-      throw new Error(`No contract history found for address "${address}"`);
+  public async getContractCodeHistory(address: string): Promise<readonly ContractCodeHistoryEntry[]> {
+    const result = await this.forceGetQueryClient().wasm.getContractCodeHistory(address);
+    if (!result) throw new Error(`No contract history found for address "${address}"`);
     const operations: Record<number, "Init" | "Genesis" | "Migrate"> = {
-      [ContractCodeHistoryOperationType.CONTRACT_CODE_HISTORY_OPERATION_TYPE_INIT]:
-        "Init",
-      [ContractCodeHistoryOperationType.CONTRACT_CODE_HISTORY_OPERATION_TYPE_GENESIS]:
-        "Genesis",
-      [ContractCodeHistoryOperationType.CONTRACT_CODE_HISTORY_OPERATION_TYPE_MIGRATE]:
-        "Migrate",
+      [ContractCodeHistoryOperationType.CONTRACT_CODE_HISTORY_OPERATION_TYPE_INIT]: "Init",
+      [ContractCodeHistoryOperationType.CONTRACT_CODE_HISTORY_OPERATION_TYPE_GENESIS]: "Genesis",
+      [ContractCodeHistoryOperationType.CONTRACT_CODE_HISTORY_OPERATION_TYPE_MIGRATE]: "Migrate",
     };
     return (result.entries || []).map((entry): ContractCodeHistoryEntry => {
       assert(entry.operation && entry.codeId && entry.msg);
@@ -905,17 +748,11 @@ export class CyberClient {
    *
    * Promise is rejected when contract does not exist.
    */
-  public async queryContractRaw(
-    address: string,
-    key: Uint8Array
-  ): Promise<Uint8Array | null> {
+  public async queryContractRaw(address: string, key: Uint8Array): Promise<Uint8Array | null> {
     // just test contract existence
     await this.getContract(address);
 
-    const { data } = await this.forceGetQueryClient().wasm.queryContractRaw(
-      address,
-      key
-    );
+    const { data } = await this.forceGetQueryClient().wasm.queryContractRaw(address, key);
     return data ?? null;
   }
 
@@ -926,15 +763,9 @@ export class CyberClient {
    * Promise is rejected for invalid query format.
    * Promise is rejected for invalid response format.
    */
-  public async queryContractSmart(
-    address: string,
-    queryMsg: Record<string, unknown>
-  ): Promise<JsonObject> {
+  public async queryContractSmart(address: string, queryMsg: Record<string, unknown>): Promise<JsonObject> {
     try {
-      return await this.forceGetQueryClient().wasm.queryContractSmart(
-        address,
-        queryMsg
-      );
+      return await this.forceGetQueryClient().wasm.queryContractSmart(address, queryMsg);
     } catch (error) {
       if (error instanceof Error) {
         if (error.message.startsWith("not found: contract")) {

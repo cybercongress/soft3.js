@@ -23,10 +23,7 @@ export interface Value {
 const baseParams: object = { maxRoutes: 0 };
 
 export const Params = {
-  encode(
-    message: Params,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: Params, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.maxRoutes !== 0) {
       writer.uint32(8).uint32(message.maxRoutes);
     }
@@ -154,8 +151,7 @@ export const Route = {
   toJSON(message: Route): unknown {
     const obj: any = {};
     message.source !== undefined && (obj.source = message.source);
-    message.destination !== undefined &&
-      (obj.destination = message.destination);
+    message.destination !== undefined && (obj.destination = message.destination);
     message.alias !== undefined && (obj.alias = message.alias);
     if (message.value) {
       obj.value = message.value.map((e) => (e ? Coin.toJSON(e) : undefined));
@@ -254,15 +250,7 @@ export const Value = {
   },
 };
 
-type Builtin =
-  | Date
-  | Function
-  | Uint8Array
-  | string
-  | number
-  | boolean
-  | undefined
-  | Long;
+type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined | Long;
 export type DeepPartial<T> = T extends Builtin
   ? T
   : T extends Array<infer U>

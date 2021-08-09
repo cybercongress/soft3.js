@@ -2,10 +2,7 @@
 import Long from "long";
 import _m0 from "protobufjs/minimal";
 import { Params, RankedCid } from "../../../cyber/rank/v1beta1/types";
-import {
-  PageRequest,
-  PageResponse,
-} from "../../../cyber/base/query/v1beta1/pagination";
+import { PageRequest, PageResponse } from "../../../cyber/base/query/v1beta1/pagination";
 
 export const protobufPackage = "cyber.rank.v1beta1";
 
@@ -90,10 +87,7 @@ export interface QueryKarmasResponse_KarmasEntry {
 const baseQueryParamsRequest: object = {};
 
 export const QueryParamsRequest = {
-  encode(
-    _: QueryParamsRequest,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(_: QueryParamsRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     return writer;
   },
 
@@ -131,10 +125,7 @@ export const QueryParamsRequest = {
 const baseQueryParamsResponse: object = {};
 
 export const QueryParamsResponse = {
-  encode(
-    message: QueryParamsResponse,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: QueryParamsResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.params !== undefined) {
       Params.encode(message.params, writer.uint32(10).fork()).ldelim();
     }
@@ -171,8 +162,7 @@ export const QueryParamsResponse = {
 
   toJSON(message: QueryParamsResponse): unknown {
     const obj: any = {};
-    message.params !== undefined &&
-      (obj.params = message.params ? Params.toJSON(message.params) : undefined);
+    message.params !== undefined && (obj.params = message.params ? Params.toJSON(message.params) : undefined);
     return obj;
   },
 
@@ -190,10 +180,7 @@ export const QueryParamsResponse = {
 const baseQueryRankRequest: object = { cid: "" };
 
 export const QueryRankRequest = {
-  encode(
-    message: QueryRankRequest,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: QueryRankRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.cid !== "") {
       writer.uint32(10).string(message.cid);
     }
@@ -248,10 +235,7 @@ export const QueryRankRequest = {
 const baseQueryRankResponse: object = { rank: Long.UZERO };
 
 export const QueryRankResponse = {
-  encode(
-    message: QueryRankResponse,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: QueryRankResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (!message.rank.isZero()) {
       writer.uint32(8).uint64(message.rank);
     }
@@ -288,8 +272,7 @@ export const QueryRankResponse = {
 
   toJSON(message: QueryRankResponse): unknown {
     const obj: any = {};
-    message.rank !== undefined &&
-      (obj.rank = (message.rank || Long.UZERO).toString());
+    message.rank !== undefined && (obj.rank = (message.rank || Long.UZERO).toString());
     return obj;
   },
 
@@ -307,10 +290,7 @@ export const QueryRankResponse = {
 const baseQuerySearchRequest: object = { cid: "" };
 
 export const QuerySearchRequest = {
-  encode(
-    message: QuerySearchRequest,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: QuerySearchRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.cid !== "") {
       writer.uint32(10).string(message.cid);
     }
@@ -360,9 +340,7 @@ export const QuerySearchRequest = {
     const obj: any = {};
     message.cid !== undefined && (obj.cid = message.cid);
     message.pagination !== undefined &&
-      (obj.pagination = message.pagination
-        ? PageRequest.toJSON(message.pagination)
-        : undefined);
+      (obj.pagination = message.pagination ? PageRequest.toJSON(message.pagination) : undefined);
     return obj;
   },
 
@@ -385,18 +363,12 @@ export const QuerySearchRequest = {
 const baseQuerySearchResponse: object = {};
 
 export const QuerySearchResponse = {
-  encode(
-    message: QuerySearchResponse,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: QuerySearchResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     for (const v of message.result) {
       RankedCid.encode(v!, writer.uint32(10).fork()).ldelim();
     }
     if (message.pagination !== undefined) {
-      PageResponse.encode(
-        message.pagination,
-        writer.uint32(18).fork()
-      ).ldelim();
+      PageResponse.encode(message.pagination, writer.uint32(18).fork()).ldelim();
     }
     return writer;
   },
@@ -442,16 +414,12 @@ export const QuerySearchResponse = {
   toJSON(message: QuerySearchResponse): unknown {
     const obj: any = {};
     if (message.result) {
-      obj.result = message.result.map((e) =>
-        e ? RankedCid.toJSON(e) : undefined
-      );
+      obj.result = message.result.map((e) => (e ? RankedCid.toJSON(e) : undefined));
     } else {
       obj.result = [];
     }
     message.pagination !== undefined &&
-      (obj.pagination = message.pagination
-        ? PageResponse.toJSON(message.pagination)
-        : undefined);
+      (obj.pagination = message.pagination ? PageResponse.toJSON(message.pagination) : undefined);
     return obj;
   },
 
@@ -475,10 +443,7 @@ export const QuerySearchResponse = {
 const baseQueryTopRequest: object = {};
 
 export const QueryTopRequest = {
-  encode(
-    _: QueryTopRequest,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(_: QueryTopRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     return writer;
   },
 
@@ -516,10 +481,7 @@ export const QueryTopRequest = {
 const baseQueryIsLinkExistRequest: object = { from: "", to: "", address: "" };
 
 export const QueryIsLinkExistRequest = {
-  encode(
-    message: QueryIsLinkExistRequest,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: QueryIsLinkExistRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.from !== "") {
       writer.uint32(10).string(message.from);
     }
@@ -532,10 +494,7 @@ export const QueryIsLinkExistRequest = {
     return writer;
   },
 
-  decode(
-    input: _m0.Reader | Uint8Array,
-    length?: number
-  ): QueryIsLinkExistRequest {
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryIsLinkExistRequest {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = {
@@ -591,9 +550,7 @@ export const QueryIsLinkExistRequest = {
     return obj;
   },
 
-  fromPartial(
-    object: DeepPartial<QueryIsLinkExistRequest>
-  ): QueryIsLinkExistRequest {
+  fromPartial(object: DeepPartial<QueryIsLinkExistRequest>): QueryIsLinkExistRequest {
     const message = {
       ...baseQueryIsLinkExistRequest,
     } as QueryIsLinkExistRequest;
@@ -619,10 +576,7 @@ export const QueryIsLinkExistRequest = {
 const baseQueryIsAnyLinkExistRequest: object = { from: "", to: "" };
 
 export const QueryIsAnyLinkExistRequest = {
-  encode(
-    message: QueryIsAnyLinkExistRequest,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: QueryIsAnyLinkExistRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.from !== "") {
       writer.uint32(10).string(message.from);
     }
@@ -632,10 +586,7 @@ export const QueryIsAnyLinkExistRequest = {
     return writer;
   },
 
-  decode(
-    input: _m0.Reader | Uint8Array,
-    length?: number
-  ): QueryIsAnyLinkExistRequest {
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryIsAnyLinkExistRequest {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = {
@@ -682,9 +633,7 @@ export const QueryIsAnyLinkExistRequest = {
     return obj;
   },
 
-  fromPartial(
-    object: DeepPartial<QueryIsAnyLinkExistRequest>
-  ): QueryIsAnyLinkExistRequest {
+  fromPartial(object: DeepPartial<QueryIsAnyLinkExistRequest>): QueryIsAnyLinkExistRequest {
     const message = {
       ...baseQueryIsAnyLinkExistRequest,
     } as QueryIsAnyLinkExistRequest;
@@ -705,20 +654,14 @@ export const QueryIsAnyLinkExistRequest = {
 const baseQueryLinkExistResponse: object = { exist: false };
 
 export const QueryLinkExistResponse = {
-  encode(
-    message: QueryLinkExistResponse,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: QueryLinkExistResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.exist === true) {
       writer.uint32(8).bool(message.exist);
     }
     return writer;
   },
 
-  decode(
-    input: _m0.Reader | Uint8Array,
-    length?: number
-  ): QueryLinkExistResponse {
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryLinkExistResponse {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseQueryLinkExistResponse } as QueryLinkExistResponse;
@@ -752,9 +695,7 @@ export const QueryLinkExistResponse = {
     return obj;
   },
 
-  fromPartial(
-    object: DeepPartial<QueryLinkExistResponse>
-  ): QueryLinkExistResponse {
+  fromPartial(object: DeepPartial<QueryLinkExistResponse>): QueryLinkExistResponse {
     const message = { ...baseQueryLinkExistResponse } as QueryLinkExistResponse;
     if (object.exist !== undefined && object.exist !== null) {
       message.exist = object.exist;
@@ -768,10 +709,7 @@ export const QueryLinkExistResponse = {
 const baseQueryEntropyRequest: object = { cid: "" };
 
 export const QueryEntropyRequest = {
-  encode(
-    message: QueryEntropyRequest,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: QueryEntropyRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.cid !== "") {
       writer.uint32(10).string(message.cid);
     }
@@ -826,20 +764,14 @@ export const QueryEntropyRequest = {
 const baseQueryEntropyResponse: object = { entropy: Long.UZERO };
 
 export const QueryEntropyResponse = {
-  encode(
-    message: QueryEntropyResponse,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: QueryEntropyResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (!message.entropy.isZero()) {
       writer.uint32(8).uint64(message.entropy);
     }
     return writer;
   },
 
-  decode(
-    input: _m0.Reader | Uint8Array,
-    length?: number
-  ): QueryEntropyResponse {
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryEntropyResponse {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseQueryEntropyResponse } as QueryEntropyResponse;
@@ -869,8 +801,7 @@ export const QueryEntropyResponse = {
 
   toJSON(message: QueryEntropyResponse): unknown {
     const obj: any = {};
-    message.entropy !== undefined &&
-      (obj.entropy = (message.entropy || Long.UZERO).toString());
+    message.entropy !== undefined && (obj.entropy = (message.entropy || Long.UZERO).toString());
     return obj;
   },
 
@@ -888,20 +819,14 @@ export const QueryEntropyResponse = {
 const baseQueryLuminosityRequest: object = { cid: "" };
 
 export const QueryLuminosityRequest = {
-  encode(
-    message: QueryLuminosityRequest,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: QueryLuminosityRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.cid !== "") {
       writer.uint32(10).string(message.cid);
     }
     return writer;
   },
 
-  decode(
-    input: _m0.Reader | Uint8Array,
-    length?: number
-  ): QueryLuminosityRequest {
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryLuminosityRequest {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseQueryLuminosityRequest } as QueryLuminosityRequest;
@@ -935,9 +860,7 @@ export const QueryLuminosityRequest = {
     return obj;
   },
 
-  fromPartial(
-    object: DeepPartial<QueryLuminosityRequest>
-  ): QueryLuminosityRequest {
+  fromPartial(object: DeepPartial<QueryLuminosityRequest>): QueryLuminosityRequest {
     const message = { ...baseQueryLuminosityRequest } as QueryLuminosityRequest;
     if (object.cid !== undefined && object.cid !== null) {
       message.cid = object.cid;
@@ -951,20 +874,14 @@ export const QueryLuminosityRequest = {
 const baseQueryLuminosityResponse: object = { luminosity: Long.UZERO };
 
 export const QueryLuminosityResponse = {
-  encode(
-    message: QueryLuminosityResponse,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: QueryLuminosityResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (!message.luminosity.isZero()) {
       writer.uint32(8).uint64(message.luminosity);
     }
     return writer;
   },
 
-  decode(
-    input: _m0.Reader | Uint8Array,
-    length?: number
-  ): QueryLuminosityResponse {
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryLuminosityResponse {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = {
@@ -998,14 +915,11 @@ export const QueryLuminosityResponse = {
 
   toJSON(message: QueryLuminosityResponse): unknown {
     const obj: any = {};
-    message.luminosity !== undefined &&
-      (obj.luminosity = (message.luminosity || Long.UZERO).toString());
+    message.luminosity !== undefined && (obj.luminosity = (message.luminosity || Long.UZERO).toString());
     return obj;
   },
 
-  fromPartial(
-    object: DeepPartial<QueryLuminosityResponse>
-  ): QueryLuminosityResponse {
+  fromPartial(object: DeepPartial<QueryLuminosityResponse>): QueryLuminosityResponse {
     const message = {
       ...baseQueryLuminosityResponse,
     } as QueryLuminosityResponse;
@@ -1021,10 +935,7 @@ export const QueryLuminosityResponse = {
 const baseQueryKarmaRequest: object = { address: "" };
 
 export const QueryKarmaRequest = {
-  encode(
-    message: QueryKarmaRequest,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: QueryKarmaRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.address !== "") {
       writer.uint32(10).string(message.address);
     }
@@ -1079,10 +990,7 @@ export const QueryKarmaRequest = {
 const baseQueryKarmaResponse: object = { karma: Long.UZERO };
 
 export const QueryKarmaResponse = {
-  encode(
-    message: QueryKarmaResponse,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: QueryKarmaResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (!message.karma.isZero()) {
       writer.uint32(8).uint64(message.karma);
     }
@@ -1119,8 +1027,7 @@ export const QueryKarmaResponse = {
 
   toJSON(message: QueryKarmaResponse): unknown {
     const obj: any = {};
-    message.karma !== undefined &&
-      (obj.karma = (message.karma || Long.UZERO).toString());
+    message.karma !== undefined && (obj.karma = (message.karma || Long.UZERO).toString());
     return obj;
   },
 
@@ -1138,10 +1045,7 @@ export const QueryKarmaResponse = {
 const baseQueryKarmasRequest: object = {};
 
 export const QueryKarmasRequest = {
-  encode(
-    _: QueryKarmasRequest,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(_: QueryKarmasRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     return writer;
   },
 
@@ -1179,15 +1083,9 @@ export const QueryKarmasRequest = {
 const baseQueryKarmasResponse: object = {};
 
 export const QueryKarmasResponse = {
-  encode(
-    message: QueryKarmasResponse,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: QueryKarmasResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     Object.entries(message.karmas).forEach(([key, value]) => {
-      QueryKarmasResponse_KarmasEntry.encode(
-        { key: key as any, value },
-        writer.uint32(10).fork()
-      ).ldelim();
+      QueryKarmasResponse_KarmasEntry.encode({ key: key as any, value }, writer.uint32(10).fork()).ldelim();
     });
     return writer;
   },
@@ -1201,10 +1099,7 @@ export const QueryKarmasResponse = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          const entry1 = QueryKarmasResponse_KarmasEntry.decode(
-            reader,
-            reader.uint32()
-          );
+          const entry1 = QueryKarmasResponse_KarmasEntry.decode(reader, reader.uint32());
           if (entry1.value !== undefined) {
             message.karmas[entry1.key] = entry1.value;
           }
@@ -1259,10 +1154,7 @@ const baseQueryKarmasResponse_KarmasEntry: object = {
 };
 
 export const QueryKarmasResponse_KarmasEntry = {
-  encode(
-    message: QueryKarmasResponse_KarmasEntry,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: QueryKarmasResponse_KarmasEntry, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.key !== "") {
       writer.uint32(10).string(message.key);
     }
@@ -1272,10 +1164,7 @@ export const QueryKarmasResponse_KarmasEntry = {
     return writer;
   },
 
-  decode(
-    input: _m0.Reader | Uint8Array,
-    length?: number
-  ): QueryKarmasResponse_KarmasEntry {
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryKarmasResponse_KarmasEntry {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = {
@@ -1318,14 +1207,11 @@ export const QueryKarmasResponse_KarmasEntry = {
   toJSON(message: QueryKarmasResponse_KarmasEntry): unknown {
     const obj: any = {};
     message.key !== undefined && (obj.key = message.key);
-    message.value !== undefined &&
-      (obj.value = (message.value || Long.UZERO).toString());
+    message.value !== undefined && (obj.value = (message.value || Long.UZERO).toString());
     return obj;
   },
 
-  fromPartial(
-    object: DeepPartial<QueryKarmasResponse_KarmasEntry>
-  ): QueryKarmasResponse_KarmasEntry {
+  fromPartial(object: DeepPartial<QueryKarmasResponse_KarmasEntry>): QueryKarmasResponse_KarmasEntry {
     const message = {
       ...baseQueryKarmasResponse_KarmasEntry,
     } as QueryKarmasResponse_KarmasEntry;
@@ -1349,12 +1235,8 @@ export interface Query {
   Search(request: QuerySearchRequest): Promise<QuerySearchResponse>;
   Backlinks(request: QuerySearchRequest): Promise<QuerySearchResponse>;
   Top(request: PageRequest): Promise<QuerySearchResponse>;
-  IsLinkExist(
-    request: QueryIsLinkExistRequest
-  ): Promise<QueryLinkExistResponse>;
-  IsAnyLinkExist(
-    request: QueryIsAnyLinkExistRequest
-  ): Promise<QueryLinkExistResponse>;
+  IsLinkExist(request: QueryIsLinkExistRequest): Promise<QueryLinkExistResponse>;
+  IsAnyLinkExist(request: QueryIsAnyLinkExistRequest): Promise<QueryLinkExistResponse>;
   Entropy(request: QueryEntropyRequest): Promise<QueryEntropyResponse>;
   Luminosity(request: QueryLuminosityRequest): Promise<QueryLuminosityResponse>;
   Karma(request: QueryKarmaRequest): Promise<QueryKarmaResponse>;
@@ -1379,148 +1261,76 @@ export class QueryClientImpl implements Query {
   }
   Params(request: QueryParamsRequest): Promise<QueryParamsResponse> {
     const data = QueryParamsRequest.encode(request).finish();
-    const promise = this.rpc.request(
-      "cyber.rank.v1beta1.Query",
-      "Params",
-      data
-    );
-    return promise.then((data) =>
-      QueryParamsResponse.decode(new _m0.Reader(data))
-    );
+    const promise = this.rpc.request("cyber.rank.v1beta1.Query", "Params", data);
+    return promise.then((data) => QueryParamsResponse.decode(new _m0.Reader(data)));
   }
 
   Rank(request: QueryRankRequest): Promise<QueryRankResponse> {
     const data = QueryRankRequest.encode(request).finish();
     const promise = this.rpc.request("cyber.rank.v1beta1.Query", "Rank", data);
-    return promise.then((data) =>
-      QueryRankResponse.decode(new _m0.Reader(data))
-    );
+    return promise.then((data) => QueryRankResponse.decode(new _m0.Reader(data)));
   }
 
   Search(request: QuerySearchRequest): Promise<QuerySearchResponse> {
     const data = QuerySearchRequest.encode(request).finish();
-    const promise = this.rpc.request(
-      "cyber.rank.v1beta1.Query",
-      "Search",
-      data
-    );
-    return promise.then((data) =>
-      QuerySearchResponse.decode(new _m0.Reader(data))
-    );
+    const promise = this.rpc.request("cyber.rank.v1beta1.Query", "Search", data);
+    return promise.then((data) => QuerySearchResponse.decode(new _m0.Reader(data)));
   }
 
   Backlinks(request: QuerySearchRequest): Promise<QuerySearchResponse> {
     const data = QuerySearchRequest.encode(request).finish();
-    const promise = this.rpc.request(
-      "cyber.rank.v1beta1.Query",
-      "Backlinks",
-      data
-    );
-    return promise.then((data) =>
-      QuerySearchResponse.decode(new _m0.Reader(data))
-    );
+    const promise = this.rpc.request("cyber.rank.v1beta1.Query", "Backlinks", data);
+    return promise.then((data) => QuerySearchResponse.decode(new _m0.Reader(data)));
   }
 
   Top(request: PageRequest): Promise<QuerySearchResponse> {
     const data = PageRequest.encode(request).finish();
     const promise = this.rpc.request("cyber.rank.v1beta1.Query", "Top", data);
-    return promise.then((data) =>
-      QuerySearchResponse.decode(new _m0.Reader(data))
-    );
+    return promise.then((data) => QuerySearchResponse.decode(new _m0.Reader(data)));
   }
 
-  IsLinkExist(
-    request: QueryIsLinkExistRequest
-  ): Promise<QueryLinkExistResponse> {
+  IsLinkExist(request: QueryIsLinkExistRequest): Promise<QueryLinkExistResponse> {
     const data = QueryIsLinkExistRequest.encode(request).finish();
-    const promise = this.rpc.request(
-      "cyber.rank.v1beta1.Query",
-      "IsLinkExist",
-      data
-    );
-    return promise.then((data) =>
-      QueryLinkExistResponse.decode(new _m0.Reader(data))
-    );
+    const promise = this.rpc.request("cyber.rank.v1beta1.Query", "IsLinkExist", data);
+    return promise.then((data) => QueryLinkExistResponse.decode(new _m0.Reader(data)));
   }
 
-  IsAnyLinkExist(
-    request: QueryIsAnyLinkExistRequest
-  ): Promise<QueryLinkExistResponse> {
+  IsAnyLinkExist(request: QueryIsAnyLinkExistRequest): Promise<QueryLinkExistResponse> {
     const data = QueryIsAnyLinkExistRequest.encode(request).finish();
-    const promise = this.rpc.request(
-      "cyber.rank.v1beta1.Query",
-      "IsAnyLinkExist",
-      data
-    );
-    return promise.then((data) =>
-      QueryLinkExistResponse.decode(new _m0.Reader(data))
-    );
+    const promise = this.rpc.request("cyber.rank.v1beta1.Query", "IsAnyLinkExist", data);
+    return promise.then((data) => QueryLinkExistResponse.decode(new _m0.Reader(data)));
   }
 
   Entropy(request: QueryEntropyRequest): Promise<QueryEntropyResponse> {
     const data = QueryEntropyRequest.encode(request).finish();
-    const promise = this.rpc.request(
-      "cyber.rank.v1beta1.Query",
-      "Entropy",
-      data
-    );
-    return promise.then((data) =>
-      QueryEntropyResponse.decode(new _m0.Reader(data))
-    );
+    const promise = this.rpc.request("cyber.rank.v1beta1.Query", "Entropy", data);
+    return promise.then((data) => QueryEntropyResponse.decode(new _m0.Reader(data)));
   }
 
-  Luminosity(
-    request: QueryLuminosityRequest
-  ): Promise<QueryLuminosityResponse> {
+  Luminosity(request: QueryLuminosityRequest): Promise<QueryLuminosityResponse> {
     const data = QueryLuminosityRequest.encode(request).finish();
-    const promise = this.rpc.request(
-      "cyber.rank.v1beta1.Query",
-      "Luminosity",
-      data
-    );
-    return promise.then((data) =>
-      QueryLuminosityResponse.decode(new _m0.Reader(data))
-    );
+    const promise = this.rpc.request("cyber.rank.v1beta1.Query", "Luminosity", data);
+    return promise.then((data) => QueryLuminosityResponse.decode(new _m0.Reader(data)));
   }
 
   Karma(request: QueryKarmaRequest): Promise<QueryKarmaResponse> {
     const data = QueryKarmaRequest.encode(request).finish();
     const promise = this.rpc.request("cyber.rank.v1beta1.Query", "Karma", data);
-    return promise.then((data) =>
-      QueryKarmaResponse.decode(new _m0.Reader(data))
-    );
+    return promise.then((data) => QueryKarmaResponse.decode(new _m0.Reader(data)));
   }
 
   Karmas(request: QueryKarmasRequest): Promise<QueryKarmasResponse> {
     const data = QueryKarmasRequest.encode(request).finish();
-    const promise = this.rpc.request(
-      "cyber.rank.v1beta1.Query",
-      "Karmas",
-      data
-    );
-    return promise.then((data) =>
-      QueryKarmasResponse.decode(new _m0.Reader(data))
-    );
+    const promise = this.rpc.request("cyber.rank.v1beta1.Query", "Karmas", data);
+    return promise.then((data) => QueryKarmasResponse.decode(new _m0.Reader(data)));
   }
 }
 
 interface Rpc {
-  request(
-    service: string,
-    method: string,
-    data: Uint8Array
-  ): Promise<Uint8Array>;
+  request(service: string, method: string, data: Uint8Array): Promise<Uint8Array>;
 }
 
-type Builtin =
-  | Date
-  | Function
-  | Uint8Array
-  | string
-  | number
-  | boolean
-  | undefined
-  | Long;
+type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined | Long;
 export type DeepPartial<T> = T extends Builtin
   ? T
   : T extends Array<infer U>

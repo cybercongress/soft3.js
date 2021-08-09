@@ -16,10 +16,7 @@ export interface PageResponse {
 const basePageRequest: object = { page: 0, perPage: 0 };
 
 export const PageRequest = {
-  encode(
-    message: PageRequest,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: PageRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.page !== 0) {
       writer.uint32(8).uint32(message.page);
     }
@@ -91,10 +88,7 @@ export const PageRequest = {
 const basePageResponse: object = { total: 0 };
 
 export const PageResponse = {
-  encode(
-    message: PageResponse,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: PageResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.total !== 0) {
       writer.uint32(8).uint32(message.total);
     }
@@ -146,15 +140,7 @@ export const PageResponse = {
   },
 };
 
-type Builtin =
-  | Date
-  | Function
-  | Uint8Array
-  | string
-  | number
-  | boolean
-  | undefined
-  | Long;
+type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined | Long;
 export type DeepPartial<T> = T extends Builtin
   ? T
   : T extends Array<infer U>

@@ -25,10 +25,7 @@ export interface QueryInvestmintAmountResponse {
 const baseQueryParamsRequest: object = {};
 
 export const QueryParamsRequest = {
-  encode(
-    _: QueryParamsRequest,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(_: QueryParamsRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     return writer;
   },
 
@@ -66,10 +63,7 @@ export const QueryParamsRequest = {
 const baseQueryParamsResponse: object = {};
 
 export const QueryParamsResponse = {
-  encode(
-    message: QueryParamsResponse,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: QueryParamsResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.params !== undefined) {
       Params.encode(message.params, writer.uint32(10).fork()).ldelim();
     }
@@ -106,8 +100,7 @@ export const QueryParamsResponse = {
 
   toJSON(message: QueryParamsResponse): unknown {
     const obj: any = {};
-    message.params !== undefined &&
-      (obj.params = message.params ? Params.toJSON(message.params) : undefined);
+    message.params !== undefined && (obj.params = message.params ? Params.toJSON(message.params) : undefined);
     return obj;
   },
 
@@ -128,10 +121,7 @@ const baseQueryInvestmintAmountRequest: object = {
 };
 
 export const QueryInvestmintAmountRequest = {
-  encode(
-    message: QueryInvestmintAmountRequest,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: QueryInvestmintAmountRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.amount !== undefined) {
       Coin.encode(message.amount, writer.uint32(10).fork()).ldelim();
     }
@@ -144,10 +134,7 @@ export const QueryInvestmintAmountRequest = {
     return writer;
   },
 
-  decode(
-    input: _m0.Reader | Uint8Array,
-    length?: number
-  ): QueryInvestmintAmountRequest {
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryInvestmintAmountRequest {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = {
@@ -197,17 +184,13 @@ export const QueryInvestmintAmountRequest = {
 
   toJSON(message: QueryInvestmintAmountRequest): unknown {
     const obj: any = {};
-    message.amount !== undefined &&
-      (obj.amount = message.amount ? Coin.toJSON(message.amount) : undefined);
+    message.amount !== undefined && (obj.amount = message.amount ? Coin.toJSON(message.amount) : undefined);
     message.resource !== undefined && (obj.resource = message.resource);
-    message.length !== undefined &&
-      (obj.length = (message.length || Long.UZERO).toString());
+    message.length !== undefined && (obj.length = (message.length || Long.UZERO).toString());
     return obj;
   },
 
-  fromPartial(
-    object: DeepPartial<QueryInvestmintAmountRequest>
-  ): QueryInvestmintAmountRequest {
+  fromPartial(object: DeepPartial<QueryInvestmintAmountRequest>): QueryInvestmintAmountRequest {
     const message = {
       ...baseQueryInvestmintAmountRequest,
     } as QueryInvestmintAmountRequest;
@@ -233,20 +216,14 @@ export const QueryInvestmintAmountRequest = {
 const baseQueryInvestmintAmountResponse: object = {};
 
 export const QueryInvestmintAmountResponse = {
-  encode(
-    message: QueryInvestmintAmountResponse,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: QueryInvestmintAmountResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.amount !== undefined) {
       Coin.encode(message.amount, writer.uint32(10).fork()).ldelim();
     }
     return writer;
   },
 
-  decode(
-    input: _m0.Reader | Uint8Array,
-    length?: number
-  ): QueryInvestmintAmountResponse {
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryInvestmintAmountResponse {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = {
@@ -280,14 +257,11 @@ export const QueryInvestmintAmountResponse = {
 
   toJSON(message: QueryInvestmintAmountResponse): unknown {
     const obj: any = {};
-    message.amount !== undefined &&
-      (obj.amount = message.amount ? Coin.toJSON(message.amount) : undefined);
+    message.amount !== undefined && (obj.amount = message.amount ? Coin.toJSON(message.amount) : undefined);
     return obj;
   },
 
-  fromPartial(
-    object: DeepPartial<QueryInvestmintAmountResponse>
-  ): QueryInvestmintAmountResponse {
+  fromPartial(object: DeepPartial<QueryInvestmintAmountResponse>): QueryInvestmintAmountResponse {
     const message = {
       ...baseQueryInvestmintAmountResponse,
     } as QueryInvestmintAmountResponse;
@@ -302,9 +276,7 @@ export const QueryInvestmintAmountResponse = {
 
 export interface Query {
   Params(request: QueryParamsRequest): Promise<QueryParamsResponse>;
-  InvestmintAmount(
-    request: QueryInvestmintAmountRequest
-  ): Promise<QueryInvestmintAmountResponse>;
+  InvestmintAmount(request: QueryInvestmintAmountRequest): Promise<QueryInvestmintAmountResponse>;
 }
 
 export class QueryClientImpl implements Query {
@@ -316,48 +288,22 @@ export class QueryClientImpl implements Query {
   }
   Params(request: QueryParamsRequest): Promise<QueryParamsResponse> {
     const data = QueryParamsRequest.encode(request).finish();
-    const promise = this.rpc.request(
-      "cyber.resources.v1beta1.Query",
-      "Params",
-      data
-    );
-    return promise.then((data) =>
-      QueryParamsResponse.decode(new _m0.Reader(data))
-    );
+    const promise = this.rpc.request("cyber.resources.v1beta1.Query", "Params", data);
+    return promise.then((data) => QueryParamsResponse.decode(new _m0.Reader(data)));
   }
 
-  InvestmintAmount(
-    request: QueryInvestmintAmountRequest
-  ): Promise<QueryInvestmintAmountResponse> {
+  InvestmintAmount(request: QueryInvestmintAmountRequest): Promise<QueryInvestmintAmountResponse> {
     const data = QueryInvestmintAmountRequest.encode(request).finish();
-    const promise = this.rpc.request(
-      "cyber.resources.v1beta1.Query",
-      "InvestmintAmount",
-      data
-    );
-    return promise.then((data) =>
-      QueryInvestmintAmountResponse.decode(new _m0.Reader(data))
-    );
+    const promise = this.rpc.request("cyber.resources.v1beta1.Query", "InvestmintAmount", data);
+    return promise.then((data) => QueryInvestmintAmountResponse.decode(new _m0.Reader(data)));
   }
 }
 
 interface Rpc {
-  request(
-    service: string,
-    method: string,
-    data: Uint8Array
-  ): Promise<Uint8Array>;
+  request(service: string, method: string, data: Uint8Array): Promise<Uint8Array>;
 }
 
-type Builtin =
-  | Date
-  | Function
-  | Uint8Array
-  | string
-  | number
-  | boolean
-  | undefined
-  | Long;
+type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined | Long;
 export type DeepPartial<T> = T extends Builtin
   ? T
   : T extends Array<infer U>

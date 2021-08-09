@@ -14,10 +14,7 @@ export interface Params {
 const baseParams: object = { maxSlots: 0, baseVestingTime: Long.UZERO };
 
 export const Params = {
-  encode(
-    message: Params,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: Params, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.maxSlots !== 0) {
       writer.uint32(8).uint32(message.maxSlots);
     }
@@ -25,10 +22,7 @@ export const Params = {
       writer.uint32(16).uint64(message.baseVestingTime);
     }
     if (message.baseVestingResource !== undefined) {
-      Coin.encode(
-        message.baseVestingResource,
-        writer.uint32(26).fork()
-      ).ldelim();
+      Coin.encode(message.baseVestingResource, writer.uint32(26).fork()).ldelim();
     }
     return writer;
   },
@@ -64,18 +58,12 @@ export const Params = {
     } else {
       message.maxSlots = 0;
     }
-    if (
-      object.baseVestingTime !== undefined &&
-      object.baseVestingTime !== null
-    ) {
+    if (object.baseVestingTime !== undefined && object.baseVestingTime !== null) {
       message.baseVestingTime = Long.fromString(object.baseVestingTime);
     } else {
       message.baseVestingTime = Long.UZERO;
     }
-    if (
-      object.baseVestingResource !== undefined &&
-      object.baseVestingResource !== null
-    ) {
+    if (object.baseVestingResource !== undefined && object.baseVestingResource !== null) {
       message.baseVestingResource = Coin.fromJSON(object.baseVestingResource);
     } else {
       message.baseVestingResource = undefined;
@@ -87,9 +75,7 @@ export const Params = {
     const obj: any = {};
     message.maxSlots !== undefined && (obj.maxSlots = message.maxSlots);
     message.baseVestingTime !== undefined &&
-      (obj.baseVestingTime = (
-        message.baseVestingTime || Long.UZERO
-      ).toString());
+      (obj.baseVestingTime = (message.baseVestingTime || Long.UZERO).toString());
     message.baseVestingResource !== undefined &&
       (obj.baseVestingResource = message.baseVestingResource
         ? Coin.toJSON(message.baseVestingResource)
@@ -104,21 +90,13 @@ export const Params = {
     } else {
       message.maxSlots = 0;
     }
-    if (
-      object.baseVestingTime !== undefined &&
-      object.baseVestingTime !== null
-    ) {
+    if (object.baseVestingTime !== undefined && object.baseVestingTime !== null) {
       message.baseVestingTime = object.baseVestingTime as Long;
     } else {
       message.baseVestingTime = Long.UZERO;
     }
-    if (
-      object.baseVestingResource !== undefined &&
-      object.baseVestingResource !== null
-    ) {
-      message.baseVestingResource = Coin.fromPartial(
-        object.baseVestingResource
-      );
+    if (object.baseVestingResource !== undefined && object.baseVestingResource !== null) {
+      message.baseVestingResource = Coin.fromPartial(object.baseVestingResource);
     } else {
       message.baseVestingResource = undefined;
     }
@@ -126,15 +104,7 @@ export const Params = {
   },
 };
 
-type Builtin =
-  | Date
-  | Function
-  | Uint8Array
-  | string
-  | number
-  | boolean
-  | undefined
-  | Long;
+type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined | Long;
 export type DeepPartial<T> = T extends Builtin
   ? T
   : T extends Array<infer U>
