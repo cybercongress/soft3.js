@@ -9,6 +9,10 @@ generated/
 proto/
 types/
 
-# Type definitions are never written by hand in this repo. Even when checked-in
-# as a source file, it is auto-generated stuff following other projects' rules.
-*.d.ts
+proto/
+scripts/proto
+tmp/
+
+src/codec/cosmos_proto
+src/codec/gogoproto
+src/codec/google
