@@ -14,7 +14,11 @@
     "build": "tsc",
     "get-proto": "./get-proto.sh",
     "define-proto": "./define-proto.sh",
-    "postdefine-proto": "prettier --write \"src/codec/**/*.ts\""
+    "postdefine-proto": "prettier --write \"src/codec/**/*.ts\"",
+    "lint": "eslint --max-warnings 0 \"./**/*.ts\" \"./*.js\"",
+    "lint-fix": "eslint --fix --max-warnings 0 \"./**/*.ts\" \"./*.js\"",
+    "format": "prettier --write --loglevel warn \"./src/**/*.ts\"",
+    "format-text": "prettier --write \"./*.md\""
   },
   "dependencies": {
     "@cosmjs/amino": "0.25.4",
@@ -32,7 +36,18 @@
     "protobufjs": "~6.10.2"
   },
   "devDependencies": {
+    "@types/eslint-plugin-prettier": "^3.1.0",
     "@types/pako": "^1.0.1",
-    "ts-proto": "^1.81.1"
+    "@typescript-eslint/eslint-plugin": "^4.29.1",
+    "@typescript-eslint/parser": "^4.29.1",
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-import-resolver-node": "^0.3.5",
+    "eslint-plugin-import": "^2.24.0",
+    "eslint-plugin-prettier": "^3.4.0",
+    "eslint-plugin-simple-import-sort": "^7.0.0",
+    "prettier": "^2.3.2",
+    "ts-proto": "^1.81.1",
+    "typescript": "^4.3.5"
   }
 }
