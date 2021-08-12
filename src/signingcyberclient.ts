@@ -1,8 +1,34 @@
+import { encodeSecp256k1Pubkey, makeSignDoc as makeSignDocAmino } from "@cosmjs/amino";
+import { isValidBuilder } from "@cosmjs/cosmwasm-launchpad";
 import {
-  encodeSecp256k1Pubkey,
-  makeSignDoc as makeSignDocAmino,
-} from "@cosmjs/amino";
+  ChangeAdminResult,
+  CosmWasmFeeTable, // part of SigningCosmWasmClientOptions
+  cosmWasmTypes,
+  defaultGasLimits as defaultCosmWasmGasLimits,
+  ExecuteResult,
+  InstantiateOptions,
+  InstantiateResult,
+  MigrateResult,
+  MsgClearAdminEncodeObject,
+  MsgExecuteContractEncodeObject,
+  MsgInstantiateContractEncodeObject,
+  MsgMigrateContractEncodeObject,
+  MsgStoreCodeEncodeObject,
+  MsgUpdateAdminEncodeObject,
+  UploadMeta,
+  UploadResult,
+} from "@cosmjs/cosmwasm-stargate";
+import {
+  MsgClearAdmin,
+  MsgExecuteContract,
+  MsgInstantiateContract,
+  MsgMigrateContract,
+  MsgStoreCode,
+  MsgUpdateAdmin,
+} from "@cosmjs/cosmwasm-stargate/build/codec/cosmwasm/wasm/v1beta1/tx";
 import { sha256 } from "@cosmjs/crypto";
+import { fromBase64, toHex, toUtf8 } from "@cosmjs/encoding";
+import { Int53, Uint53 } from "@cosmjs/math";
 import {
   EncodeObject,
   encodePubkey,
@@ -24,16 +50,11 @@ import {
   logs,
   MsgDelegateEncodeObject,
   MsgSendEncodeObject,
-  MsgUndelegateEncodeObject,
-  MsgWithdrawDelegatorRewardEncodeObject,
   MsgTransferEncodeObject,
+  MsgUndelegateEncodeObject,
   SignerData,
   StdFee,
 } from "@cosmjs/stargate";
-import { fromBase64, toHex, toUtf8 } from "@cosmjs/encoding";
-import { Int53, Uint53 } from "@cosmjs/math";
-import { MsgCyberlink } from "./codec/cyber/graph/v1beta1/tx";
-import { MsgInvestmint } from "./codec/cyber/resources/v1beta1/tx";
 import {
   MsgCreateRoute,
   MsgDeleteRoute,
@@ -80,20 +101,22 @@ import Long from "long";
 import { MsgTransfer } from "cosmjs-types/ibc/applications/transfer/v1/tx";
 import { Height } from "cosmjs-types/ibc/core/client/v1/client";
 import {
+  MsgCreateRoute,
+  MsgDeleteRoute,
+  MsgEditRoute,
+  MsgEditRouteAlias,
+} from "./codec/cyber/energy/v1beta1/tx";
+import { MsgCyberlink } from "./codec/cyber/graph/v1beta1/tx";
+import { MsgInvestmint } from "./codec/cyber/resources/v1beta1/tx";
+import { CyberClient } from "./cyberclient";
+import {
   MsgBeginRedelegateEncodeObject,
-  isMsgBeginRedelegateEncodeObject,
   MsgCreateRouteEncodeObject,
-  isMsgCreateRouteEncodeObject,
-  MsgDeleteRouteEncodeObject,
-  isMsgDeleteRouteEncodeObject,
-  MsgEditRouteEncodeObject,
-  isMsgEditRouteEncodeObject,
-  MsgEditRouteAliasEncodeObject,
-  isMsgEditRouteAliasEncodeObject,
   MsgCyberlinkEncodeObject,
-  isMsgCyberlinkEncodeObject,
+  MsgDeleteRouteEncodeObject,
+  MsgEditRouteAliasEncodeObject,
+  MsgEditRouteEncodeObject,
   MsgInvestmintEncodeObject,
-  isMsgInvestmintEncodeObject,
 } from "./encodeobjects";
 
 export interface CyberlinkResult {
@@ -167,7 +190,7 @@ export class SigningCyberClient extends CyberClient {
   public static async connectWithSigner(
     endpoint: string,
     signer: OfflineSigner,
-    options: SigningCyberClientOptions = {}
+    options: SigningCyberClientOptions = {},
   ): Promise<SigningCyberClient> {
     const tmClient = await Tendermint34Client.connect(endpoint);
     return new SigningCyberClient(tmClient, signer, options);
@@ -184,7 +207,7 @@ export class SigningCyberClient extends CyberClient {
    */
   public static async offline(
     signer: OfflineSigner,
-    options: SigningCyberClientOptions = {}
+    options: SigningCyberClientOptions = {},
   ): Promise<SigningCyberClient> {
     return new SigningCyberClient(undefined, signer, options);
   }
@@ -192,7 +215,7 @@ export class SigningCyberClient extends CyberClient {
   protected constructor(
     tmClient: Tendermint34Client | undefined,
     signer: OfflineSigner,
-    options: SigningCyberClientOptions
+    options: SigningCyberClientOptions,
   ) {
     super(tmClient);
     const {
