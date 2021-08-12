@@ -1,12 +1,14 @@
 import { EncodeObject } from "@cosmjs/proto-signing";
+import { MsgBeginRedelegate } from "cosmjs-types/cosmos/staking/v1beta1/tx";
 
-import { MsgBeginRedelegate } from "@cosmjs/stargate/build/codec/cosmos/staking/v1beta1/tx";
 import {
-    MsgBeginRedelegate
-} from "cosmjs-types/cosmos/staking/v1beta1/tx";
-import { MsgCreateRoute, MsgDeleteRoute, MsgEditRoute, MsgEditRouteAlias } from "./codec/cyber/energy/v1beta1/tx"
-import { MsgCyberlink } from "./codec/cyber/graph/v1beta1/tx"
-import { MsgInvestmint } from "./codec/cyber/resources/v1beta1/tx"
+  MsgCreateRoute,
+  MsgDeleteRoute,
+  MsgEditRoute,
+  MsgEditRouteAlias,
+} from "./codec/cyber/energy/v1beta1/tx";
+import { MsgCyberlink } from "./codec/cyber/graph/v1beta1/tx";
+import { MsgInvestmint } from "./codec/cyber/resources/v1beta1/tx";
 
 export interface MsgBeginRedelegateEncodeObject extends EncodeObject {
   readonly typeUrl: "/cosmos.staking.v1beta1.MsgBeginRedelegate";

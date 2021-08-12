@@ -1,17 +1,10 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { createPagination, createProtobufRpcClient, QueryClient } from "@cosmjs/stargate";
-import Long from "long";
+import { createProtobufRpcClient, QueryClient } from "@cosmjs/stargate";
 
 import {
-  Query,
-  QueryClientImpl,
-  QueryAccountRequest,
   QueryAccountResponse,
-  QueryLoadRequest,
+  QueryClientImpl,
   QueryLoadResponse,
-  QueryParamsRequest,
-  QueryParamsResponse,
-  QueryPriceRequest,
   QueryPriceResponse,
 } from "../codec/cyber/bandwidth/v1beta1/query";
 
@@ -32,30 +25,18 @@ export function setupBandwidthExtension(base: QueryClient): BandwidthExtension {
   return {
     bandwidth: {
       load: async () => {
-        try {
-          const response = await queryService.Load({});
-          return response;
-        } catch (error) {
-          throw error;
-        }
+        const response = await queryService.Load({});
+        return response;
       },
       price: async () => {
-        try {
-          const response = await queryService.Price({});
-          return response;
-        } catch (error) {
-          throw error;
-        }
+        const response = await queryService.Price({});
+        return response;
       },
       account: async (agent: string) => {
-        try {
-          const response = await queryService.Account({
-            address: agent,
-          });
-          return response;
-        } catch (error) {
-          throw error;
-        }
+        const response = await queryService.Account({
+          address: agent,
+        });
+        return response;
       },
     },
   };

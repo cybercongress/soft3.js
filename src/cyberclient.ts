@@ -1,12 +1,7 @@
+import { Code, CodeDetails, Contract, ContractCodeHistoryEntry, JsonObject } from "@cosmjs/cosmwasm-stargate";
+import { setupWasmExtension, WasmExtension } from "@cosmjs/cosmwasm-stargate/build/queries";
 import { fromAscii, toHex } from "@cosmjs/encoding";
 import { Uint53 } from "@cosmjs/math";
-import {
-  Code,
-  CodeDetails,
-  Contract,
-  ContractCodeHistoryEntry,
-  JsonObject
-} from "@cosmjs/cosmwasm-stargate";
 import {
   Account,
   accountFromAny,
@@ -31,37 +26,18 @@ import {
   StakingExtension,
 } from "@cosmjs/stargate";
 import { Tendermint34Client, toRfc3339WithNanoseconds } from "@cosmjs/tendermint-rpc";
-import { assert, sleep } from "@cosmjs/utils";
-import { CodeInfoResponse } from "cosmjs-types/cosmwasm/wasm/v1/query";
-import { ContractCodeHistoryOperationType } from "cosmjs-types/cosmwasm/wasm/v1/types";
-import { setupWasmExtension, WasmExtension } from "@cosmjs/cosmwasm-stargate/build/queries";
-import { QueryGraphStatsResponse } from "./codec/cyber/graph/v1beta1/query";
+import { assert } from "@cosmjs/utils";
 import {
-  Query,
-  QueryClientImpl,
-  QuerySearchRequest,
-  QuerySearchResponse,
-  QueryRankRequest,
-  QueryRankResponse,
-  QueryTopRequest,
-  QueryIsAnyLinkExistRequest,
-  QueryIsLinkExistRequest,
-  QueryLinkExistResponse,
-} from "./codec/cyber/rank/v1beta1/query";
-import {
-  QueryLoadResponse,
-  QueryAccountResponse,
-  QueryPriceResponse,
-} from "./codec/cyber/bandwidth/v1beta1/query";
-import {
-  QuerySourceRequest,
-  QueryDestinationRequest,
-  QueryRouteResponse,
-  QueryRoutesRequest,
-  QueryRouteRequest,
-  QueryRoutedEnergyResponse,
-  QueryRoutesResponse,
-} from "./codec/cyber/energy/v1beta1/query";
+  QueryCommunityPoolResponse,
+  QueryDelegationRewardsResponse,
+  QueryDelegationTotalRewardsResponse,
+  QueryDelegatorValidatorsResponse as QueryDelegatorValidatorsResponseDistribution,
+  QueryDelegatorWithdrawAddressResponse,
+  QueryParamsResponse as QueryParamsResponseDistribution,
+  QueryValidatorCommissionResponse,
+  QueryValidatorOutstandingRewardsResponse,
+  QueryValidatorSlashesResponse,
+} from "cosmjs-types/cosmos/distribution/v1beta1/query";
 import {
   QueryDelegationResponse,
   QueryDelegatorDelegationsResponse,
@@ -78,18 +54,10 @@ import {
   QueryValidatorsResponse,
   QueryValidatorUnbondingDelegationsResponse,
 } from "cosmjs-types/cosmos/staking/v1beta1/query";
-import {
-  QueryCommunityPoolResponse,
-  QueryDelegationRewardsResponse,
-  QueryDelegationTotalRewardsResponse,
-  QueryDelegatorValidatorsResponse as QueryDelegatorValidatorsResponseDistribution,
-  QueryDelegatorWithdrawAddressResponse,
-  QueryParamsResponse as QueryParamsResponseDistribution,
-  QueryValidatorCommissionResponse,
-  QueryValidatorOutstandingRewardsResponse,
-  QueryValidatorSlashesResponse,
-} from "cosmjs-types/cosmos/distribution/v1beta1/query";
 import { BondStatus } from "cosmjs-types/cosmos/staking/v1beta1/staking";
+import { CodeInfoResponse } from "cosmjs-types/cosmwasm/wasm/v1/query";
+import { ContractCodeHistoryOperationType } from "cosmjs-types/cosmwasm/wasm/v1/types";
+
 import {
   QueryAccountResponse,
   QueryLoadResponse,
@@ -127,9 +95,8 @@ export {
 
 export interface PrivateCyberClient {
   readonly tmClient: Tendermint34Client | undefined;
-  readonly queryClient: 
-    (
-        QueryClient &
+  readonly queryClient:
+    | (QueryClient &
         AuthExtension &
         BankExtension &
         DistributionExtension &
@@ -138,8 +105,8 @@ export interface PrivateCyberClient {
         RankExtension &
         BandwidthExtension &
         EnergyExtension &
-        WasmExtension
-    ) | undefined;
+        WasmExtension)
+    | undefined;
 }
 
 export declare type BondStatusString = Exclude<keyof typeof BondStatus, "BOND_STATUS_UNSPECIFIED">;
@@ -147,8 +114,7 @@ export declare type BondStatusString = Exclude<keyof typeof BondStatus, "BOND_ST
 export class CyberClient {
   private readonly tmClient: Tendermint34Client | undefined;
   private readonly queryClient:
-    (
-        QueryClient &
+    | (QueryClient &
         AuthExtension &
         BankExtension &
         DistributionExtension &
@@ -157,8 +123,8 @@ export class CyberClient {
         RankExtension &
         BandwidthExtension &
         EnergyExtension &
-        WasmExtension
-    ) | undefined;
+        WasmExtension)
+    | undefined;
   private readonly codesCache = new Map<number, CodeDetails>();
   private chainId: string | undefined;
 
@@ -199,8 +165,7 @@ export class CyberClient {
   }
 
   protected getQueryClient():
-    (
-        QueryClient &
+    | (QueryClient &
         AuthExtension &
         BankExtension &
         DistributionExtension &
@@ -209,13 +174,12 @@ export class CyberClient {
         RankExtension &
         BandwidthExtension &
         EnergyExtension &
-        WasmExtension
-    ) | undefined {
+        WasmExtension)
+    | undefined {
     return this.queryClient;
   }
 
-  protected forceGetQueryClient(): 
-    QueryClient &
+  protected forceGetQueryClient(): QueryClient &
     AuthExtension &
     BankExtension &
     DistributionExtension &
@@ -363,8 +327,8 @@ export class CyberClient {
   // Make sure it is kept in sync!
   public async broadcastTx(
     tx: Uint8Array,
-    timeoutMs = 60_000,
-    pollIntervalMs = 3_000,
+    // timeoutMs = 60_000,
+    // pollIntervalMs = 3_000,
   ): Promise<BroadcastTxResponse> {
     // let timedOut = false;
     // const txPollTimeout = setTimeout(() => {
@@ -393,7 +357,7 @@ export class CyberClient {
     // };
 
     const broadcasted = await this.forceGetTmClient().broadcastTxSync({ tx });
-    console.log(`broadcasted`, broadcasted);
+    // console.log(`broadcasted`, broadcasted);
     // if (broadcasted.code) {
     //   throw new Error(
     //     `Broadcasting transaction failed with code ${broadcasted.code} (codespace: ${broadcasted.codeSpace}). Log: ${broadcasted.log}`
@@ -452,7 +416,7 @@ export class CyberClient {
     return QueryLinkExistResponse.toJSON(response);
   }
 
-  public async isAnyLinkExist(from: string, to: string, agent: string): Promise<JsonObject> {
+  public async isAnyLinkExist(from: string, to: string): Promise<JsonObject> {
     const response = await this.forceGetQueryClient().rank.isAnyLinkExist(from, to);
     return QueryLinkExistResponse.toJSON(response);
   }

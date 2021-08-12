@@ -1,20 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { createPagination, createProtobufRpcClient, QueryClient } from "@cosmjs/stargate";
-import Long from "long";
+import { createProtobufRpcClient, QueryClient } from "@cosmjs/stargate";
 
-import {
-  Query,
-  QueryClientImpl,
-  QueryGraphStatsRequest,
-  QueryGraphStatsResponse,
-  QueryCidsAmountRequest,
-  QueryCidsAmountResponse,
-  QueryLinksAmountRequest,
-  QueryLinksAmountResponse,
-  // QueryLinksParams,
-  QueryLinksRequest,
-  QueryLinksResponse,
-} from "../codec/cyber/graph/v1beta1/query";
+import { QueryClientImpl, QueryGraphStatsResponse } from "../codec/cyber/graph/v1beta1/query";
 
 export interface GraphExtension {
   readonly graph: {
@@ -31,7 +18,8 @@ export function setupGraphExtension(base: QueryClient): GraphExtension {
   return {
     graph: {
       graphStats: async () => {
-        return await queryService.GraphStats({});
+        const response = await queryService.GraphStats({});
+        return response;
       },
     },
   };

@@ -1,20 +1,13 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { createProtobufRpcClient, QueryClient } from "@cosmjs/stargate";
-import Long from "long";
 
+import { PageRequest } from "../codec/cyber/base/query/v1beta1/pagination";
 import {
-  Query,
   QueryClientImpl,
-  QuerySearchRequest,
-  QuerySearchResponse,
-  QueryRankRequest,
-  QueryRankResponse,
-  QueryTopRequest,
-  QueryIsAnyLinkExistRequest,
-  QueryIsLinkExistRequest,
   QueryLinkExistResponse,
+  QueryRankResponse,
+  QuerySearchResponse,
 } from "../codec/cyber/rank/v1beta1/query";
-import { PageRequest, PageResponse } from "../codec/cyber/base/query/v1beta1/pagination";
 
 export function createPagination(page?: number, perPage?: number): PageRequest {
   return page
@@ -47,59 +40,39 @@ export function setupRankExtension(base: QueryClient): RankExtension {
   return {
     rank: {
       search: async (cid: string, page?: number, perPage?: number) => {
-        try {
-          const response = await queryService.Search({
-            cid: cid,
-            pagination: createPagination(page, perPage),
-          });
-          return response;
-        } catch (error) {
-          throw error;
-        }
+        const response = await queryService.Search({
+          cid: cid,
+          pagination: createPagination(page, perPage),
+        });
+        return response;
       },
       backlinks: async (cid: string, page?: number, perPage?: number) => {
-        try {
-          const response = await queryService.Backlinks({
-            cid: cid,
-            pagination: createPagination(page, perPage),
-          });
-          return response;
-        } catch (error) {
-          throw error;
-        }
+        const response = await queryService.Backlinks({
+          cid: cid,
+          pagination: createPagination(page, perPage),
+        });
+        return response;
       },
       rank: async (cid: string) => {
-        try {
-          const response = await queryService.Rank({
-            cid: cid,
-          });
-          return response;
-        } catch (error) {
-          throw error;
-        }
+        const response = await queryService.Rank({
+          cid: cid,
+        });
+        return response;
       },
       isLinkExist: async (from: string, to: string, agent: string) => {
-        try {
-          const response = await queryService.IsLinkExist({
-            from: from,
-            to: to,
-            address: agent,
-          });
-          return response;
-        } catch (error) {
-          throw error;
-        }
+        const response = await queryService.IsLinkExist({
+          from: from,
+          to: to,
+          address: agent,
+        });
+        return response;
       },
       isAnyLinkExist: async (from: string, to: string) => {
-        try {
-          const response = await queryService.IsAnyLinkExist({
-            from: from,
-            to: to,
-          });
-          return response;
-        } catch (error) {
-          throw error;
-        }
+        const response = await queryService.IsAnyLinkExist({
+          from: from,
+          to: to,
+        });
+        return response;
       },
     },
   };

@@ -1,16 +1,10 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { createPagination, createProtobufRpcClient, QueryClient } from "@cosmjs/stargate";
-import Long from "long";
+import { createProtobufRpcClient, QueryClient } from "@cosmjs/stargate";
 
 import {
-  Query,
   QueryClientImpl,
-  QuerySourceRequest,
-  QueryDestinationRequest,
   QueryRoutedEnergyResponse,
-  QueryRouteRequest,
   QueryRouteResponse,
-  QueryRoutesRequest,
   QueryRoutesResponse,
 } from "../codec/cyber/energy/v1beta1/query";
 
@@ -34,55 +28,31 @@ export function setupEnergyExtension(base: QueryClient): EnergyExtension {
   return {
     energy: {
       sourceRoutes: async (source: string) => {
-        try {
-          const response = await queryService.SourceRoutes({ source: source });
-          return response;
-        } catch (error) {
-          throw error;
-        }
+        const response = await queryService.SourceRoutes({ source: source });
+        return response;
       },
       destinationRoutes: async (destination: string) => {
-        try {
-          const response = await queryService.DestinationRoutes({ destination: destination });
-          return response;
-        } catch (error) {
-          throw error;
-        }
+        const response = await queryService.DestinationRoutes({ destination: destination });
+        return response;
       },
       destinationRoutedEnergy: async (destination: string) => {
-        try {
-          const response = await queryService.DestinationRoutedEnergy({ destination: destination });
-          return response;
-        } catch (error) {
-          throw error;
-        }
+        const response = await queryService.DestinationRoutedEnergy({ destination: destination });
+        return response;
       },
       sourceRoutedEnergy: async (source: string) => {
-        try {
-          const response = await queryService.SourceRoutedEnergy({ source: source });
-          return response;
-        } catch (error) {
-          throw error;
-        }
+        const response = await queryService.SourceRoutedEnergy({ source: source });
+        return response;
       },
       route: async (source: string, destination: string) => {
-        try {
-          const response = await queryService.Route({
-            source: source,
-            destination: destination,
-          });
-          return response;
-        } catch (error) {
-          throw error;
-        }
+        const response = await queryService.Route({
+          source: source,
+          destination: destination,
+        });
+        return response;
       },
       routes: async () => {
-        try {
-          const response = await queryService.Routes({});
-          return response;
-        } catch (error) {
-          throw error;
-        }
+        const response = await queryService.Routes({});
+        return response;
       },
     },
   };

@@ -15,8 +15,8 @@
     "get-proto": "./get-proto.sh",
     "define-proto": "./define-proto.sh",
     "postdefine-proto": "prettier --write \"src/codec/**/*.ts\"",
-    "lint": "eslint --max-warnings 0 \"./**/*.ts\" \"./*.js\"",
-    "lint-fix": "eslint --fix --max-warnings 0 \"./**/*.ts\" \"./*.js\"",
+    "lint": "eslint --max-warnings 0 \"./**/*.ts\"",
+    "lint-fix": "eslint --fix --max-warnings 0 \"./**/*.ts\"",
     "format": "prettier --write --loglevel warn \"./src/**/*.ts\"",
     "format-text": "prettier --write \"./*.md\""
   },

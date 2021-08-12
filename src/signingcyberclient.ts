@@ -1,10 +1,7 @@
 import { encodeSecp256k1Pubkey, makeSignDoc as makeSignDocAmino } from "@cosmjs/amino";
-import { isValidBuilder } from "@cosmjs/cosmwasm-launchpad";
 import {
   ChangeAdminResult,
-  CosmWasmFeeTable, // part of SigningCosmWasmClientOptions
   cosmWasmTypes,
-  defaultGasLimits as defaultCosmWasmGasLimits,
   ExecuteResult,
   InstantiateOptions,
   InstantiateResult,
@@ -15,17 +12,8 @@ import {
   MsgMigrateContractEncodeObject,
   MsgStoreCodeEncodeObject,
   MsgUpdateAdminEncodeObject,
-  UploadMeta,
   UploadResult,
 } from "@cosmjs/cosmwasm-stargate";
-import {
-  MsgClearAdmin,
-  MsgExecuteContract,
-  MsgInstantiateContract,
-  MsgMigrateContract,
-  MsgStoreCode,
-  MsgUpdateAdmin,
-} from "@cosmjs/cosmwasm-stargate/build/codec/cosmwasm/wasm/v1beta1/tx";
 import { sha256 } from "@cosmjs/crypto";
 import { fromBase64, toHex, toUtf8 } from "@cosmjs/encoding";
 import { Int53, Uint53 } from "@cosmjs/math";
@@ -45,7 +33,6 @@ import {
   BroadcastTxResponse,
   Coin,
   defaultRegistryTypes,
-  GasPrice,
   isBroadcastTxFailure,
   logs,
   MsgDelegateEncodeObject,
@@ -55,38 +42,12 @@ import {
   SignerData,
   StdFee,
 } from "@cosmjs/stargate";
-import {
-  MsgCreateRoute,
-  MsgDeleteRoute,
-  MsgEditRoute,
-  MsgEditRouteAlias,
-} from "./codec/cyber/energy/v1beta1/tx";
-import { CyberClient } from "./cyberclient";
-import { MsgWithdrawDelegatorReward } from "cosmjs-types/cosmos/distribution/v1beta1/tx";
-import {
-  MsgBeginRedelegate,
-  MsgDelegate,
-  MsgUndelegate,
-} from "cosmjs-types/cosmos/staking/v1beta1/tx";
-import { SignMode } from "cosmjs-types/cosmos/tx/signing/v1beta1/signing";
-import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 import { Tendermint34Client } from "@cosmjs/tendermint-rpc";
 import { assert } from "@cosmjs/utils";
-import {
-  MsgClearAdminEncodeObject,
-  MsgExecuteContractEncodeObject,
-  MsgInstantiateContractEncodeObject,
-  MsgMigrateContractEncodeObject,
-  MsgStoreCodeEncodeObject,
-  MsgUpdateAdminEncodeObject,
-  ChangeAdminResult,
-  ExecuteResult,
-  InstantiateOptions,
-  InstantiateResult,
-  MigrateResult,
-  UploadResult,
-  cosmWasmTypes,
-} from "@cosmjs/cosmwasm-stargate";
+import { MsgWithdrawDelegatorReward } from "cosmjs-types/cosmos/distribution/v1beta1/tx";
+import { MsgBeginRedelegate, MsgDelegate, MsgUndelegate } from "cosmjs-types/cosmos/staking/v1beta1/tx";
+import { SignMode } from "cosmjs-types/cosmos/tx/signing/v1beta1/signing";
+import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 import {
   MsgClearAdmin,
   MsgExecuteContract,
@@ -95,11 +56,11 @@ import {
   MsgStoreCode,
   MsgUpdateAdmin,
 } from "cosmjs-types/cosmwasm/wasm/v1/tx";
-import { isValidBuilder } from "@cosmjs/cosmwasm-launchpad";
-import pako from "pako";
-import Long from "long";
 import { MsgTransfer } from "cosmjs-types/ibc/applications/transfer/v1/tx";
 import { Height } from "cosmjs-types/ibc/core/client/v1/client";
+import Long from "long";
+import pako from "pako";
+
 import {
   MsgCreateRoute,
   MsgDeleteRoute,
@@ -238,7 +199,7 @@ export class SigningCyberClient extends CyberClient {
     from: string,
     to: string,
     fee: StdFee,
-    memo = ""
+    memo = "",
   ): Promise<BroadcastTxResponse> {
     const cyberlinkMsg: MsgCyberlinkEncodeObject = {
       typeUrl: "/cyber.graph.v1beta1.MsgCyberlink",
@@ -253,12 +214,7 @@ export class SigningCyberClient extends CyberClient {
       },
     };
 
-    return this.signAndBroadcast(
-      senderAddress,
-      [cyberlinkMsg],
-      fee,
-      memo
-    );
+    return this.signAndBroadcast(senderAddress, [cyberlinkMsg], fee, memo);
   }
 
   public async investmint(
@@ -267,7 +223,7 @@ export class SigningCyberClient extends CyberClient {
     resource: string,
     length: number,
     fee: StdFee,
-    memo = ""
+    memo = "",
   ): Promise<BroadcastTxResponse> {
     const investmintMsg: MsgInvestmintEncodeObject = {
       typeUrl: "/cyber.resources.v1beta1.MsgInvestmint",
@@ -278,12 +234,7 @@ export class SigningCyberClient extends CyberClient {
         length: Long.fromString(new Uint53(length).toString()),
       }),
     };
-    return this.signAndBroadcast(
-      senderAddress,
-      [investmintMsg],
-      fee,
-      memo
-    );
+    return this.signAndBroadcast(senderAddress, [investmintMsg], fee, memo);
   }
 
   public async createEnergyRoute(
@@ -291,7 +242,7 @@ export class SigningCyberClient extends CyberClient {
     destination: string,
     alias: string,
     fee: StdFee,
-    memo = ""
+    memo = "",
   ): Promise<BroadcastTxResponse> {
     const createEnergyRouteMsg: MsgCreateRouteEncodeObject = {
       typeUrl: "/cyber.energy.v1beta1.MsgCreateRoute",
@@ -301,12 +252,7 @@ export class SigningCyberClient extends CyberClient {
         alias: alias,
       }),
     };
-    return this.signAndBroadcast(
-      senderAddress,
-      [createEnergyRouteMsg],
-      fee,
-      memo
-    );
+    return this.signAndBroadcast(senderAddress, [createEnergyRouteMsg], fee, memo);
   }
 
   public async editEnergyRoute(
@@ -314,7 +260,7 @@ export class SigningCyberClient extends CyberClient {
     destination: string,
     value: Coin,
     fee: StdFee,
-    memo = ""
+    memo = "",
   ): Promise<BroadcastTxResponse> {
     const editEnergyRouteMsg: MsgEditRouteEncodeObject = {
       typeUrl: "/cyber.energy.v1beta1.MsgEditRoute",
@@ -324,19 +270,14 @@ export class SigningCyberClient extends CyberClient {
         value: value,
       }),
     };
-    return this.signAndBroadcast(
-      senderAddress,
-      [editEnergyRouteMsg],
-      fee,
-      memo
-    );
+    return this.signAndBroadcast(senderAddress, [editEnergyRouteMsg], fee, memo);
   }
 
   public async deleteEnergyRoute(
     senderAddress: string,
     destination: string,
     fee: StdFee,
-    memo = ""
+    memo = "",
   ): Promise<BroadcastTxResponse> {
     const deleteEnergyRouteMsg: MsgDeleteRouteEncodeObject = {
       typeUrl: "/cyber.energy.v1beta1.MsgDeleteRoute",
@@ -345,12 +286,7 @@ export class SigningCyberClient extends CyberClient {
         destination: destination,
       }),
     };
-    return this.signAndBroadcast(
-      senderAddress,
-      [deleteEnergyRouteMsg],
-      fee,
-      memo
-    );
+    return this.signAndBroadcast(senderAddress, [deleteEnergyRouteMsg], fee, memo);
   }
 
   public async editEnergyRouteAlias(
@@ -358,7 +294,7 @@ export class SigningCyberClient extends CyberClient {
     destination: string,
     alias: string,
     fee: StdFee,
-    memo = ""
+    memo = "",
   ): Promise<BroadcastTxResponse> {
     const editEnergyRouteAliasMsg: MsgEditRouteAliasEncodeObject = {
       typeUrl: "/cyber.energy.v1beta1.MsgEditRouteAlias",
@@ -369,12 +305,7 @@ export class SigningCyberClient extends CyberClient {
       }),
     };
 
-    return this.signAndBroadcast(
-      senderAddress,
-      [editEnergyRouteAliasMsg],
-      fee,
-      memo
-    );
+    return this.signAndBroadcast(senderAddress, [editEnergyRouteAliasMsg], fee, memo);
   }
 
   /** Uploads code and returns a receipt, including the code ID */
@@ -549,7 +480,7 @@ export class SigningCyberClient extends CyberClient {
     recipientAddress: string,
     amount: readonly Coin[],
     fee: StdFee,
-    memo = ""
+    memo = "",
   ): Promise<BroadcastTxResponse> {
     const sendMsg: MsgSendEncodeObject = {
       typeUrl: "/cosmos.bank.v1beta1.MsgSend",
@@ -560,12 +491,7 @@ export class SigningCyberClient extends CyberClient {
       },
     };
     // console.log(`this.fees.send,`, fee);
-    return this.signAndBroadcast(
-      senderAddress,
-      [sendMsg],
-      fee,
-      memo
-    );
+    return this.signAndBroadcast(senderAddress, [sendMsg], fee, memo);
   }
 
   public async delegateTokens(
@@ -573,7 +499,7 @@ export class SigningCyberClient extends CyberClient {
     validatorAddress: string,
     amount: Coin,
     fee: StdFee,
-    memo = ""
+    memo = "",
   ): Promise<BroadcastTxResponse> {
     const delegateMsg: MsgDelegateEncodeObject = {
       typeUrl: "/cosmos.staking.v1beta1.MsgDelegate",
@@ -583,12 +509,7 @@ export class SigningCyberClient extends CyberClient {
         amount,
       }),
     };
-    return this.signAndBroadcast(
-      delegatorAddress,
-      [delegateMsg],
-      fee,
-      memo
-    );
+    return this.signAndBroadcast(delegatorAddress, [delegateMsg], fee, memo);
   }
 
   public async redelegateTokens(
@@ -597,7 +518,7 @@ export class SigningCyberClient extends CyberClient {
     validatorDstAddress: string,
     amount: Coin,
     fee: StdFee,
-    memo = ""
+    memo = "",
   ): Promise<BroadcastTxResponse> {
     const redelegateMsg: MsgBeginRedelegateEncodeObject = {
       typeUrl: "/cosmos.staking.v1beta1.MsgBeginRedelegate",
@@ -608,12 +529,7 @@ export class SigningCyberClient extends CyberClient {
         amount,
       }),
     };
-    return this.signAndBroadcast(
-      delegatorAddress,
-      [redelegateMsg],
-      fee,
-      memo
-    );
+    return this.signAndBroadcast(delegatorAddress, [redelegateMsg], fee, memo);
   }
 
   public async undelegateTokens(
@@ -621,7 +537,7 @@ export class SigningCyberClient extends CyberClient {
     validatorAddress: string,
     amount: Coin,
     fee: StdFee,
-    memo = ""
+    memo = "",
   ): Promise<BroadcastTxResponse> {
     const undelegateMsg: MsgUndelegateEncodeObject = {
       typeUrl: "/cosmos.staking.v1beta1.MsgUndelegate",
@@ -631,12 +547,7 @@ export class SigningCyberClient extends CyberClient {
         amount,
       }),
     };
-    return this.signAndBroadcast(
-      delegatorAddress,
-      [undelegateMsg],
-      fee,
-      memo
-    );
+    return this.signAndBroadcast(delegatorAddress, [undelegateMsg], fee, memo);
   }
 
   public async withdrawRewards(
@@ -656,7 +567,7 @@ export class SigningCyberClient extends CyberClient {
     delegatorAddress: string,
     validatorAddresses: string[],
     fee: StdFee,
-    memo = ""
+    memo = "",
   ): Promise<BroadcastTxResponse> {
     const msgs = validatorAddresses.map((validatorAddress) => {
       return {
@@ -668,12 +579,7 @@ export class SigningCyberClient extends CyberClient {
       };
     });
 
-    return this.signAndBroadcast(
-      delegatorAddress,
-      msgs,
-      fee,
-      memo
-    );
+    return this.signAndBroadcast(delegatorAddress, msgs, fee, memo);
   }
 
   public async sendIbcTokens(
@@ -686,7 +592,7 @@ export class SigningCyberClient extends CyberClient {
     /** timeout in seconds */
     timeoutTimestamp: number | undefined,
     fee: StdFee,
-    memo = ""
+    memo = "",
   ): Promise<BroadcastTxResponse> {
     const timeoutTimestampNanoseconds = timeoutTimestamp
       ? Long.fromNumber(timeoutTimestamp).multiply(1_000_000_000)
@@ -703,12 +609,7 @@ export class SigningCyberClient extends CyberClient {
         timeoutTimestamp: timeoutTimestampNanoseconds,
       }),
     };
-    return this.signAndBroadcast(
-      senderAddress,
-      [transferMsg],
-      fee,
-      memo
-    );
+    return this.signAndBroadcast(senderAddress, [transferMsg], fee, memo);
   }
 
   /**
@@ -727,7 +628,8 @@ export class SigningCyberClient extends CyberClient {
   ): Promise<BroadcastTxResponse> {
     const txRaw = await this.sign(signerAddress, messages, fee, memo);
     const txBytes = TxRaw.encode(txRaw).finish();
-    return this.broadcastTx(txBytes, this.broadcastTimeoutMs, this.broadcastPollIntervalMs);
+    // return this.broadcastTx(txBytes, this.broadcastTimeoutMs, this.broadcastPollIntervalMs);
+    return this.broadcastTx(txBytes);
   }
 
   public async sign(
