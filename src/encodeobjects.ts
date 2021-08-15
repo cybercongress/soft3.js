@@ -9,6 +9,12 @@ import {
 } from "./codec/cyber/energy/v1beta1/tx";
 import { MsgCyberlink } from "./codec/cyber/graph/v1beta1/tx";
 import { MsgInvestmint } from "./codec/cyber/resources/v1beta1/tx";
+import {
+  MsgCreatePool,
+  MsgDepositWithinBatch,
+  MsgSwapWithinBatch,
+  MsgWithdrawWithinBatch,
+} from "./codec/tendermint/liquidity/v1beta1/tx";
 
 export interface MsgBeginRedelegateEncodeObject extends EncodeObject {
   readonly typeUrl: "/cosmos.staking.v1beta1.MsgBeginRedelegate";
@@ -89,4 +95,59 @@ export function isMsgInvestmintEncodeObject(
   encodeObject: EncodeObject,
 ): encodeObject is MsgInvestmintEncodeObject {
   return (encodeObject as MsgInvestmintEncodeObject).typeUrl === "/cyber.resources.v1beta1.MsgInvestmint";
+}
+
+export interface MsgSwapWithinBatchEncodeObject extends EncodeObject {
+  readonly typeUrl: "/tendermint.liquidity.v1beta1.MsgSwapWithinBatch";
+  readonly value: Partial<MsgSwapWithinBatch>;
+}
+
+export function isMsgSwapWithinBatchEncodeObject(
+  encodeObject: EncodeObject,
+): encodeObject is MsgSwapWithinBatchEncodeObject {
+  return (
+    (encodeObject as MsgSwapWithinBatchEncodeObject).typeUrl ===
+    "/tendermint.liquidity.v1beta1.MsgSwapWithinBatch"
+  );
+}
+
+export interface MsgDepositWithinBatchEncodeObject extends EncodeObject {
+  readonly typeUrl: "/tendermint.liquidity.v1beta1.MsgDepositWithinBatch";
+  readonly value: Partial<MsgDepositWithinBatch>;
+}
+
+export function isMsgDepositWithinBatchEncodeObject(
+  encodeObject: EncodeObject,
+): encodeObject is MsgDepositWithinBatchEncodeObject {
+  return (
+    (encodeObject as MsgDepositWithinBatchEncodeObject).typeUrl ===
+    "/tendermint.liquidity.v1beta1.MsgDepositWithinBatch"
+  );
+}
+
+export interface MsgWithdrawWithinBatchEncodeObject extends EncodeObject {
+  readonly typeUrl: "/tendermint.liquidity.v1beta1.MsgWithdrawWithinBatch";
+  readonly value: Partial<MsgWithdrawWithinBatch>;
+}
+
+export function isMsgWithdrawWithinBatchEncodeObject(
+  encodeObject: EncodeObject,
+): encodeObject is MsgWithdrawWithinBatchEncodeObject {
+  return (
+    (encodeObject as MsgWithdrawWithinBatchEncodeObject).typeUrl ===
+    "/tendermint.liquidity.v1beta1.MsgWithdrawWithinBatch"
+  );
+}
+
+export interface MsgCreatePoolEncodeObject extends EncodeObject {
+  readonly typeUrl: "/tendermint.liquidity.v1beta1.MsgCreatePool";
+  readonly value: Partial<MsgCreatePool>;
+}
+
+export function isMsgCreatePoolEncodeObject(
+  encodeObject: EncodeObject,
+): encodeObject is MsgCreatePoolEncodeObject {
+  return (
+    (encodeObject as MsgCreatePoolEncodeObject).typeUrl === "/tendermint.liquidity.v1beta1.MsgCreatePool"
+  );
 }

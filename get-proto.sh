@@ -12,3 +12,7 @@ mkdir -p "$CYBER_DIR"
 wget -qO "$ZIP_FILE" "https://github.com/cybercongress/go-cyber/archive/$CYBER_REF.zip"
 unzip "$ZIP_FILE" "*.proto" -d "$CYBER_DIR"
 rm "$ZIP_FILE"
+
+wget -qO "$ZIP_FILE" "https://github.com/tendermint/liquidity/archive/master.zip"
+unzip "$ZIP_FILE" "*.proto" -d "$CYBER_DIR"
+rm "$ZIP_FILE"

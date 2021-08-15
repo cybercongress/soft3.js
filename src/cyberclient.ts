@@ -45,7 +45,7 @@ import {
   QueryDelegatorValidatorResponse,
   QueryDelegatorValidatorsResponse,
   QueryHistoricalInfoResponse,
-  QueryParamsResponse,
+  QueryParamsResponse as QueryParamsResponseStaking,
   QueryPoolResponse,
   QueryRedelegationsResponse,
   QueryUnbondingDelegationResponse,
@@ -75,13 +75,20 @@ import {
   QuerySearchResponse,
 } from "./codec/cyber/rank/v1beta1/query";
 import {
+  QueryLiquidityPoolResponse,
+  QueryLiquidityPoolsResponse,
+  QueryParamsResponse as QueryParamsResponseLiquidity,
+} from "./codec/tendermint/liquidity/v1beta1/query";
+import {
   BandwidthExtension,
   EnergyExtension,
   GraphExtension,
+  LiquidityExtension,
   RankExtension,
   setupBandwidthExtension,
   setupEnergyExtension,
   setupGraphExtension,
+  setupLiquidityExtension,
   setupRankExtension,
 } from "./queries/index";
 
@@ -105,7 +112,8 @@ export interface PrivateCyberClient {
         RankExtension &
         BandwidthExtension &
         EnergyExtension &
-        WasmExtension)
+        WasmExtension &
+        LiquidityExtension)
     | undefined;
 }
 
@@ -123,7 +131,8 @@ export class CyberClient {
         RankExtension &
         BandwidthExtension &
         EnergyExtension &
-        WasmExtension)
+        WasmExtension &
+        LiquidityExtension)
     | undefined;
   private readonly codesCache = new Map<number, CodeDetails>();
   private chainId: string | undefined;
@@ -147,6 +156,7 @@ export class CyberClient {
         setupBandwidthExtension,
         setupEnergyExtension,
         setupWasmExtension,
+        setupLiquidityExtension,
       );
     }
   }
@@ -174,7 +184,8 @@ export class CyberClient {
         RankExtension &
         BandwidthExtension &
         EnergyExtension &
-        WasmExtension)
+        WasmExtension &
+        LiquidityExtension)
     | undefined {
     return this.queryClient;
   }
@@ -188,7 +199,8 @@ export class CyberClient {
     RankExtension &
     BandwidthExtension &
     EnergyExtension &
-    WasmExtension {
+    WasmExtension &
+    LiquidityExtension {
     if (!this.queryClient) {
       throw new Error("Query client not available. You cannot use online functionality in offline mode.");
     }
@@ -493,7 +505,7 @@ export class CyberClient {
 
   public async stakingParams(): Promise<JsonObject> {
     const response = await this.forceGetQueryClient().staking.params();
-    return QueryParamsResponse.toJSON(response);
+    return QueryParamsResponseStaking.toJSON(response);
   }
 
   public async stakingPool(): Promise<JsonObject> {
@@ -645,6 +657,23 @@ export class CyberClient {
   public async routes(): Promise<JsonObject> {
     const response = await this.forceGetQueryClient().energy.routes();
     return QueryRoutesResponse.toJSON(response);
+  }
+
+  // Liquidity module
+
+  public async params(): Promise<JsonObject> {
+    const response = await this.forceGetQueryClient().liquidity.params();
+    return QueryParamsResponseLiquidity.toJSON(response);
+  }
+
+  public async pool(id: number): Promise<JsonObject> {
+    const response = await this.forceGetQueryClient().liquidity.pool(id);
+    return QueryLiquidityPoolResponse.toJSON(response);
+  }
+
+  public async pools(): Promise<JsonObject> {
+    const response = await this.forceGetQueryClient().liquidity.pools();
+    return QueryLiquidityPoolsResponse.toJSON(response);
   }
 
   // Wasm module

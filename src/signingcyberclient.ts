@@ -39,6 +39,7 @@ import {
   MsgSendEncodeObject,
   MsgTransferEncodeObject,
   MsgUndelegateEncodeObject,
+  MsgWithdrawDelegatorRewardEncodeObject,
   SignerData,
   StdFee,
 } from "@cosmjs/stargate";
@@ -69,15 +70,25 @@ import {
 } from "./codec/cyber/energy/v1beta1/tx";
 import { MsgCyberlink } from "./codec/cyber/graph/v1beta1/tx";
 import { MsgInvestmint } from "./codec/cyber/resources/v1beta1/tx";
+import {
+  MsgCreatePool,
+  MsgDepositWithinBatch,
+  MsgSwapWithinBatch,
+  MsgWithdrawWithinBatch,
+} from "./codec/tendermint/liquidity/v1beta1/tx";
 import { CyberClient } from "./cyberclient";
 import {
   MsgBeginRedelegateEncodeObject,
+  MsgCreatePoolEncodeObject,
   MsgCreateRouteEncodeObject,
   MsgCyberlinkEncodeObject,
   MsgDeleteRouteEncodeObject,
+  MsgDepositWithinBatchEncodeObject,
   MsgEditRouteAliasEncodeObject,
   MsgEditRouteEncodeObject,
   MsgInvestmintEncodeObject,
+  MsgSwapWithinBatchEncodeObject,
+  MsgWithdrawWithinBatchEncodeObject,
 } from "./encodeobjects";
 
 export interface CyberlinkResult {
@@ -129,6 +140,10 @@ function createDefaultRegistry(): Registry {
     ["/cyber.energy.v1beta1.MsgEditRoute", MsgEditRoute],
     ["/cyber.energy.v1beta1.MsgEditRouteAlias", MsgEditRouteAlias],
     ["/cyber.energy.v1beta1.MsgDeleteRoute", MsgDeleteRoute],
+    ["/tendermint.liquidity.v1beta1.MsgSwapWithinBatch", MsgSwapWithinBatch],
+    ["/tendermint.liquidity.v1beta1.MsgDepositWithinBatch", MsgDepositWithinBatch],
+    ["/tendermint.liquidity.v1beta1.MsgWithdrawWithinBatch", MsgWithdrawWithinBatch],
+    ["/tendermint.liquidity.v1beta1.MsgCreatePool", MsgCreatePool],
   ]);
 }
 
@@ -572,10 +587,10 @@ export class SigningCyberClient extends CyberClient {
     const msgs = validatorAddresses.map((validatorAddress) => {
       return {
         typeUrl: "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward",
-        value: {
+        value: MsgWithdrawDelegatorReward.fromPartial({
           delegatorAddress: delegatorAddress,
           validatorAddress: validatorAddress,
-        },
+        }),
       };
     });
 
@@ -610,6 +625,90 @@ export class SigningCyberClient extends CyberClient {
       }),
     };
     return this.signAndBroadcast(senderAddress, [transferMsg], fee, memo);
+  }
+
+  public async swapWithinBatch(
+    swapRequesterAddress: string,
+    poolId: number,
+    swapTypeId: number,
+    offerCoin: Coin,
+    demandCoinDenom: string,
+    offerCoinFee: Coin,
+    orderPrice: string,
+    fee: StdFee,
+    memo = "",
+  ): Promise<BroadcastTxResponse> {
+    const swapWithinBatchMsg: MsgSwapWithinBatchEncodeObject = {
+      typeUrl: "/tendermint.liquidity.v1beta1.MsgSwapWithinBatch",
+      value: MsgSwapWithinBatch.fromPartial({
+        swapRequesterAddress: swapRequesterAddress,
+        poolId: Long.fromString(new Uint53(poolId).toString()),
+        swapTypeId: swapTypeId,
+        offerCoin: offerCoin,
+        demandCoinDenom: demandCoinDenom,
+        offerCoinFee: offerCoinFee,
+        orderPrice: orderPrice,
+      }),
+    };
+    // console.log(swapWithinBatchMsg);
+    return this.signAndBroadcast(swapRequesterAddress, [swapWithinBatchMsg], fee, memo);
+  }
+
+  public async depositWithinBatch(
+    depositorAddress: string,
+    poolId: number,
+    depositCoins: Coin[],
+    fee: StdFee,
+    memo = "",
+  ): Promise<BroadcastTxResponse> {
+    const depositWithinBatchMsg: MsgDepositWithinBatchEncodeObject = {
+      typeUrl: "/tendermint.liquidity.v1beta1.MsgDepositWithinBatch",
+      value: MsgDepositWithinBatch.fromPartial({
+        depositorAddress: depositorAddress,
+        poolId: Long.fromString(new Uint53(poolId).toString()),
+        depositCoins: depositCoins,
+      }),
+    };
+    // console.log(depositWithinBatchMsg);
+    return this.signAndBroadcast(depositorAddress, [depositWithinBatchMsg], fee, memo);
+  }
+
+  public async withdwawWithinBatch(
+    withdrawerAddress: string,
+    poolId: number,
+    poolCoin: Coin,
+    fee: StdFee,
+    memo = "",
+  ): Promise<BroadcastTxResponse> {
+    const withdrawWithinBatchMsg: MsgWithdrawWithinBatchEncodeObject = {
+      typeUrl: "/tendermint.liquidity.v1beta1.MsgWithdrawWithinBatch",
+      value: MsgWithdrawWithinBatch.fromPartial({
+        withdrawerAddress: withdrawerAddress,
+        poolId: Long.fromString(new Uint53(poolId).toString()),
+        poolCoin: poolCoin,
+      }),
+    };
+    // console.log(withdrawWithinBatchMsg);
+    return this.signAndBroadcast(withdrawerAddress, [withdrawWithinBatchMsg], fee, memo);
+  }
+
+  public async createPool(
+    poolCreatorAddress: string,
+    poolTypeId: number,
+    depositCoins: Coin[],
+    fee: StdFee,
+    memo = "",
+  ): Promise<BroadcastTxResponse> {
+    const createPoolMsg: MsgCreatePoolEncodeObject = {
+      typeUrl: "/tendermint.liquidity.v1beta1.MsgCreatePool",
+      value: MsgCreatePool.fromPartial({
+        poolCreatorAddress: poolCreatorAddress,
+        poolTypeId: poolTypeId,
+        depositCoins: depositCoins,
+      }),
+    };
+    // console.log(createPoolMsg);
+    return this.signAndBroadcast(poolCreatorAddress, [createPoolMsg], fee, memo);
   }
 
   /**
