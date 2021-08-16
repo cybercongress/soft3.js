@@ -600,7 +600,7 @@ export class CyberClient {
     return QueryDelegatorWithdrawAddressResponse.toJSON(response);
   }
 
-  public async paramsDistribution(): Promise<JsonObject> {
+  public async distributionParams(): Promise<JsonObject> {
     const response = await this.forceGetQueryClient().distribution.params();
     return QueryParamsResponseDistribution.toJSON(response);
   }
@@ -666,7 +666,7 @@ export class CyberClient {
 
   // Liquidity module
 
-  public async params(): Promise<JsonObject> {
+  public async liquidityParams(): Promise<JsonObject> {
     const response = await this.forceGetQueryClient().liquidity.params();
     return QueryParamsResponseLiquidity.toJSON(response);
   }
