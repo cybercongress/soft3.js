@@ -12,6 +12,8 @@ import {
   Coin,
   DistributionExtension,
   GovExtension,
+  GovParamsType,
+  GovProposalId,
   IndexedTx,
   isSearchByHeightQuery,
   isSearchBySentFromOrToQuery,
@@ -40,6 +42,17 @@ import {
   QueryValidatorOutstandingRewardsResponse,
   QueryValidatorSlashesResponse,
 } from "cosmjs-types/cosmos/distribution/v1beta1/query";
+import { ProposalStatus } from "cosmjs-types/cosmos/gov/v1beta1/gov";
+import {
+  QueryDepositResponse,
+  QueryDepositsResponse,
+  QueryParamsResponse as QueryParamsResponseGovernance,
+  QueryProposalResponse,
+  QueryProposalsResponse,
+  QueryTallyResultResponse,
+  QueryVoteResponse,
+  QueryVotesResponse,
+} from "cosmjs-types/cosmos/gov/v1beta1/query";
 import {
   QueryDelegationResponse,
   QueryDelegatorDelegationsResponse,
@@ -190,7 +203,8 @@ export class CyberClient {
         BandwidthExtension &
         EnergyExtension &
         WasmExtension &
-        LiquidityExtension)
+        LiquidityExtension &
+        GovExtension)
     | undefined {
     return this.queryClient;
   }
@@ -205,7 +219,8 @@ export class CyberClient {
     BandwidthExtension &
     EnergyExtension &
     WasmExtension &
-    LiquidityExtension {
+    LiquidityExtension &
+    GovExtension {
     if (!this.queryClient) {
       throw new Error("Query client not available. You cannot use online functionality in offline mode.");
     }
@@ -679,6 +694,56 @@ export class CyberClient {
   public async pools(): Promise<JsonObject> {
     const response = await this.forceGetQueryClient().liquidity.pools();
     return QueryLiquidityPoolsResponse.toJSON(response);
+  }
+
+  // Gov module
+
+  public async govParams(parametersType: GovParamsType): Promise<JsonObject> {
+    const response = await this.forceGetQueryClient().gov.params(parametersType);
+    return QueryParamsResponseGovernance.toJSON(response);
+  }
+
+  public async proposals(
+    proposalStatus: ProposalStatus,
+    depositorAddress: string,
+    voterAddress: string,
+  ): Promise<JsonObject> {
+    const response = await this.forceGetQueryClient().gov.proposals(
+      proposalStatus,
+      depositorAddress,
+      voterAddress,
+    );
+    return QueryProposalsResponse.toJSON(response);
+  }
+
+  public async proposal(proposalId: GovProposalId): Promise<JsonObject> {
+    const response = await this.forceGetQueryClient().gov.proposal(proposalId);
+    return QueryProposalResponse.toJSON(response);
+  }
+
+  public async deposits(proposalId: GovProposalId): Promise<JsonObject> {
+    const response = await this.forceGetQueryClient().gov.deposits(proposalId);
+    return QueryDepositsResponse.toJSON(response);
+  }
+
+  public async deposit(proposalId: GovProposalId, depositorAddress: string): Promise<JsonObject> {
+    const response = await this.forceGetQueryClient().gov.deposit(proposalId, depositorAddress);
+    return QueryDepositResponse.toJSON(response);
+  }
+
+  public async tally(proposalId: GovProposalId): Promise<JsonObject> {
+    const response = await this.forceGetQueryClient().gov.tally(proposalId);
+    return QueryTallyResultResponse.toJSON(response);
+  }
+
+  public async votes(proposalId: GovProposalId): Promise<JsonObject> {
+    const response = await this.forceGetQueryClient().gov.votes(proposalId);
+    return QueryVotesResponse.toJSON(response);
+  }
+
+  public async vote(proposalId: GovProposalId, voterAddress: string): Promise<JsonObject> {
+    const response = await this.forceGetQueryClient().gov.vote(proposalId, voterAddress);
+    return QueryVoteResponse.toJSON(response);
   }
 
   // Wasm module
