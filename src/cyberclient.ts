@@ -11,6 +11,7 @@ import {
   BroadcastTxResponse,
   Coin,
   DistributionExtension,
+  GovExtension,
   IndexedTx,
   isSearchByHeightQuery,
   isSearchBySentFromOrToQuery,
@@ -22,6 +23,7 @@ import {
   setupAuthExtension,
   setupBankExtension,
   setupDistributionExtension,
+  setupGovExtension,
   setupStakingExtension,
   StakingExtension,
 } from "@cosmjs/stargate";
@@ -113,7 +115,8 @@ export interface PrivateCyberClient {
         BandwidthExtension &
         EnergyExtension &
         WasmExtension &
-        LiquidityExtension)
+        LiquidityExtension &
+        GovExtension)
     | undefined;
 }
 
@@ -132,7 +135,8 @@ export class CyberClient {
         BandwidthExtension &
         EnergyExtension &
         WasmExtension &
-        LiquidityExtension)
+        LiquidityExtension &
+        GovExtension)
     | undefined;
   private readonly codesCache = new Map<number, CodeDetails>();
   private chainId: string | undefined;
@@ -157,6 +161,7 @@ export class CyberClient {
         setupEnergyExtension,
         setupWasmExtension,
         setupLiquidityExtension,
+        setupGovExtension,
       );
     }
   }

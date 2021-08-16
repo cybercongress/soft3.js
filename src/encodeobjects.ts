@@ -1,4 +1,5 @@
 import { EncodeObject } from "@cosmjs/proto-signing";
+import { MsgDeposit, MsgSubmitProposal, MsgVote } from "cosmjs-types/cosmos/gov/v1beta1/tx";
 import { MsgBeginRedelegate } from "cosmjs-types/cosmos/staking/v1beta1/tx";
 
 import {
@@ -16,6 +17,8 @@ import {
   MsgWithdrawWithinBatch,
 } from "./codec/tendermint/liquidity/v1beta1/tx";
 
+// Staking module
+
 export interface MsgBeginRedelegateEncodeObject extends EncodeObject {
   readonly typeUrl: "/cosmos.staking.v1beta1.MsgBeginRedelegate";
   readonly value: Partial<MsgBeginRedelegate>;
@@ -28,6 +31,8 @@ export function isMsgBeginRedelegateEncodeObject(
     (encodeObject as MsgBeginRedelegateEncodeObject).typeUrl === "/cosmos.staking.v1beta1.MsgBeginRedelegate"
   );
 }
+
+// Energy module
 
 export interface MsgCreateRouteEncodeObject extends EncodeObject {
   readonly typeUrl: "/cyber.energy.v1beta1.MsgCreateRoute";
@@ -75,6 +80,8 @@ export function isMsgEditRouteAliasEncodeObject(
   );
 }
 
+// Graph module
+
 export interface MsgCyberlinkEncodeObject extends EncodeObject {
   readonly typeUrl: "/cyber.graph.v1beta1.MsgCyberlink";
   readonly value: Partial<MsgCyberlink>;
@@ -86,6 +93,8 @@ export function isMsgCyberlinkEncodeObject(
   return (encodeObject as MsgCyberlinkEncodeObject).typeUrl === "/cyber.graph.v1beta1.MsgCyberlink";
 }
 
+// Resources module
+
 export interface MsgInvestmintEncodeObject extends EncodeObject {
   readonly typeUrl: "/cyber.resources.v1beta1.MsgInvestmint";
   readonly value: Partial<MsgInvestmint>;
@@ -96,6 +105,8 @@ export function isMsgInvestmintEncodeObject(
 ): encodeObject is MsgInvestmintEncodeObject {
   return (encodeObject as MsgInvestmintEncodeObject).typeUrl === "/cyber.resources.v1beta1.MsgInvestmint";
 }
+
+// Liquidity module
 
 export interface MsgSwapWithinBatchEncodeObject extends EncodeObject {
   readonly typeUrl: "/tendermint.liquidity.v1beta1.MsgSwapWithinBatch";
@@ -150,4 +161,35 @@ export function isMsgCreatePoolEncodeObject(
   return (
     (encodeObject as MsgCreatePoolEncodeObject).typeUrl === "/tendermint.liquidity.v1beta1.MsgCreatePool"
   );
+}
+
+// Gov module
+
+export interface MsgSubmitProposalEncodeObject extends EncodeObject {
+  readonly typeUrl: "/cosmos.gov.v1beta1.MsgSubmitProposal";
+  readonly value: Partial<MsgSubmitProposal>;
+}
+
+export function isMsgSubmitProposalEncodeObject(
+  encodeObject: EncodeObject,
+): encodeObject is MsgSubmitProposalEncodeObject {
+  return (encodeObject as MsgSubmitProposalEncodeObject).typeUrl === "/cosmos.gov.v1beta1.MsgSubmitProposal";
+}
+
+export interface MsgVoteEncodeObject extends EncodeObject {
+  readonly typeUrl: "/cosmos.gov.v1beta1.MsgVote";
+  readonly value: Partial<MsgVote>;
+}
+
+export function isMsgVoteEncodeObject(encodeObject: EncodeObject): encodeObject is MsgVoteEncodeObject {
+  return (encodeObject as MsgVoteEncodeObject).typeUrl === "/cosmos.gov.v1beta1.MsgVote";
+}
+
+export interface MsgDepositEncodeObject extends EncodeObject {
+  readonly typeUrl: "/cosmos.gov.v1beta1.MsgDeposit";
+  readonly value: Partial<MsgDeposit>;
+}
+
+export function isMsgDepositEncodeObject(encodeObject: EncodeObject): encodeObject is MsgDepositEncodeObject {
+  return (encodeObject as MsgDepositEncodeObject).typeUrl === "/cosmos.gov.v1beta1.MsgDeposit";
 }

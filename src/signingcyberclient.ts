@@ -14,6 +14,7 @@ import {
   MsgUpdateAdminEncodeObject,
   UploadResult,
 } from "@cosmjs/cosmwasm-stargate";
+import { JsonObject } from "@cosmjs/cosmwasm-stargate";
 import { sha256 } from "@cosmjs/crypto";
 import { fromBase64, toHex, toUtf8 } from "@cosmjs/encoding";
 import { Int53, Uint53 } from "@cosmjs/math";
@@ -43,9 +44,12 @@ import {
   SignerData,
   StdFee,
 } from "@cosmjs/stargate";
+import { longify } from "@cosmjs/stargate/build/queries/utils";
 import { Tendermint34Client } from "@cosmjs/tendermint-rpc";
 import { assert } from "@cosmjs/utils";
 import { MsgWithdrawDelegatorReward } from "cosmjs-types/cosmos/distribution/v1beta1/tx";
+import { VoteOption } from "cosmjs-types/cosmos/gov/v1beta1/gov";
+import { MsgDeposit, MsgSubmitProposal, MsgVote } from "cosmjs-types/cosmos/gov/v1beta1/tx";
 import { MsgBeginRedelegate, MsgDelegate, MsgUndelegate } from "cosmjs-types/cosmos/staking/v1beta1/tx";
 import { SignMode } from "cosmjs-types/cosmos/tx/signing/v1beta1/signing";
 import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
@@ -83,11 +87,14 @@ import {
   MsgCreateRouteEncodeObject,
   MsgCyberlinkEncodeObject,
   MsgDeleteRouteEncodeObject,
+  MsgDepositEncodeObject,
   MsgDepositWithinBatchEncodeObject,
   MsgEditRouteAliasEncodeObject,
   MsgEditRouteEncodeObject,
   MsgInvestmintEncodeObject,
+  MsgSubmitProposalEncodeObject,
   MsgSwapWithinBatchEncodeObject,
+  MsgVoteEncodeObject,
   MsgWithdrawWithinBatchEncodeObject,
 } from "./encodeobjects";
 
@@ -209,6 +216,8 @@ export class SigningCyberClient extends CyberClient {
     this.broadcastPollIntervalMs = options.broadcastPollIntervalMs;
   }
 
+  // Graph module
+
   public async cyberlink(
     senderAddress: string,
     from: string,
@@ -232,6 +241,8 @@ export class SigningCyberClient extends CyberClient {
     return this.signAndBroadcast(senderAddress, [cyberlinkMsg], fee, memo);
   }
 
+  // Resources module
+
   public async investmint(
     senderAddress: string,
     amount: Coin,
@@ -251,6 +262,8 @@ export class SigningCyberClient extends CyberClient {
     };
     return this.signAndBroadcast(senderAddress, [investmintMsg], fee, memo);
   }
+
+  // Energy module
 
   public async createEnergyRoute(
     senderAddress: string,
@@ -322,6 +335,8 @@ export class SigningCyberClient extends CyberClient {
 
     return this.signAndBroadcast(senderAddress, [editEnergyRouteAliasMsg], fee, memo);
   }
+
+  // Wasm module
 
   /** Uploads code and returns a receipt, including the code ID */
   public async upload(
@@ -490,6 +505,8 @@ export class SigningCyberClient extends CyberClient {
     };
   }
 
+  // Bank module
+
   public async sendTokens(
     senderAddress: string,
     recipientAddress: string,
@@ -508,6 +525,8 @@ export class SigningCyberClient extends CyberClient {
     // console.log(`this.fees.send,`, fee);
     return this.signAndBroadcast(senderAddress, [sendMsg], fee, memo);
   }
+
+  // Distribution module
 
   public async delegateTokens(
     delegatorAddress: string,
@@ -597,6 +616,64 @@ export class SigningCyberClient extends CyberClient {
     return this.signAndBroadcast(delegatorAddress, msgs, fee, memo);
   }
 
+  // Gov module
+
+  public async voteProposal(
+    voter: string,
+    proposalId: number,
+    option: number,
+    fee: StdFee,
+    memo = "",
+  ): Promise<BroadcastTxResponse> {
+    const voteMsg: MsgVoteEncodeObject = {
+      typeUrl: "/cosmos.gov.v1beta1.MsgVote",
+      value: MsgVote.fromPartial({
+        proposalId: longify(proposalId),
+        voter: voter,
+        option: option as VoteOption | undefined,
+      }),
+    };
+    return this.signAndBroadcast(voter, [voteMsg], fee, memo);
+  }
+
+  public async submitProposal(
+    proposer: string,
+    content: JsonObject,
+    initialDeposit: Coin[],
+    fee: StdFee,
+    memo = "",
+  ): Promise<BroadcastTxResponse> {
+    const sumbitProposalMsg: MsgSubmitProposalEncodeObject = {
+      typeUrl: "/cosmos.gov.v1beta1.MsgSubmitProposal",
+      value: MsgSubmitProposal.fromPartial({
+        content: content,
+        initialDeposit: initialDeposit,
+        proposer: proposer,
+      }),
+    };
+    return this.signAndBroadcast(proposer, [sumbitProposalMsg], fee, memo);
+  }
+
+  public async depositProposal(
+    depositor: string,
+    proposalId: number,
+    amount: Coin[],
+    fee: StdFee,
+    memo = "",
+  ): Promise<BroadcastTxResponse> {
+    const depositMsg: MsgDepositEncodeObject = {
+      typeUrl: "/cosmos.gov.v1beta1.MsgDeposit",
+      value: MsgDeposit.fromPartial({
+        depositor: depositor,
+        proposalId: longify(proposalId),
+        amount: amount,
+      }),
+    };
+    return this.signAndBroadcast(depositor, [depositMsg], fee, memo);
+  }
+
+  // IBC module
+
   public async sendIbcTokens(
     senderAddress: string,
     recipientAddress: string,
@@ -626,6 +703,8 @@ export class SigningCyberClient extends CyberClient {
     };
     return this.signAndBroadcast(senderAddress, [transferMsg], fee, memo);
   }
+
+  // Liquidity module
 
   public async swapWithinBatch(
     swapRequesterAddress: string,
