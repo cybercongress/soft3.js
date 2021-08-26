@@ -151,6 +151,7 @@ function createDefaultRegistry(): Registry {
     ["/tendermint.liquidity.v1beta1.MsgDepositWithinBatch", MsgDepositWithinBatch],
     ["/tendermint.liquidity.v1beta1.MsgWithdrawWithinBatch", MsgWithdrawWithinBatch],
     ["/tendermint.liquidity.v1beta1.MsgCreatePool", MsgCreatePool],
+    ["/cosmos.gov.v1beta1.MsgVote", MsgDeposit],
   ]);
 }
 
