@@ -34,10 +34,7 @@ export interface QueryGraphStatsResponse {
 const baseQueryLinksRequest: object = { cid: "" };
 
 export const QueryLinksRequest = {
-  encode(
-    message: QueryLinksRequest,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: QueryLinksRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.cid !== "") {
       writer.uint32(10).string(message.cid);
     }
@@ -92,10 +89,7 @@ export const QueryLinksRequest = {
 const baseQueryLinksResponse: object = { cids: "" };
 
 export const QueryLinksResponse = {
-  encode(
-    message: QueryLinksResponse,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: QueryLinksResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     for (const v of message.cids) {
       writer.uint32(10).string(v!);
     }
@@ -157,22 +151,14 @@ export const QueryLinksResponse = {
 const baseQueryLinksAmountRequest: object = {};
 
 export const QueryLinksAmountRequest = {
-  encode(
-    _: QueryLinksAmountRequest,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(_: QueryLinksAmountRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     return writer;
   },
 
-  decode(
-    input: _m0.Reader | Uint8Array,
-    length?: number
-  ): QueryLinksAmountRequest {
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryLinksAmountRequest {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = {
-      ...baseQueryLinksAmountRequest,
-    } as QueryLinksAmountRequest;
+    const message = { ...baseQueryLinksAmountRequest } as QueryLinksAmountRequest;
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -185,9 +171,7 @@ export const QueryLinksAmountRequest = {
   },
 
   fromJSON(_: any): QueryLinksAmountRequest {
-    const message = {
-      ...baseQueryLinksAmountRequest,
-    } as QueryLinksAmountRequest;
+    const message = { ...baseQueryLinksAmountRequest } as QueryLinksAmountRequest;
     return message;
   },
 
@@ -196,12 +180,8 @@ export const QueryLinksAmountRequest = {
     return obj;
   },
 
-  fromPartial(
-    _: DeepPartial<QueryLinksAmountRequest>
-  ): QueryLinksAmountRequest {
-    const message = {
-      ...baseQueryLinksAmountRequest,
-    } as QueryLinksAmountRequest;
+  fromPartial(_: DeepPartial<QueryLinksAmountRequest>): QueryLinksAmountRequest {
+    const message = { ...baseQueryLinksAmountRequest } as QueryLinksAmountRequest;
     return message;
   },
 };
@@ -209,25 +189,17 @@ export const QueryLinksAmountRequest = {
 const baseQueryLinksAmountResponse: object = { amount: Long.UZERO };
 
 export const QueryLinksAmountResponse = {
-  encode(
-    message: QueryLinksAmountResponse,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: QueryLinksAmountResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (!message.amount.isZero()) {
       writer.uint32(8).uint64(message.amount);
     }
     return writer;
   },
 
-  decode(
-    input: _m0.Reader | Uint8Array,
-    length?: number
-  ): QueryLinksAmountResponse {
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryLinksAmountResponse {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = {
-      ...baseQueryLinksAmountResponse,
-    } as QueryLinksAmountResponse;
+    const message = { ...baseQueryLinksAmountResponse } as QueryLinksAmountResponse;
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -243,9 +215,7 @@ export const QueryLinksAmountResponse = {
   },
 
   fromJSON(object: any): QueryLinksAmountResponse {
-    const message = {
-      ...baseQueryLinksAmountResponse,
-    } as QueryLinksAmountResponse;
+    const message = { ...baseQueryLinksAmountResponse } as QueryLinksAmountResponse;
     if (object.amount !== undefined && object.amount !== null) {
       message.amount = Long.fromString(object.amount);
     } else {
@@ -256,17 +226,12 @@ export const QueryLinksAmountResponse = {
 
   toJSON(message: QueryLinksAmountResponse): unknown {
     const obj: any = {};
-    message.amount !== undefined &&
-      (obj.amount = (message.amount || Long.UZERO).toString());
+    message.amount !== undefined && (obj.amount = (message.amount || Long.UZERO).toString());
     return obj;
   },
 
-  fromPartial(
-    object: DeepPartial<QueryLinksAmountResponse>
-  ): QueryLinksAmountResponse {
-    const message = {
-      ...baseQueryLinksAmountResponse,
-    } as QueryLinksAmountResponse;
+  fromPartial(object: DeepPartial<QueryLinksAmountResponse>): QueryLinksAmountResponse {
+    const message = { ...baseQueryLinksAmountResponse } as QueryLinksAmountResponse;
     if (object.amount !== undefined && object.amount !== null) {
       message.amount = object.amount as Long;
     } else {
@@ -279,17 +244,11 @@ export const QueryLinksAmountResponse = {
 const baseQueryCidsAmountRequest: object = {};
 
 export const QueryCidsAmountRequest = {
-  encode(
-    _: QueryCidsAmountRequest,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(_: QueryCidsAmountRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     return writer;
   },
 
-  decode(
-    input: _m0.Reader | Uint8Array,
-    length?: number
-  ): QueryCidsAmountRequest {
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryCidsAmountRequest {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseQueryCidsAmountRequest } as QueryCidsAmountRequest;
@@ -323,25 +282,17 @@ export const QueryCidsAmountRequest = {
 const baseQueryCidsAmountResponse: object = { amount: Long.UZERO };
 
 export const QueryCidsAmountResponse = {
-  encode(
-    message: QueryCidsAmountResponse,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: QueryCidsAmountResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (!message.amount.isZero()) {
       writer.uint32(8).uint64(message.amount);
     }
     return writer;
   },
 
-  decode(
-    input: _m0.Reader | Uint8Array,
-    length?: number
-  ): QueryCidsAmountResponse {
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryCidsAmountResponse {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = {
-      ...baseQueryCidsAmountResponse,
-    } as QueryCidsAmountResponse;
+    const message = { ...baseQueryCidsAmountResponse } as QueryCidsAmountResponse;
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -357,9 +308,7 @@ export const QueryCidsAmountResponse = {
   },
 
   fromJSON(object: any): QueryCidsAmountResponse {
-    const message = {
-      ...baseQueryCidsAmountResponse,
-    } as QueryCidsAmountResponse;
+    const message = { ...baseQueryCidsAmountResponse } as QueryCidsAmountResponse;
     if (object.amount !== undefined && object.amount !== null) {
       message.amount = Long.fromString(object.amount);
     } else {
@@ -370,17 +319,12 @@ export const QueryCidsAmountResponse = {
 
   toJSON(message: QueryCidsAmountResponse): unknown {
     const obj: any = {};
-    message.amount !== undefined &&
-      (obj.amount = (message.amount || Long.UZERO).toString());
+    message.amount !== undefined && (obj.amount = (message.amount || Long.UZERO).toString());
     return obj;
   },
 
-  fromPartial(
-    object: DeepPartial<QueryCidsAmountResponse>
-  ): QueryCidsAmountResponse {
-    const message = {
-      ...baseQueryCidsAmountResponse,
-    } as QueryCidsAmountResponse;
+  fromPartial(object: DeepPartial<QueryCidsAmountResponse>): QueryCidsAmountResponse {
+    const message = { ...baseQueryCidsAmountResponse } as QueryCidsAmountResponse;
     if (object.amount !== undefined && object.amount !== null) {
       message.amount = object.amount as Long;
     } else {
@@ -393,17 +337,11 @@ export const QueryCidsAmountResponse = {
 const baseQueryGraphStatsRequest: object = {};
 
 export const QueryGraphStatsRequest = {
-  encode(
-    _: QueryGraphStatsRequest,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(_: QueryGraphStatsRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     return writer;
   },
 
-  decode(
-    input: _m0.Reader | Uint8Array,
-    length?: number
-  ): QueryGraphStatsRequest {
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryGraphStatsRequest {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseQueryGraphStatsRequest } as QueryGraphStatsRequest;
@@ -434,16 +372,10 @@ export const QueryGraphStatsRequest = {
   },
 };
 
-const baseQueryGraphStatsResponse: object = {
-  links: Long.UZERO,
-  cids: Long.UZERO,
-};
+const baseQueryGraphStatsResponse: object = { links: Long.UZERO, cids: Long.UZERO };
 
 export const QueryGraphStatsResponse = {
-  encode(
-    message: QueryGraphStatsResponse,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: QueryGraphStatsResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (!message.links.isZero()) {
       writer.uint32(8).uint64(message.links);
     }
@@ -453,15 +385,10 @@ export const QueryGraphStatsResponse = {
     return writer;
   },
 
-  decode(
-    input: _m0.Reader | Uint8Array,
-    length?: number
-  ): QueryGraphStatsResponse {
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryGraphStatsResponse {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = {
-      ...baseQueryGraphStatsResponse,
-    } as QueryGraphStatsResponse;
+    const message = { ...baseQueryGraphStatsResponse } as QueryGraphStatsResponse;
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -480,9 +407,7 @@ export const QueryGraphStatsResponse = {
   },
 
   fromJSON(object: any): QueryGraphStatsResponse {
-    const message = {
-      ...baseQueryGraphStatsResponse,
-    } as QueryGraphStatsResponse;
+    const message = { ...baseQueryGraphStatsResponse } as QueryGraphStatsResponse;
     if (object.links !== undefined && object.links !== null) {
       message.links = Long.fromString(object.links);
     } else {
@@ -498,19 +423,13 @@ export const QueryGraphStatsResponse = {
 
   toJSON(message: QueryGraphStatsResponse): unknown {
     const obj: any = {};
-    message.links !== undefined &&
-      (obj.links = (message.links || Long.UZERO).toString());
-    message.cids !== undefined &&
-      (obj.cids = (message.cids || Long.UZERO).toString());
+    message.links !== undefined && (obj.links = (message.links || Long.UZERO).toString());
+    message.cids !== undefined && (obj.cids = (message.cids || Long.UZERO).toString());
     return obj;
   },
 
-  fromPartial(
-    object: DeepPartial<QueryGraphStatsResponse>
-  ): QueryGraphStatsResponse {
-    const message = {
-      ...baseQueryGraphStatsResponse,
-    } as QueryGraphStatsResponse;
+  fromPartial(object: DeepPartial<QueryGraphStatsResponse>): QueryGraphStatsResponse {
+    const message = { ...baseQueryGraphStatsResponse } as QueryGraphStatsResponse;
     if (object.links !== undefined && object.links !== null) {
       message.links = object.links as Long;
     } else {
@@ -530,9 +449,7 @@ export interface Query {
   InLinks(request: QueryLinksRequest): Promise<QueryLinksResponse>;
   /** TODO add pagination on storage */
   OutLinks(request: QueryLinksRequest): Promise<QueryLinksResponse>;
-  LinksAmount(
-    request: QueryLinksAmountRequest
-  ): Promise<QueryLinksAmountResponse>;
+  LinksAmount(request: QueryLinksAmountRequest): Promise<QueryLinksAmountResponse>;
   CidsAmount(request: QueryCidsAmountRequest): Promise<QueryCidsAmountResponse>;
   GraphStats(request: QueryGraphStatsRequest): Promise<QueryGraphStatsResponse>;
 }
@@ -549,88 +466,40 @@ export class QueryClientImpl implements Query {
   }
   InLinks(request: QueryLinksRequest): Promise<QueryLinksResponse> {
     const data = QueryLinksRequest.encode(request).finish();
-    const promise = this.rpc.request(
-      "cyber.graph.v1beta1.Query",
-      "InLinks",
-      data
-    );
-    return promise.then((data) =>
-      QueryLinksResponse.decode(new _m0.Reader(data))
-    );
+    const promise = this.rpc.request("cyber.graph.v1beta1.Query", "InLinks", data);
+    return promise.then((data) => QueryLinksResponse.decode(new _m0.Reader(data)));
   }
 
   OutLinks(request: QueryLinksRequest): Promise<QueryLinksResponse> {
     const data = QueryLinksRequest.encode(request).finish();
-    const promise = this.rpc.request(
-      "cyber.graph.v1beta1.Query",
-      "OutLinks",
-      data
-    );
-    return promise.then((data) =>
-      QueryLinksResponse.decode(new _m0.Reader(data))
-    );
+    const promise = this.rpc.request("cyber.graph.v1beta1.Query", "OutLinks", data);
+    return promise.then((data) => QueryLinksResponse.decode(new _m0.Reader(data)));
   }
 
-  LinksAmount(
-    request: QueryLinksAmountRequest
-  ): Promise<QueryLinksAmountResponse> {
+  LinksAmount(request: QueryLinksAmountRequest): Promise<QueryLinksAmountResponse> {
     const data = QueryLinksAmountRequest.encode(request).finish();
-    const promise = this.rpc.request(
-      "cyber.graph.v1beta1.Query",
-      "LinksAmount",
-      data
-    );
-    return promise.then((data) =>
-      QueryLinksAmountResponse.decode(new _m0.Reader(data))
-    );
+    const promise = this.rpc.request("cyber.graph.v1beta1.Query", "LinksAmount", data);
+    return promise.then((data) => QueryLinksAmountResponse.decode(new _m0.Reader(data)));
   }
 
-  CidsAmount(
-    request: QueryCidsAmountRequest
-  ): Promise<QueryCidsAmountResponse> {
+  CidsAmount(request: QueryCidsAmountRequest): Promise<QueryCidsAmountResponse> {
     const data = QueryCidsAmountRequest.encode(request).finish();
-    const promise = this.rpc.request(
-      "cyber.graph.v1beta1.Query",
-      "CidsAmount",
-      data
-    );
-    return promise.then((data) =>
-      QueryCidsAmountResponse.decode(new _m0.Reader(data))
-    );
+    const promise = this.rpc.request("cyber.graph.v1beta1.Query", "CidsAmount", data);
+    return promise.then((data) => QueryCidsAmountResponse.decode(new _m0.Reader(data)));
   }
 
-  GraphStats(
-    request: QueryGraphStatsRequest
-  ): Promise<QueryGraphStatsResponse> {
+  GraphStats(request: QueryGraphStatsRequest): Promise<QueryGraphStatsResponse> {
     const data = QueryGraphStatsRequest.encode(request).finish();
-    const promise = this.rpc.request(
-      "cyber.graph.v1beta1.Query",
-      "GraphStats",
-      data
-    );
-    return promise.then((data) =>
-      QueryGraphStatsResponse.decode(new _m0.Reader(data))
-    );
+    const promise = this.rpc.request("cyber.graph.v1beta1.Query", "GraphStats", data);
+    return promise.then((data) => QueryGraphStatsResponse.decode(new _m0.Reader(data)));
   }
 }
 
 interface Rpc {
-  request(
-    service: string,
-    method: string,
-    data: Uint8Array
-  ): Promise<Uint8Array>;
+  request(service: string, method: string, data: Uint8Array): Promise<Uint8Array>;
 }
 
-type Builtin =
-  | Date
-  | Function
-  | Uint8Array
-  | string
-  | number
-  | boolean
-  | undefined
-  | Long;
+type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined | Long;
 export type DeepPartial<T> = T extends Builtin
   ? T
   : T extends Array<infer U>

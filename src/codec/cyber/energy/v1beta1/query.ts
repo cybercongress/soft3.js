@@ -2,10 +2,7 @@
 import Long from "long";
 import _m0 from "protobufjs/minimal";
 import { Params, Route } from "../../../cyber/energy/v1beta1/types";
-import {
-  PageRequest,
-  PageResponse,
-} from "../../../cosmos/base/query/v1beta1/pagination";
+import { PageRequest, PageResponse } from "../../../cosmos/base/query/v1beta1/pagination";
 import { Coin } from "../../../cosmos_proto/coin";
 
 export const protobufPackage = "cyber.energy.v1beta1";
@@ -49,10 +46,7 @@ export interface QueryRoutesResponse {
 const baseQueryParamsRequest: object = {};
 
 export const QueryParamsRequest = {
-  encode(
-    _: QueryParamsRequest,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(_: QueryParamsRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     return writer;
   },
 
@@ -90,10 +84,7 @@ export const QueryParamsRequest = {
 const baseQueryParamsResponse: object = {};
 
 export const QueryParamsResponse = {
-  encode(
-    message: QueryParamsResponse,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: QueryParamsResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.params !== undefined) {
       Params.encode(message.params, writer.uint32(10).fork()).ldelim();
     }
@@ -130,8 +121,7 @@ export const QueryParamsResponse = {
 
   toJSON(message: QueryParamsResponse): unknown {
     const obj: any = {};
-    message.params !== undefined &&
-      (obj.params = message.params ? Params.toJSON(message.params) : undefined);
+    message.params !== undefined && (obj.params = message.params ? Params.toJSON(message.params) : undefined);
     return obj;
   },
 
@@ -149,10 +139,7 @@ export const QueryParamsResponse = {
 const baseQuerySourceRequest: object = { source: "" };
 
 export const QuerySourceRequest = {
-  encode(
-    message: QuerySourceRequest,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: QuerySourceRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.source !== "") {
       writer.uint32(10).string(message.source);
     }
@@ -207,25 +194,17 @@ export const QuerySourceRequest = {
 const baseQueryDestinationRequest: object = { destination: "" };
 
 export const QueryDestinationRequest = {
-  encode(
-    message: QueryDestinationRequest,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: QueryDestinationRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.destination !== "") {
       writer.uint32(10).string(message.destination);
     }
     return writer;
   },
 
-  decode(
-    input: _m0.Reader | Uint8Array,
-    length?: number
-  ): QueryDestinationRequest {
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryDestinationRequest {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = {
-      ...baseQueryDestinationRequest,
-    } as QueryDestinationRequest;
+    const message = { ...baseQueryDestinationRequest } as QueryDestinationRequest;
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -241,9 +220,7 @@ export const QueryDestinationRequest = {
   },
 
   fromJSON(object: any): QueryDestinationRequest {
-    const message = {
-      ...baseQueryDestinationRequest,
-    } as QueryDestinationRequest;
+    const message = { ...baseQueryDestinationRequest } as QueryDestinationRequest;
     if (object.destination !== undefined && object.destination !== null) {
       message.destination = String(object.destination);
     } else {
@@ -254,17 +231,12 @@ export const QueryDestinationRequest = {
 
   toJSON(message: QueryDestinationRequest): unknown {
     const obj: any = {};
-    message.destination !== undefined &&
-      (obj.destination = message.destination);
+    message.destination !== undefined && (obj.destination = message.destination);
     return obj;
   },
 
-  fromPartial(
-    object: DeepPartial<QueryDestinationRequest>
-  ): QueryDestinationRequest {
-    const message = {
-      ...baseQueryDestinationRequest,
-    } as QueryDestinationRequest;
+  fromPartial(object: DeepPartial<QueryDestinationRequest>): QueryDestinationRequest {
+    const message = { ...baseQueryDestinationRequest } as QueryDestinationRequest;
     if (object.destination !== undefined && object.destination !== null) {
       message.destination = object.destination;
     } else {
@@ -277,25 +249,17 @@ export const QueryDestinationRequest = {
 const baseQueryRoutedEnergyResponse: object = {};
 
 export const QueryRoutedEnergyResponse = {
-  encode(
-    message: QueryRoutedEnergyResponse,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: QueryRoutedEnergyResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     for (const v of message.value) {
       Coin.encode(v!, writer.uint32(10).fork()).ldelim();
     }
     return writer;
   },
 
-  decode(
-    input: _m0.Reader | Uint8Array,
-    length?: number
-  ): QueryRoutedEnergyResponse {
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryRoutedEnergyResponse {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = {
-      ...baseQueryRoutedEnergyResponse,
-    } as QueryRoutedEnergyResponse;
+    const message = { ...baseQueryRoutedEnergyResponse } as QueryRoutedEnergyResponse;
     message.value = [];
     while (reader.pos < end) {
       const tag = reader.uint32();
@@ -312,9 +276,7 @@ export const QueryRoutedEnergyResponse = {
   },
 
   fromJSON(object: any): QueryRoutedEnergyResponse {
-    const message = {
-      ...baseQueryRoutedEnergyResponse,
-    } as QueryRoutedEnergyResponse;
+    const message = { ...baseQueryRoutedEnergyResponse } as QueryRoutedEnergyResponse;
     message.value = [];
     if (object.value !== undefined && object.value !== null) {
       for (const e of object.value) {
@@ -334,12 +296,8 @@ export const QueryRoutedEnergyResponse = {
     return obj;
   },
 
-  fromPartial(
-    object: DeepPartial<QueryRoutedEnergyResponse>
-  ): QueryRoutedEnergyResponse {
-    const message = {
-      ...baseQueryRoutedEnergyResponse,
-    } as QueryRoutedEnergyResponse;
+  fromPartial(object: DeepPartial<QueryRoutedEnergyResponse>): QueryRoutedEnergyResponse {
+    const message = { ...baseQueryRoutedEnergyResponse } as QueryRoutedEnergyResponse;
     message.value = [];
     if (object.value !== undefined && object.value !== null) {
       for (const e of object.value) {
@@ -353,10 +311,7 @@ export const QueryRoutedEnergyResponse = {
 const baseQueryRouteRequest: object = { source: "", destination: "" };
 
 export const QueryRouteRequest = {
-  encode(
-    message: QueryRouteRequest,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: QueryRouteRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.source !== "") {
       writer.uint32(10).string(message.source);
     }
@@ -405,8 +360,7 @@ export const QueryRouteRequest = {
   toJSON(message: QueryRouteRequest): unknown {
     const obj: any = {};
     message.source !== undefined && (obj.source = message.source);
-    message.destination !== undefined &&
-      (obj.destination = message.destination);
+    message.destination !== undefined && (obj.destination = message.destination);
     return obj;
   },
 
@@ -429,10 +383,7 @@ export const QueryRouteRequest = {
 const baseQueryRouteResponse: object = {};
 
 export const QueryRouteResponse = {
-  encode(
-    message: QueryRouteResponse,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: QueryRouteResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.route !== undefined) {
       Route.encode(message.route, writer.uint32(10).fork()).ldelim();
     }
@@ -469,8 +420,7 @@ export const QueryRouteResponse = {
 
   toJSON(message: QueryRouteResponse): unknown {
     const obj: any = {};
-    message.route !== undefined &&
-      (obj.route = message.route ? Route.toJSON(message.route) : undefined);
+    message.route !== undefined && (obj.route = message.route ? Route.toJSON(message.route) : undefined);
     return obj;
   },
 
@@ -488,10 +438,7 @@ export const QueryRouteResponse = {
 const baseQueryRoutesRequest: object = {};
 
 export const QueryRoutesRequest = {
-  encode(
-    message: QueryRoutesRequest,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: QueryRoutesRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.pagination !== undefined) {
       PageRequest.encode(message.pagination, writer.uint32(10).fork()).ldelim();
     }
@@ -529,9 +476,7 @@ export const QueryRoutesRequest = {
   toJSON(message: QueryRoutesRequest): unknown {
     const obj: any = {};
     message.pagination !== undefined &&
-      (obj.pagination = message.pagination
-        ? PageRequest.toJSON(message.pagination)
-        : undefined);
+      (obj.pagination = message.pagination ? PageRequest.toJSON(message.pagination) : undefined);
     return obj;
   },
 
@@ -549,18 +494,12 @@ export const QueryRoutesRequest = {
 const baseQueryRoutesResponse: object = {};
 
 export const QueryRoutesResponse = {
-  encode(
-    message: QueryRoutesResponse,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: QueryRoutesResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     for (const v of message.routes) {
       Route.encode(v!, writer.uint32(10).fork()).ldelim();
     }
     if (message.pagination !== undefined) {
-      PageResponse.encode(
-        message.pagination,
-        writer.uint32(18).fork()
-      ).ldelim();
+      PageResponse.encode(message.pagination, writer.uint32(18).fork()).ldelim();
     }
     return writer;
   },
@@ -611,9 +550,7 @@ export const QueryRoutesResponse = {
       obj.routes = [];
     }
     message.pagination !== undefined &&
-      (obj.pagination = message.pagination
-        ? PageResponse.toJSON(message.pagination)
-        : undefined);
+      (obj.pagination = message.pagination ? PageResponse.toJSON(message.pagination) : undefined);
     return obj;
   },
 
@@ -637,15 +574,9 @@ export const QueryRoutesResponse = {
 export interface Query {
   Params(request: QueryParamsRequest): Promise<QueryParamsResponse>;
   SourceRoutes(request: QuerySourceRequest): Promise<QueryRoutesResponse>;
-  DestinationRoutes(
-    request: QueryDestinationRequest
-  ): Promise<QueryRoutesResponse>;
-  DestinationRoutedEnergy(
-    request: QueryDestinationRequest
-  ): Promise<QueryRoutedEnergyResponse>;
-  SourceRoutedEnergy(
-    request: QuerySourceRequest
-  ): Promise<QueryRoutedEnergyResponse>;
+  DestinationRoutes(request: QueryDestinationRequest): Promise<QueryRoutesResponse>;
+  DestinationRoutedEnergy(request: QueryDestinationRequest): Promise<QueryRoutedEnergyResponse>;
+  SourceRoutedEnergy(request: QuerySourceRequest): Promise<QueryRoutedEnergyResponse>;
   Route(request: QueryRouteRequest): Promise<QueryRouteResponse>;
   Routes(request: QueryRoutesRequest): Promise<QueryRoutesResponse>;
 }
@@ -664,112 +595,52 @@ export class QueryClientImpl implements Query {
   }
   Params(request: QueryParamsRequest): Promise<QueryParamsResponse> {
     const data = QueryParamsRequest.encode(request).finish();
-    const promise = this.rpc.request(
-      "cyber.energy.v1beta1.Query",
-      "Params",
-      data
-    );
-    return promise.then((data) =>
-      QueryParamsResponse.decode(new _m0.Reader(data))
-    );
+    const promise = this.rpc.request("cyber.energy.v1beta1.Query", "Params", data);
+    return promise.then((data) => QueryParamsResponse.decode(new _m0.Reader(data)));
   }
 
   SourceRoutes(request: QuerySourceRequest): Promise<QueryRoutesResponse> {
     const data = QuerySourceRequest.encode(request).finish();
-    const promise = this.rpc.request(
-      "cyber.energy.v1beta1.Query",
-      "SourceRoutes",
-      data
-    );
-    return promise.then((data) =>
-      QueryRoutesResponse.decode(new _m0.Reader(data))
-    );
+    const promise = this.rpc.request("cyber.energy.v1beta1.Query", "SourceRoutes", data);
+    return promise.then((data) => QueryRoutesResponse.decode(new _m0.Reader(data)));
   }
 
-  DestinationRoutes(
-    request: QueryDestinationRequest
-  ): Promise<QueryRoutesResponse> {
+  DestinationRoutes(request: QueryDestinationRequest): Promise<QueryRoutesResponse> {
     const data = QueryDestinationRequest.encode(request).finish();
-    const promise = this.rpc.request(
-      "cyber.energy.v1beta1.Query",
-      "DestinationRoutes",
-      data
-    );
-    return promise.then((data) =>
-      QueryRoutesResponse.decode(new _m0.Reader(data))
-    );
+    const promise = this.rpc.request("cyber.energy.v1beta1.Query", "DestinationRoutes", data);
+    return promise.then((data) => QueryRoutesResponse.decode(new _m0.Reader(data)));
   }
 
-  DestinationRoutedEnergy(
-    request: QueryDestinationRequest
-  ): Promise<QueryRoutedEnergyResponse> {
+  DestinationRoutedEnergy(request: QueryDestinationRequest): Promise<QueryRoutedEnergyResponse> {
     const data = QueryDestinationRequest.encode(request).finish();
-    const promise = this.rpc.request(
-      "cyber.energy.v1beta1.Query",
-      "DestinationRoutedEnergy",
-      data
-    );
-    return promise.then((data) =>
-      QueryRoutedEnergyResponse.decode(new _m0.Reader(data))
-    );
+    const promise = this.rpc.request("cyber.energy.v1beta1.Query", "DestinationRoutedEnergy", data);
+    return promise.then((data) => QueryRoutedEnergyResponse.decode(new _m0.Reader(data)));
   }
 
-  SourceRoutedEnergy(
-    request: QuerySourceRequest
-  ): Promise<QueryRoutedEnergyResponse> {
+  SourceRoutedEnergy(request: QuerySourceRequest): Promise<QueryRoutedEnergyResponse> {
     const data = QuerySourceRequest.encode(request).finish();
-    const promise = this.rpc.request(
-      "cyber.energy.v1beta1.Query",
-      "SourceRoutedEnergy",
-      data
-    );
-    return promise.then((data) =>
-      QueryRoutedEnergyResponse.decode(new _m0.Reader(data))
-    );
+    const promise = this.rpc.request("cyber.energy.v1beta1.Query", "SourceRoutedEnergy", data);
+    return promise.then((data) => QueryRoutedEnergyResponse.decode(new _m0.Reader(data)));
   }
 
   Route(request: QueryRouteRequest): Promise<QueryRouteResponse> {
     const data = QueryRouteRequest.encode(request).finish();
-    const promise = this.rpc.request(
-      "cyber.energy.v1beta1.Query",
-      "Route",
-      data
-    );
-    return promise.then((data) =>
-      QueryRouteResponse.decode(new _m0.Reader(data))
-    );
+    const promise = this.rpc.request("cyber.energy.v1beta1.Query", "Route", data);
+    return promise.then((data) => QueryRouteResponse.decode(new _m0.Reader(data)));
   }
 
   Routes(request: QueryRoutesRequest): Promise<QueryRoutesResponse> {
     const data = QueryRoutesRequest.encode(request).finish();
-    const promise = this.rpc.request(
-      "cyber.energy.v1beta1.Query",
-      "Routes",
-      data
-    );
-    return promise.then((data) =>
-      QueryRoutesResponse.decode(new _m0.Reader(data))
-    );
+    const promise = this.rpc.request("cyber.energy.v1beta1.Query", "Routes", data);
+    return promise.then((data) => QueryRoutesResponse.decode(new _m0.Reader(data)));
   }
 }
 
 interface Rpc {
-  request(
-    service: string,
-    method: string,
-    data: Uint8Array
-  ): Promise<Uint8Array>;
+  request(service: string, method: string, data: Uint8Array): Promise<Uint8Array>;
 }
 
-type Builtin =
-  | Date
-  | Function
-  | Uint8Array
-  | string
-  | number
-  | boolean
-  | undefined
-  | Long;
+type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined | Long;
 export type DeepPartial<T> = T extends Builtin
   ? T
   : T extends Array<infer U>
