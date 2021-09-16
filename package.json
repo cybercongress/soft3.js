@@ -1,6 +1,7 @@
 {
-  "name": "cyber-js",
+  "name": "@cybercongress/cyber-js",
   "version": "0.1.0",
+  "description": "Cyber SDK",
   "license": "",
   "main": "build/index.js",
   "types": "build/index.d.ts",
@@ -10,6 +11,13 @@
     "!*.spec.*",
     "!**/testdata/"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cybercongress/cyber-js"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsc",
     "get-proto": "./get-proto.sh",
