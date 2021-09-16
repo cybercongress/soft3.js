@@ -1,7 +1,7 @@
 {
-  "name": "js-cyber",
+  "name": "cyber-js",
   "version": "0.1.0",
-  "license": "MIT",
+  "license": "",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
