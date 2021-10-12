@@ -42,7 +42,7 @@ import {
   QueryValidatorOutstandingRewardsResponse,
   QueryValidatorSlashesResponse,
 } from "cosmjs-types/cosmos/distribution/v1beta1/query";
-import { ProposalStatus } from "cosmjs-types/cosmos/gov/v1beta1/gov";
+import { ProposalStatus, TextProposal } from "cosmjs-types/cosmos/gov/v1beta1/gov";
 import {
   QueryDepositResponse,
   QueryDepositsResponse,

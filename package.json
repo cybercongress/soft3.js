@@ -26,7 +26,7 @@
     "@cosmjs/cosmwasm-stargate": "v0.26.0-alpha2",
     "@cosmjs/crypto": "v0.26.0-alpha2",
     "@cosmjs/math": "v0.26.0-alpha2",
-    "@cosmjs/proto-signing": "v0.26.0-alpha2",
+    "@cosmjs/proto-signing": "v0.26.0",
     "@cosmjs/stargate": "v0.26.0-alpha2",
     "@cosmjs/tendermint-rpc": "v0.26.0-alpha2",
     "@cosmjs/utils": "v0.26.0-alpha2",
@@ -37,6 +37,7 @@
     "protobufjs": "~6.10.2"
   },
   "devDependencies": {
+    "@cosmjs/encoding": "^0.26.0",
     "@types/eslint-plugin-prettier": "^3.1.0",
     "@types/pako": "^1.0.1",
     "@typescript-eslint/eslint-plugin": "^4.29.1",
