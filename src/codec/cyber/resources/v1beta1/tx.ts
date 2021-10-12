@@ -20,17 +20,10 @@ export interface MsgInvestmint {
  */
 export interface MsgInvestmintResponse {}
 
-const baseMsgInvestmint: object = {
-  agent: "",
-  resource: "",
-  length: Long.UZERO,
-};
+const baseMsgInvestmint: object = { agent: "", resource: "", length: Long.UZERO };
 
 export const MsgInvestmint = {
-  encode(
-    message: MsgInvestmint,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: MsgInvestmint, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.agent !== "") {
       writer.uint32(10).string(message.agent);
     }
@@ -101,11 +94,9 @@ export const MsgInvestmint = {
   toJSON(message: MsgInvestmint): unknown {
     const obj: any = {};
     message.agent !== undefined && (obj.agent = message.agent);
-    message.amount !== undefined &&
-      (obj.amount = message.amount ? Coin.toJSON(message.amount) : undefined);
+    message.amount !== undefined && (obj.amount = message.amount ? Coin.toJSON(message.amount) : undefined);
     message.resource !== undefined && (obj.resource = message.resource);
-    message.length !== undefined &&
-      (obj.length = (message.length || Long.UZERO).toString());
+    message.length !== undefined && (obj.length = (message.length || Long.UZERO).toString());
     return obj;
   },
 
@@ -138,17 +129,11 @@ export const MsgInvestmint = {
 const baseMsgInvestmintResponse: object = {};
 
 export const MsgInvestmintResponse = {
-  encode(
-    _: MsgInvestmintResponse,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(_: MsgInvestmintResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     return writer;
   },
 
-  decode(
-    input: _m0.Reader | Uint8Array,
-    length?: number
-  ): MsgInvestmintResponse {
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgInvestmintResponse {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseMsgInvestmintResponse } as MsgInvestmintResponse;
@@ -191,34 +176,16 @@ export class MsgClientImpl implements Msg {
   }
   Investmint(request: MsgInvestmint): Promise<MsgInvestmintResponse> {
     const data = MsgInvestmint.encode(request).finish();
-    const promise = this.rpc.request(
-      "cyber.resources.v1beta1.Msg",
-      "Investmint",
-      data
-    );
-    return promise.then((data) =>
-      MsgInvestmintResponse.decode(new _m0.Reader(data))
-    );
+    const promise = this.rpc.request("cyber.resources.v1beta1.Msg", "Investmint", data);
+    return promise.then((data) => MsgInvestmintResponse.decode(new _m0.Reader(data)));
   }
 }
 
 interface Rpc {
-  request(
-    service: string,
-    method: string,
-    data: Uint8Array
-  ): Promise<Uint8Array>;
+  request(service: string, method: string, data: Uint8Array): Promise<Uint8Array>;
 }
 
-type Builtin =
-  | Date
-  | Function
-  | Uint8Array
-  | string
-  | number
-  | boolean
-  | undefined
-  | Long;
+type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined | Long;
 export type DeepPartial<T> = T extends Builtin
   ? T
   : T extends Array<infer U>

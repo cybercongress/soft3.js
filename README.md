@@ -1,6 +1,57 @@
 # cyber-js
 
-Usage:
+### Modules support:
+
+Query client extensions:
+- Auth
+- Bank
+- Distribution
+- Staking
+- Graph
+- Rank
+- Bandwidth
+- Energy
+- Wasm
+- Liquidity
+- Gov
+
+Signing client transaction:
+- Graph
+    - MsgCyberlink
+- Resources
+    - MsgInvestmint
+- Energy
+    - MsgCreateRoute
+    - MsgEditRoute
+    - MsgEditRouteAlias
+    - MsgDeleteRoute
+- Wasm
+    - MsgClearAdmin
+    - MsgExecuteContract
+    - MsgMigrateContract
+    - MsgStoreCode
+    - MsgInstantiateContract
+    - MsgUpdateAdmin
+- Liquidity
+    - MsgSwapWithinBatch
+    - MsgDepositWithinBatch
+    - MsgWithdrawWithinBatch
+    - MsgCreatePool
+- Gov
+    - MsgDeposit
+    - MsgVote
+    - MsgSubmitProposal
+- Distribution
+    - MsgWithdrawDelegatorReward
+- Staking
+    - MsgDelegate
+    - MsgBeginRedelegate
+    - MsgUndelegate
+- IBC
+    - MsgTransfer
+
+
+### Usage:
 ```
 yarn
 
@@ -12,16 +63,3 @@ yarn postdefine-proto
 
 yarn build
 ```
-
-Try workaround tests:
-```
-node txs.js
-
-node queries.js
-```
-
-Note:
-
-- [Install protoc](https://github.com/cybercongress/go-cyber/blob/bostrom-dev/contrib/devtools/Makefile#L7)
-- Install typescript ```yarn add tsc -g```
-- In local dev env link to your app ```yarn add link:/path/to/js-cyber```

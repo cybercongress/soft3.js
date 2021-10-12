@@ -248,7 +248,7 @@ export class CyberClient {
       const account = await this.forceGetQueryClient().auth.account(searchAddress);
       return account ? accountFromAny(account) : null;
     } catch (error) {
-      if (/rpc error: code = NotFound/i.test(error)) {
+      if (/rpc error: code = NotFound/i.test(String(error))) {
         return null;
       }
       throw error;

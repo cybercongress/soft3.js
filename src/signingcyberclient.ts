@@ -66,7 +66,9 @@ import { MsgTransfer } from "cosmjs-types/ibc/applications/transfer/v1/tx";
 import { Height } from "cosmjs-types/ibc/core/client/v1/client";
 import Long from "long";
 import pako from "pako";
-
+import { 
+  createCyberTypes
+} from "./aminomsgs";
 import {
   MsgCreateRoute,
   MsgDeleteRoute,
@@ -207,7 +209,7 @@ export class SigningCyberClient extends CyberClient {
       registry = createDefaultRegistry(),
       // TODO add cyber's amino types
       aminoTypes = new AminoTypes({
-        additions: cosmWasmTypes,
+        additions: createCyberTypes(),
         prefix: options.prefix,
       }),
     } = options;

@@ -1,7 +1,8 @@
 {
-  "name": "js-cyber",
+  "name": "@cybercongress/cyber-js",
   "version": "0.1.0",
-  "license": "MIT",
+  "description": "Cyber SDK",
+  "license": "",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
@@ -10,6 +11,13 @@
     "!*.spec.*",
     "!**/testdata/"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cybercongress/cyber-js"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsc",
     "get-proto": "./get-proto.sh",
@@ -21,7 +29,7 @@
     "format-text": "prettier --write \"./*.md\""
   },
   "dependencies": {
-    "@cosmjs/amino": "v0.26.0-alpha2",
+    "@cosmjs/amino": "v0.26.0",
     "@cosmjs/cosmwasm-launchpad": "v0.25.6",
     "@cosmjs/cosmwasm-stargate": "v0.26.0-alpha2",
     "@cosmjs/crypto": "v0.26.0-alpha2",

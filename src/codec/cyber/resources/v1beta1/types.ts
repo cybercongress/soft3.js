@@ -7,28 +7,49 @@ export const protobufPackage = "cyber.resources.v1beta1";
 
 export interface Params {
   maxSlots: number;
-  baseVestingTime: Long;
-  baseVestingResource?: Coin;
+  baseHalvingPeriodVolt: number;
+  baseHalvingPeriodAmpere: number;
+  baseInvestmintPeriodVolt: number;
+  baseInvestmintPeriodAmpere: number;
+  minInvestmintPeriodSec: number;
+  baseInvestmintAmountVolt?: Coin;
+  baseInvestmintAmountAmpere?: Coin;
 }
 
-const baseParams: object = { maxSlots: 0, baseVestingTime: Long.UZERO };
+const baseParams: object = {
+  maxSlots: 0,
+  baseHalvingPeriodVolt: 0,
+  baseHalvingPeriodAmpere: 0,
+  baseInvestmintPeriodVolt: 0,
+  baseInvestmintPeriodAmpere: 0,
+  minInvestmintPeriodSec: 0,
+};
 
 export const Params = {
-  encode(
-    message: Params,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: Params, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.maxSlots !== 0) {
       writer.uint32(8).uint32(message.maxSlots);
     }
-    if (!message.baseVestingTime.isZero()) {
-      writer.uint32(16).uint64(message.baseVestingTime);
+    if (message.baseHalvingPeriodVolt !== 0) {
+      writer.uint32(16).uint32(message.baseHalvingPeriodVolt);
     }
-    if (message.baseVestingResource !== undefined) {
-      Coin.encode(
-        message.baseVestingResource,
-        writer.uint32(26).fork()
-      ).ldelim();
+    if (message.baseHalvingPeriodAmpere !== 0) {
+      writer.uint32(24).uint32(message.baseHalvingPeriodAmpere);
+    }
+    if (message.baseInvestmintPeriodVolt !== 0) {
+      writer.uint32(32).uint32(message.baseInvestmintPeriodVolt);
+    }
+    if (message.baseInvestmintPeriodAmpere !== 0) {
+      writer.uint32(40).uint32(message.baseInvestmintPeriodAmpere);
+    }
+    if (message.minInvestmintPeriodSec !== 0) {
+      writer.uint32(48).uint32(message.minInvestmintPeriodSec);
+    }
+    if (message.baseInvestmintAmountVolt !== undefined) {
+      Coin.encode(message.baseInvestmintAmountVolt, writer.uint32(58).fork()).ldelim();
+    }
+    if (message.baseInvestmintAmountAmpere !== undefined) {
+      Coin.encode(message.baseInvestmintAmountAmpere, writer.uint32(66).fork()).ldelim();
     }
     return writer;
   },
@@ -44,10 +65,25 @@ export const Params = {
           message.maxSlots = reader.uint32();
           break;
         case 2:
-          message.baseVestingTime = reader.uint64() as Long;
+          message.baseHalvingPeriodVolt = reader.uint32();
           break;
         case 3:
-          message.baseVestingResource = Coin.decode(reader, reader.uint32());
+          message.baseHalvingPeriodAmpere = reader.uint32();
+          break;
+        case 4:
+          message.baseInvestmintPeriodVolt = reader.uint32();
+          break;
+        case 5:
+          message.baseInvestmintPeriodAmpere = reader.uint32();
+          break;
+        case 6:
+          message.minInvestmintPeriodSec = reader.uint32();
+          break;
+        case 7:
+          message.baseInvestmintAmountVolt = Coin.decode(reader, reader.uint32());
+          break;
+        case 8:
+          message.baseInvestmintAmountAmpere = Coin.decode(reader, reader.uint32());
           break;
         default:
           reader.skipType(tag & 7);
@@ -64,21 +100,40 @@ export const Params = {
     } else {
       message.maxSlots = 0;
     }
-    if (
-      object.baseVestingTime !== undefined &&
-      object.baseVestingTime !== null
-    ) {
-      message.baseVestingTime = Long.fromString(object.baseVestingTime);
+    if (object.baseHalvingPeriodVolt !== undefined && object.baseHalvingPeriodVolt !== null) {
+      message.baseHalvingPeriodVolt = Number(object.baseHalvingPeriodVolt);
     } else {
-      message.baseVestingTime = Long.UZERO;
+      message.baseHalvingPeriodVolt = 0;
     }
-    if (
-      object.baseVestingResource !== undefined &&
-      object.baseVestingResource !== null
-    ) {
-      message.baseVestingResource = Coin.fromJSON(object.baseVestingResource);
+    if (object.baseHalvingPeriodAmpere !== undefined && object.baseHalvingPeriodAmpere !== null) {
+      message.baseHalvingPeriodAmpere = Number(object.baseHalvingPeriodAmpere);
     } else {
-      message.baseVestingResource = undefined;
+      message.baseHalvingPeriodAmpere = 0;
+    }
+    if (object.baseInvestmintPeriodVolt !== undefined && object.baseInvestmintPeriodVolt !== null) {
+      message.baseInvestmintPeriodVolt = Number(object.baseInvestmintPeriodVolt);
+    } else {
+      message.baseInvestmintPeriodVolt = 0;
+    }
+    if (object.baseInvestmintPeriodAmpere !== undefined && object.baseInvestmintPeriodAmpere !== null) {
+      message.baseInvestmintPeriodAmpere = Number(object.baseInvestmintPeriodAmpere);
+    } else {
+      message.baseInvestmintPeriodAmpere = 0;
+    }
+    if (object.minInvestmintPeriodSec !== undefined && object.minInvestmintPeriodSec !== null) {
+      message.minInvestmintPeriodSec = Number(object.minInvestmintPeriodSec);
+    } else {
+      message.minInvestmintPeriodSec = 0;
+    }
+    if (object.baseInvestmintAmountVolt !== undefined && object.baseInvestmintAmountVolt !== null) {
+      message.baseInvestmintAmountVolt = Coin.fromJSON(object.baseInvestmintAmountVolt);
+    } else {
+      message.baseInvestmintAmountVolt = undefined;
+    }
+    if (object.baseInvestmintAmountAmpere !== undefined && object.baseInvestmintAmountAmpere !== null) {
+      message.baseInvestmintAmountAmpere = Coin.fromJSON(object.baseInvestmintAmountAmpere);
+    } else {
+      message.baseInvestmintAmountAmpere = undefined;
     }
     return message;
   },
@@ -86,13 +141,23 @@ export const Params = {
   toJSON(message: Params): unknown {
     const obj: any = {};
     message.maxSlots !== undefined && (obj.maxSlots = message.maxSlots);
-    message.baseVestingTime !== undefined &&
-      (obj.baseVestingTime = (
-        message.baseVestingTime || Long.UZERO
-      ).toString());
-    message.baseVestingResource !== undefined &&
-      (obj.baseVestingResource = message.baseVestingResource
-        ? Coin.toJSON(message.baseVestingResource)
+    message.baseHalvingPeriodVolt !== undefined &&
+      (obj.baseHalvingPeriodVolt = message.baseHalvingPeriodVolt);
+    message.baseHalvingPeriodAmpere !== undefined &&
+      (obj.baseHalvingPeriodAmpere = message.baseHalvingPeriodAmpere);
+    message.baseInvestmintPeriodVolt !== undefined &&
+      (obj.baseInvestmintPeriodVolt = message.baseInvestmintPeriodVolt);
+    message.baseInvestmintPeriodAmpere !== undefined &&
+      (obj.baseInvestmintPeriodAmpere = message.baseInvestmintPeriodAmpere);
+    message.minInvestmintPeriodSec !== undefined &&
+      (obj.minInvestmintPeriodSec = message.minInvestmintPeriodSec);
+    message.baseInvestmintAmountVolt !== undefined &&
+      (obj.baseInvestmintAmountVolt = message.baseInvestmintAmountVolt
+        ? Coin.toJSON(message.baseInvestmintAmountVolt)
+        : undefined);
+    message.baseInvestmintAmountAmpere !== undefined &&
+      (obj.baseInvestmintAmountAmpere = message.baseInvestmintAmountAmpere
+        ? Coin.toJSON(message.baseInvestmintAmountAmpere)
         : undefined);
     return obj;
   },
@@ -104,37 +169,46 @@ export const Params = {
     } else {
       message.maxSlots = 0;
     }
-    if (
-      object.baseVestingTime !== undefined &&
-      object.baseVestingTime !== null
-    ) {
-      message.baseVestingTime = object.baseVestingTime as Long;
+    if (object.baseHalvingPeriodVolt !== undefined && object.baseHalvingPeriodVolt !== null) {
+      message.baseHalvingPeriodVolt = object.baseHalvingPeriodVolt;
     } else {
-      message.baseVestingTime = Long.UZERO;
+      message.baseHalvingPeriodVolt = 0;
     }
-    if (
-      object.baseVestingResource !== undefined &&
-      object.baseVestingResource !== null
-    ) {
-      message.baseVestingResource = Coin.fromPartial(
-        object.baseVestingResource
-      );
+    if (object.baseHalvingPeriodAmpere !== undefined && object.baseHalvingPeriodAmpere !== null) {
+      message.baseHalvingPeriodAmpere = object.baseHalvingPeriodAmpere;
     } else {
-      message.baseVestingResource = undefined;
+      message.baseHalvingPeriodAmpere = 0;
+    }
+    if (object.baseInvestmintPeriodVolt !== undefined && object.baseInvestmintPeriodVolt !== null) {
+      message.baseInvestmintPeriodVolt = object.baseInvestmintPeriodVolt;
+    } else {
+      message.baseInvestmintPeriodVolt = 0;
+    }
+    if (object.baseInvestmintPeriodAmpere !== undefined && object.baseInvestmintPeriodAmpere !== null) {
+      message.baseInvestmintPeriodAmpere = object.baseInvestmintPeriodAmpere;
+    } else {
+      message.baseInvestmintPeriodAmpere = 0;
+    }
+    if (object.minInvestmintPeriodSec !== undefined && object.minInvestmintPeriodSec !== null) {
+      message.minInvestmintPeriodSec = object.minInvestmintPeriodSec;
+    } else {
+      message.minInvestmintPeriodSec = 0;
+    }
+    if (object.baseInvestmintAmountVolt !== undefined && object.baseInvestmintAmountVolt !== null) {
+      message.baseInvestmintAmountVolt = Coin.fromPartial(object.baseInvestmintAmountVolt);
+    } else {
+      message.baseInvestmintAmountVolt = undefined;
+    }
+    if (object.baseInvestmintAmountAmpere !== undefined && object.baseInvestmintAmountAmpere !== null) {
+      message.baseInvestmintAmountAmpere = Coin.fromPartial(object.baseInvestmintAmountAmpere);
+    } else {
+      message.baseInvestmintAmountAmpere = undefined;
     }
     return message;
   },
 };
 
-type Builtin =
-  | Date
-  | Function
-  | Uint8Array
-  | string
-  | number
-  | boolean
-  | undefined
-  | Long;
+type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined | Long;
 export type DeepPartial<T> = T extends Builtin
   ? T
   : T extends Array<infer U>

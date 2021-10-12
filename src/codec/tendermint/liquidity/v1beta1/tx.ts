@@ -66,7 +66,7 @@ export interface MsgWithdrawWithinBatchResponse {}
  * `MsgSwapWithinBatch` defines an sdk.Msg type that supports submitting a swap offer request to the batch of the liquidity pool.
  * Submit swap offer to the liquidity pool batch with the specified the `pool_id`, `swap_type_id`,
  * `demand_coin_denom` with the coin and the price you're offering
- * and `offer_coin_fee` must be half of offer coin amount * current `params.swap_fee_rate` for reservation to pay fees.
+ * and `offer_coin_fee` must be half of offer coin amount * current `params.swap_fee_rate` and ceil for reservation to pay fees.
  * This request is stacked in the batch of the liquidity pool, is not processed
  * immediately, and is processed in the `endblock` at the same time as other requests.
  * You must request the same fields as the pool.
@@ -86,7 +86,7 @@ export interface MsgSwapWithinBatch {
   offerCoin?: Coin;
   /** denom of demand coin to be exchanged on the swap request, must match the denom in the pool. */
   demandCoinDenom: string;
-  /** half of offer coin amount * params.swap_fee_rate for reservation to pay fees. */
+  /** half of offer coin amount * params.swap_fee_rate and ceil for reservation to pay fees. */
   offerCoinFee?: Coin;
   /**
    * limit order price for the order, the price is the exchange ratio of X/Y

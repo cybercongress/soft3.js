@@ -30,10 +30,7 @@ const baseParams: object = {
 };
 
 export const Params = {
-  encode(
-    message: Params,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: Params, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (!message.recoveryPeriod.isZero()) {
       writer.uint32(8).uint64(message.recoveryPeriod);
     }
@@ -83,10 +80,7 @@ export const Params = {
     } else {
       message.recoveryPeriod = Long.UZERO;
     }
-    if (
-      object.adjustPricePeriod !== undefined &&
-      object.adjustPricePeriod !== null
-    ) {
+    if (object.adjustPricePeriod !== undefined && object.adjustPricePeriod !== null) {
       message.adjustPricePeriod = Long.fromString(object.adjustPricePeriod);
     } else {
       message.adjustPricePeriod = Long.UZERO;
@@ -96,10 +90,7 @@ export const Params = {
     } else {
       message.basePrice = "";
     }
-    if (
-      object.maxBlockBandwidth !== undefined &&
-      object.maxBlockBandwidth !== null
-    ) {
+    if (object.maxBlockBandwidth !== undefined && object.maxBlockBandwidth !== null) {
       message.maxBlockBandwidth = Long.fromString(object.maxBlockBandwidth);
     } else {
       message.maxBlockBandwidth = Long.UZERO;
@@ -112,14 +103,10 @@ export const Params = {
     message.recoveryPeriod !== undefined &&
       (obj.recoveryPeriod = (message.recoveryPeriod || Long.UZERO).toString());
     message.adjustPricePeriod !== undefined &&
-      (obj.adjustPricePeriod = (
-        message.adjustPricePeriod || Long.UZERO
-      ).toString());
+      (obj.adjustPricePeriod = (message.adjustPricePeriod || Long.UZERO).toString());
     message.basePrice !== undefined && (obj.basePrice = message.basePrice);
     message.maxBlockBandwidth !== undefined &&
-      (obj.maxBlockBandwidth = (
-        message.maxBlockBandwidth || Long.UZERO
-      ).toString());
+      (obj.maxBlockBandwidth = (message.maxBlockBandwidth || Long.UZERO).toString());
     return obj;
   },
 
@@ -130,10 +117,7 @@ export const Params = {
     } else {
       message.recoveryPeriod = Long.UZERO;
     }
-    if (
-      object.adjustPricePeriod !== undefined &&
-      object.adjustPricePeriod !== null
-    ) {
+    if (object.adjustPricePeriod !== undefined && object.adjustPricePeriod !== null) {
       message.adjustPricePeriod = object.adjustPricePeriod as Long;
     } else {
       message.adjustPricePeriod = Long.UZERO;
@@ -143,10 +127,7 @@ export const Params = {
     } else {
       message.basePrice = "";
     }
-    if (
-      object.maxBlockBandwidth !== undefined &&
-      object.maxBlockBandwidth !== null
-    ) {
+    if (object.maxBlockBandwidth !== undefined && object.maxBlockBandwidth !== null) {
       message.maxBlockBandwidth = object.maxBlockBandwidth as Long;
     } else {
       message.maxBlockBandwidth = Long.UZERO;
@@ -163,10 +144,7 @@ const baseAccountBandwidth: object = {
 };
 
 export const AccountBandwidth = {
-  encode(
-    message: AccountBandwidth,
-    writer: _m0.Writer = _m0.Writer.create()
-  ): _m0.Writer {
+  encode(message: AccountBandwidth, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.address !== "") {
       writer.uint32(10).string(message.address);
     }
@@ -221,10 +199,7 @@ export const AccountBandwidth = {
     } else {
       message.remainedValue = Long.UZERO;
     }
-    if (
-      object.lastUpdatedBlock !== undefined &&
-      object.lastUpdatedBlock !== null
-    ) {
+    if (object.lastUpdatedBlock !== undefined && object.lastUpdatedBlock !== null) {
       message.lastUpdatedBlock = Long.fromString(object.lastUpdatedBlock);
     } else {
       message.lastUpdatedBlock = Long.UZERO;
@@ -243,11 +218,8 @@ export const AccountBandwidth = {
     message.remainedValue !== undefined &&
       (obj.remainedValue = (message.remainedValue || Long.UZERO).toString());
     message.lastUpdatedBlock !== undefined &&
-      (obj.lastUpdatedBlock = (
-        message.lastUpdatedBlock || Long.UZERO
-      ).toString());
-    message.maxValue !== undefined &&
-      (obj.maxValue = (message.maxValue || Long.UZERO).toString());
+      (obj.lastUpdatedBlock = (message.lastUpdatedBlock || Long.UZERO).toString());
+    message.maxValue !== undefined && (obj.maxValue = (message.maxValue || Long.UZERO).toString());
     return obj;
   },
 
@@ -263,10 +235,7 @@ export const AccountBandwidth = {
     } else {
       message.remainedValue = Long.UZERO;
     }
-    if (
-      object.lastUpdatedBlock !== undefined &&
-      object.lastUpdatedBlock !== null
-    ) {
+    if (object.lastUpdatedBlock !== undefined && object.lastUpdatedBlock !== null) {
       message.lastUpdatedBlock = object.lastUpdatedBlock as Long;
     } else {
       message.lastUpdatedBlock = Long.UZERO;
@@ -335,15 +304,7 @@ export const Price = {
   },
 };
 
-type Builtin =
-  | Date
-  | Function
-  | Uint8Array
-  | string
-  | number
-  | boolean
-  | undefined
-  | Long;
+type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined | Long;
 export type DeepPartial<T> = T extends Builtin
   ? T
   : T extends Array<infer U>
