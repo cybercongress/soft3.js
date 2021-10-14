@@ -32,9 +32,9 @@ protoc \
   "$CYBER_PROTO_DIR/cyber/resources/v1beta1/tx.proto" \
   "$CYBER_PROTO_DIR/cyber/rank/v1beta1/types.proto" \
   "$CYBER_PROTO_DIR/cyber/rank/v1beta1/query.proto" \
-  "$CYBER_PROTO_DIR/cyber/energy/v1beta1/types.proto" \
-  "$CYBER_PROTO_DIR/cyber/energy/v1beta1/query.proto" \
-  "$CYBER_PROTO_DIR/cyber/energy/v1beta1/tx.proto"
+  "$CYBER_PROTO_DIR/cyber/grid/v1beta1/types.proto" \
+  "$CYBER_PROTO_DIR/cyber/grid/v1beta1/query.proto" \
+  "$CYBER_PROTO_DIR/cyber/grid/v1beta1/tx.proto"
 
 protoc \
   --plugin="$(yarn bin protoc-gen-ts_proto)" \

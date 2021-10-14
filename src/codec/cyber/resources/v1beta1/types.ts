@@ -1,28 +1,28 @@
 /* eslint-disable */
 import Long from "long";
 import _m0 from "protobufjs/minimal";
-import { Coin } from "../../../cosmos_proto/coin";
+import { Coin } from "../../../cosmos/base/v1beta1/coin";
 
 export const protobufPackage = "cyber.resources.v1beta1";
 
 export interface Params {
   maxSlots: number;
-  baseHalvingPeriodVolt: number;
-  baseHalvingPeriodAmpere: number;
+  halvingPeriodVoltBlocks: number;
+  halvingPeriodAmpereBlocks: number;
   baseInvestmintPeriodVolt: number;
   baseInvestmintPeriodAmpere: number;
-  minInvestmintPeriodSec: number;
+  minInvestmintPeriod: number;
   baseInvestmintAmountVolt?: Coin;
   baseInvestmintAmountAmpere?: Coin;
 }
 
 const baseParams: object = {
   maxSlots: 0,
-  baseHalvingPeriodVolt: 0,
-  baseHalvingPeriodAmpere: 0,
+  halvingPeriodVoltBlocks: 0,
+  halvingPeriodAmpereBlocks: 0,
   baseInvestmintPeriodVolt: 0,
   baseInvestmintPeriodAmpere: 0,
-  minInvestmintPeriodSec: 0,
+  minInvestmintPeriod: 0,
 };
 
 export const Params = {
@@ -30,11 +30,11 @@ export const Params = {
     if (message.maxSlots !== 0) {
       writer.uint32(8).uint32(message.maxSlots);
     }
-    if (message.baseHalvingPeriodVolt !== 0) {
-      writer.uint32(16).uint32(message.baseHalvingPeriodVolt);
+    if (message.halvingPeriodVoltBlocks !== 0) {
+      writer.uint32(16).uint32(message.halvingPeriodVoltBlocks);
     }
-    if (message.baseHalvingPeriodAmpere !== 0) {
-      writer.uint32(24).uint32(message.baseHalvingPeriodAmpere);
+    if (message.halvingPeriodAmpereBlocks !== 0) {
+      writer.uint32(24).uint32(message.halvingPeriodAmpereBlocks);
     }
     if (message.baseInvestmintPeriodVolt !== 0) {
       writer.uint32(32).uint32(message.baseInvestmintPeriodVolt);
@@ -42,8 +42,8 @@ export const Params = {
     if (message.baseInvestmintPeriodAmpere !== 0) {
       writer.uint32(40).uint32(message.baseInvestmintPeriodAmpere);
     }
-    if (message.minInvestmintPeriodSec !== 0) {
-      writer.uint32(48).uint32(message.minInvestmintPeriodSec);
+    if (message.minInvestmintPeriod !== 0) {
+      writer.uint32(48).uint32(message.minInvestmintPeriod);
     }
     if (message.baseInvestmintAmountVolt !== undefined) {
       Coin.encode(message.baseInvestmintAmountVolt, writer.uint32(58).fork()).ldelim();
@@ -65,10 +65,10 @@ export const Params = {
           message.maxSlots = reader.uint32();
           break;
         case 2:
-          message.baseHalvingPeriodVolt = reader.uint32();
+          message.halvingPeriodVoltBlocks = reader.uint32();
           break;
         case 3:
-          message.baseHalvingPeriodAmpere = reader.uint32();
+          message.halvingPeriodAmpereBlocks = reader.uint32();
           break;
         case 4:
           message.baseInvestmintPeriodVolt = reader.uint32();
@@ -77,7 +77,7 @@ export const Params = {
           message.baseInvestmintPeriodAmpere = reader.uint32();
           break;
         case 6:
-          message.minInvestmintPeriodSec = reader.uint32();
+          message.minInvestmintPeriod = reader.uint32();
           break;
         case 7:
           message.baseInvestmintAmountVolt = Coin.decode(reader, reader.uint32());
@@ -100,15 +100,15 @@ export const Params = {
     } else {
       message.maxSlots = 0;
     }
-    if (object.baseHalvingPeriodVolt !== undefined && object.baseHalvingPeriodVolt !== null) {
-      message.baseHalvingPeriodVolt = Number(object.baseHalvingPeriodVolt);
+    if (object.halvingPeriodVoltBlocks !== undefined && object.halvingPeriodVoltBlocks !== null) {
+      message.halvingPeriodVoltBlocks = Number(object.halvingPeriodVoltBlocks);
     } else {
-      message.baseHalvingPeriodVolt = 0;
+      message.halvingPeriodVoltBlocks = 0;
     }
-    if (object.baseHalvingPeriodAmpere !== undefined && object.baseHalvingPeriodAmpere !== null) {
-      message.baseHalvingPeriodAmpere = Number(object.baseHalvingPeriodAmpere);
+    if (object.halvingPeriodAmpereBlocks !== undefined && object.halvingPeriodAmpereBlocks !== null) {
+      message.halvingPeriodAmpereBlocks = Number(object.halvingPeriodAmpereBlocks);
     } else {
-      message.baseHalvingPeriodAmpere = 0;
+      message.halvingPeriodAmpereBlocks = 0;
     }
     if (object.baseInvestmintPeriodVolt !== undefined && object.baseInvestmintPeriodVolt !== null) {
       message.baseInvestmintPeriodVolt = Number(object.baseInvestmintPeriodVolt);
@@ -120,10 +120,10 @@ export const Params = {
     } else {
       message.baseInvestmintPeriodAmpere = 0;
     }
-    if (object.minInvestmintPeriodSec !== undefined && object.minInvestmintPeriodSec !== null) {
-      message.minInvestmintPeriodSec = Number(object.minInvestmintPeriodSec);
+    if (object.minInvestmintPeriod !== undefined && object.minInvestmintPeriod !== null) {
+      message.minInvestmintPeriod = Number(object.minInvestmintPeriod);
     } else {
-      message.minInvestmintPeriodSec = 0;
+      message.minInvestmintPeriod = 0;
     }
     if (object.baseInvestmintAmountVolt !== undefined && object.baseInvestmintAmountVolt !== null) {
       message.baseInvestmintAmountVolt = Coin.fromJSON(object.baseInvestmintAmountVolt);
@@ -141,16 +141,15 @@ export const Params = {
   toJSON(message: Params): unknown {
     const obj: any = {};
     message.maxSlots !== undefined && (obj.maxSlots = message.maxSlots);
-    message.baseHalvingPeriodVolt !== undefined &&
-      (obj.baseHalvingPeriodVolt = message.baseHalvingPeriodVolt);
-    message.baseHalvingPeriodAmpere !== undefined &&
-      (obj.baseHalvingPeriodAmpere = message.baseHalvingPeriodAmpere);
+    message.halvingPeriodVoltBlocks !== undefined &&
+      (obj.halvingPeriodVoltBlocks = message.halvingPeriodVoltBlocks);
+    message.halvingPeriodAmpereBlocks !== undefined &&
+      (obj.halvingPeriodAmpereBlocks = message.halvingPeriodAmpereBlocks);
     message.baseInvestmintPeriodVolt !== undefined &&
       (obj.baseInvestmintPeriodVolt = message.baseInvestmintPeriodVolt);
     message.baseInvestmintPeriodAmpere !== undefined &&
       (obj.baseInvestmintPeriodAmpere = message.baseInvestmintPeriodAmpere);
-    message.minInvestmintPeriodSec !== undefined &&
-      (obj.minInvestmintPeriodSec = message.minInvestmintPeriodSec);
+    message.minInvestmintPeriod !== undefined && (obj.minInvestmintPeriod = message.minInvestmintPeriod);
     message.baseInvestmintAmountVolt !== undefined &&
       (obj.baseInvestmintAmountVolt = message.baseInvestmintAmountVolt
         ? Coin.toJSON(message.baseInvestmintAmountVolt)
@@ -169,15 +168,15 @@ export const Params = {
     } else {
       message.maxSlots = 0;
     }
-    if (object.baseHalvingPeriodVolt !== undefined && object.baseHalvingPeriodVolt !== null) {
-      message.baseHalvingPeriodVolt = object.baseHalvingPeriodVolt;
+    if (object.halvingPeriodVoltBlocks !== undefined && object.halvingPeriodVoltBlocks !== null) {
+      message.halvingPeriodVoltBlocks = object.halvingPeriodVoltBlocks;
     } else {
-      message.baseHalvingPeriodVolt = 0;
+      message.halvingPeriodVoltBlocks = 0;
     }
-    if (object.baseHalvingPeriodAmpere !== undefined && object.baseHalvingPeriodAmpere !== null) {
-      message.baseHalvingPeriodAmpere = object.baseHalvingPeriodAmpere;
+    if (object.halvingPeriodAmpereBlocks !== undefined && object.halvingPeriodAmpereBlocks !== null) {
+      message.halvingPeriodAmpereBlocks = object.halvingPeriodAmpereBlocks;
     } else {
-      message.baseHalvingPeriodAmpere = 0;
+      message.halvingPeriodAmpereBlocks = 0;
     }
     if (object.baseInvestmintPeriodVolt !== undefined && object.baseInvestmintPeriodVolt !== null) {
       message.baseInvestmintPeriodVolt = object.baseInvestmintPeriodVolt;
@@ -189,10 +188,10 @@ export const Params = {
     } else {
       message.baseInvestmintPeriodAmpere = 0;
     }
-    if (object.minInvestmintPeriodSec !== undefined && object.minInvestmintPeriodSec !== null) {
-      message.minInvestmintPeriodSec = object.minInvestmintPeriodSec;
+    if (object.minInvestmintPeriod !== undefined && object.minInvestmintPeriod !== null) {
+      message.minInvestmintPeriod = object.minInvestmintPeriod;
     } else {
-      message.minInvestmintPeriodSec = 0;
+      message.minInvestmintPeriod = 0;
     }
     if (object.baseInvestmintAmountVolt !== undefined && object.baseInvestmintAmountVolt !== null) {
       message.baseInvestmintAmountVolt = Coin.fromPartial(object.baseInvestmintAmountVolt);

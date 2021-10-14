@@ -23,9 +23,9 @@ export function createPagination(page?: number, perPage?: number): PageRequest {
 
 export interface RankExtension {
   readonly rank: {
-    readonly search: (cid: string, page?: number, perPage?: number) => Promise<QuerySearchResponse>;
-    readonly backlinks: (cid: string, page?: number, perPage?: number) => Promise<QuerySearchResponse>;
-    readonly rank: (cid: string) => Promise<QueryRankResponse>;
+    readonly search: (particle: string, page?: number, perPage?: number) => Promise<QuerySearchResponse>;
+    readonly backlinks: (particle: string, page?: number, perPage?: number) => Promise<QuerySearchResponse>;
+    readonly rank: (particle: string) => Promise<QueryRankResponse>;
     readonly isLinkExist: (from: string, to: string, agent: string) => Promise<QueryLinkExistResponse>;
     readonly isAnyLinkExist: (from: string, to: string) => Promise<QueryLinkExistResponse>;
   };
@@ -39,23 +39,23 @@ export function setupRankExtension(base: QueryClient): RankExtension {
 
   return {
     rank: {
-      search: async (cid: string, page?: number, perPage?: number) => {
+      search: async (particle: string, page?: number, perPage?: number) => {
         const response = await queryService.Search({
-          cid: cid,
+          particle: particle,
           pagination: createPagination(page, perPage),
         });
         return response;
       },
-      backlinks: async (cid: string, page?: number, perPage?: number) => {
+      backlinks: async (particle: string, page?: number, perPage?: number) => {
         const response = await queryService.Backlinks({
-          cid: cid,
+          particle: particle,
           pagination: createPagination(page, perPage),
         });
         return response;
       },
-      rank: async (cid: string) => {
+      rank: async (particle: string) => {
         const response = await queryService.Rank({
-          cid: cid,
+          particle: particle,
         });
         return response;
       },

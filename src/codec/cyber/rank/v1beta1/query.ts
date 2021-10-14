@@ -1,7 +1,7 @@
 /* eslint-disable */
 import Long from "long";
 import _m0 from "protobufjs/minimal";
-import { Params, RankedCid } from "../../../cyber/rank/v1beta1/types";
+import { Params, RankedParticle } from "../../../cyber/rank/v1beta1/types";
 import { PageRequest, PageResponse } from "../../../cyber/base/query/v1beta1/pagination";
 
 export const protobufPackage = "cyber.rank.v1beta1";
@@ -13,7 +13,7 @@ export interface QueryParamsResponse {
 }
 
 export interface QueryRankRequest {
-  cid: string;
+  particle: string;
 }
 
 export interface QueryRankResponse {
@@ -21,12 +21,12 @@ export interface QueryRankResponse {
 }
 
 export interface QuerySearchRequest {
-  cid: string;
+  particle: string;
   pagination?: PageRequest;
 }
 
 export interface QuerySearchResponse {
-  result: RankedCid[];
+  result: RankedParticle[];
   pagination?: PageResponse;
 }
 
@@ -43,16 +43,15 @@ export interface QueryIsAnyLinkExistRequest {
   to: string;
 }
 
-/** FIXME move to bool... */
 export interface QueryLinkExistResponse {
   exist: boolean;
 }
 
-export interface QueryEntropyRequest {
-  cid: string;
+export interface QueryNegentropyPartilceRequest {
+  particle: string;
 }
 
-export interface QueryEntropyResponse {
+export interface QueryNegentropyParticleResponse {
   entropy: Long;
 }
 
@@ -63,7 +62,7 @@ export interface QueryNegentropyResponse {
 }
 
 export interface QueryKarmaRequest {
-  address: string;
+  neuron: string;
 }
 
 export interface QueryKarmaResponse {
@@ -163,12 +162,12 @@ export const QueryParamsResponse = {
   },
 };
 
-const baseQueryRankRequest: object = { cid: "" };
+const baseQueryRankRequest: object = { particle: "" };
 
 export const QueryRankRequest = {
   encode(message: QueryRankRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.cid !== "") {
-      writer.uint32(10).string(message.cid);
+    if (message.particle !== "") {
+      writer.uint32(10).string(message.particle);
     }
     return writer;
   },
@@ -181,7 +180,7 @@ export const QueryRankRequest = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.cid = reader.string();
+          message.particle = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -193,26 +192,26 @@ export const QueryRankRequest = {
 
   fromJSON(object: any): QueryRankRequest {
     const message = { ...baseQueryRankRequest } as QueryRankRequest;
-    if (object.cid !== undefined && object.cid !== null) {
-      message.cid = String(object.cid);
+    if (object.particle !== undefined && object.particle !== null) {
+      message.particle = String(object.particle);
     } else {
-      message.cid = "";
+      message.particle = "";
     }
     return message;
   },
 
   toJSON(message: QueryRankRequest): unknown {
     const obj: any = {};
-    message.cid !== undefined && (obj.cid = message.cid);
+    message.particle !== undefined && (obj.particle = message.particle);
     return obj;
   },
 
   fromPartial(object: DeepPartial<QueryRankRequest>): QueryRankRequest {
     const message = { ...baseQueryRankRequest } as QueryRankRequest;
-    if (object.cid !== undefined && object.cid !== null) {
-      message.cid = object.cid;
+    if (object.particle !== undefined && object.particle !== null) {
+      message.particle = object.particle;
     } else {
-      message.cid = "";
+      message.particle = "";
     }
     return message;
   },
@@ -273,12 +272,12 @@ export const QueryRankResponse = {
   },
 };
 
-const baseQuerySearchRequest: object = { cid: "" };
+const baseQuerySearchRequest: object = { particle: "" };
 
 export const QuerySearchRequest = {
   encode(message: QuerySearchRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.cid !== "") {
-      writer.uint32(10).string(message.cid);
+    if (message.particle !== "") {
+      writer.uint32(10).string(message.particle);
     }
     if (message.pagination !== undefined) {
       PageRequest.encode(message.pagination, writer.uint32(18).fork()).ldelim();
@@ -294,7 +293,7 @@ export const QuerySearchRequest = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.cid = reader.string();
+          message.particle = reader.string();
           break;
         case 2:
           message.pagination = PageRequest.decode(reader, reader.uint32());
@@ -309,10 +308,10 @@ export const QuerySearchRequest = {
 
   fromJSON(object: any): QuerySearchRequest {
     const message = { ...baseQuerySearchRequest } as QuerySearchRequest;
-    if (object.cid !== undefined && object.cid !== null) {
-      message.cid = String(object.cid);
+    if (object.particle !== undefined && object.particle !== null) {
+      message.particle = String(object.particle);
     } else {
-      message.cid = "";
+      message.particle = "";
     }
     if (object.pagination !== undefined && object.pagination !== null) {
       message.pagination = PageRequest.fromJSON(object.pagination);
@@ -324,7 +323,7 @@ export const QuerySearchRequest = {
 
   toJSON(message: QuerySearchRequest): unknown {
     const obj: any = {};
-    message.cid !== undefined && (obj.cid = message.cid);
+    message.particle !== undefined && (obj.particle = message.particle);
     message.pagination !== undefined &&
       (obj.pagination = message.pagination ? PageRequest.toJSON(message.pagination) : undefined);
     return obj;
@@ -332,10 +331,10 @@ export const QuerySearchRequest = {
 
   fromPartial(object: DeepPartial<QuerySearchRequest>): QuerySearchRequest {
     const message = { ...baseQuerySearchRequest } as QuerySearchRequest;
-    if (object.cid !== undefined && object.cid !== null) {
-      message.cid = object.cid;
+    if (object.particle !== undefined && object.particle !== null) {
+      message.particle = object.particle;
     } else {
-      message.cid = "";
+      message.particle = "";
     }
     if (object.pagination !== undefined && object.pagination !== null) {
       message.pagination = PageRequest.fromPartial(object.pagination);
@@ -351,7 +350,7 @@ const baseQuerySearchResponse: object = {};
 export const QuerySearchResponse = {
   encode(message: QuerySearchResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     for (const v of message.result) {
-      RankedCid.encode(v!, writer.uint32(10).fork()).ldelim();
+      RankedParticle.encode(v!, writer.uint32(10).fork()).ldelim();
     }
     if (message.pagination !== undefined) {
       PageResponse.encode(message.pagination, writer.uint32(18).fork()).ldelim();
@@ -368,7 +367,7 @@ export const QuerySearchResponse = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.result.push(RankedCid.decode(reader, reader.uint32()));
+          message.result.push(RankedParticle.decode(reader, reader.uint32()));
           break;
         case 2:
           message.pagination = PageResponse.decode(reader, reader.uint32());
@@ -386,7 +385,7 @@ export const QuerySearchResponse = {
     message.result = [];
     if (object.result !== undefined && object.result !== null) {
       for (const e of object.result) {
-        message.result.push(RankedCid.fromJSON(e));
+        message.result.push(RankedParticle.fromJSON(e));
       }
     }
     if (object.pagination !== undefined && object.pagination !== null) {
@@ -400,7 +399,7 @@ export const QuerySearchResponse = {
   toJSON(message: QuerySearchResponse): unknown {
     const obj: any = {};
     if (message.result) {
-      obj.result = message.result.map((e) => (e ? RankedCid.toJSON(e) : undefined));
+      obj.result = message.result.map((e) => (e ? RankedParticle.toJSON(e) : undefined));
     } else {
       obj.result = [];
     }
@@ -414,7 +413,7 @@ export const QuerySearchResponse = {
     message.result = [];
     if (object.result !== undefined && object.result !== null) {
       for (const e of object.result) {
-        message.result.push(RankedCid.fromPartial(e));
+        message.result.push(RankedParticle.fromPartial(e));
       }
     }
     if (object.pagination !== undefined && object.pagination !== null) {
@@ -680,25 +679,25 @@ export const QueryLinkExistResponse = {
   },
 };
 
-const baseQueryEntropyRequest: object = { cid: "" };
+const baseQueryNegentropyPartilceRequest: object = { particle: "" };
 
-export const QueryEntropyRequest = {
-  encode(message: QueryEntropyRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.cid !== "") {
-      writer.uint32(10).string(message.cid);
+export const QueryNegentropyPartilceRequest = {
+  encode(message: QueryNegentropyPartilceRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.particle !== "") {
+      writer.uint32(10).string(message.particle);
     }
     return writer;
   },
 
-  decode(input: _m0.Reader | Uint8Array, length?: number): QueryEntropyRequest {
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryNegentropyPartilceRequest {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseQueryEntropyRequest } as QueryEntropyRequest;
+    const message = { ...baseQueryNegentropyPartilceRequest } as QueryNegentropyPartilceRequest;
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.cid = reader.string();
+          message.particle = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -708,47 +707,47 @@ export const QueryEntropyRequest = {
     return message;
   },
 
-  fromJSON(object: any): QueryEntropyRequest {
-    const message = { ...baseQueryEntropyRequest } as QueryEntropyRequest;
-    if (object.cid !== undefined && object.cid !== null) {
-      message.cid = String(object.cid);
+  fromJSON(object: any): QueryNegentropyPartilceRequest {
+    const message = { ...baseQueryNegentropyPartilceRequest } as QueryNegentropyPartilceRequest;
+    if (object.particle !== undefined && object.particle !== null) {
+      message.particle = String(object.particle);
     } else {
-      message.cid = "";
+      message.particle = "";
     }
     return message;
   },
 
-  toJSON(message: QueryEntropyRequest): unknown {
+  toJSON(message: QueryNegentropyPartilceRequest): unknown {
     const obj: any = {};
-    message.cid !== undefined && (obj.cid = message.cid);
+    message.particle !== undefined && (obj.particle = message.particle);
     return obj;
   },
 
-  fromPartial(object: DeepPartial<QueryEntropyRequest>): QueryEntropyRequest {
-    const message = { ...baseQueryEntropyRequest } as QueryEntropyRequest;
-    if (object.cid !== undefined && object.cid !== null) {
-      message.cid = object.cid;
+  fromPartial(object: DeepPartial<QueryNegentropyPartilceRequest>): QueryNegentropyPartilceRequest {
+    const message = { ...baseQueryNegentropyPartilceRequest } as QueryNegentropyPartilceRequest;
+    if (object.particle !== undefined && object.particle !== null) {
+      message.particle = object.particle;
     } else {
-      message.cid = "";
+      message.particle = "";
     }
     return message;
   },
 };
 
-const baseQueryEntropyResponse: object = { entropy: Long.UZERO };
+const baseQueryNegentropyParticleResponse: object = { entropy: Long.UZERO };
 
-export const QueryEntropyResponse = {
-  encode(message: QueryEntropyResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+export const QueryNegentropyParticleResponse = {
+  encode(message: QueryNegentropyParticleResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (!message.entropy.isZero()) {
       writer.uint32(8).uint64(message.entropy);
     }
     return writer;
   },
 
-  decode(input: _m0.Reader | Uint8Array, length?: number): QueryEntropyResponse {
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryNegentropyParticleResponse {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseQueryEntropyResponse } as QueryEntropyResponse;
+    const message = { ...baseQueryNegentropyParticleResponse } as QueryNegentropyParticleResponse;
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -763,8 +762,8 @@ export const QueryEntropyResponse = {
     return message;
   },
 
-  fromJSON(object: any): QueryEntropyResponse {
-    const message = { ...baseQueryEntropyResponse } as QueryEntropyResponse;
+  fromJSON(object: any): QueryNegentropyParticleResponse {
+    const message = { ...baseQueryNegentropyParticleResponse } as QueryNegentropyParticleResponse;
     if (object.entropy !== undefined && object.entropy !== null) {
       message.entropy = Long.fromString(object.entropy);
     } else {
@@ -773,14 +772,14 @@ export const QueryEntropyResponse = {
     return message;
   },
 
-  toJSON(message: QueryEntropyResponse): unknown {
+  toJSON(message: QueryNegentropyParticleResponse): unknown {
     const obj: any = {};
     message.entropy !== undefined && (obj.entropy = (message.entropy || Long.UZERO).toString());
     return obj;
   },
 
-  fromPartial(object: DeepPartial<QueryEntropyResponse>): QueryEntropyResponse {
-    const message = { ...baseQueryEntropyResponse } as QueryEntropyResponse;
+  fromPartial(object: DeepPartial<QueryNegentropyParticleResponse>): QueryNegentropyParticleResponse {
+    const message = { ...baseQueryNegentropyParticleResponse } as QueryNegentropyParticleResponse;
     if (object.entropy !== undefined && object.entropy !== null) {
       message.entropy = object.entropy as Long;
     } else {
@@ -883,12 +882,12 @@ export const QueryNegentropyResponse = {
   },
 };
 
-const baseQueryKarmaRequest: object = { address: "" };
+const baseQueryKarmaRequest: object = { neuron: "" };
 
 export const QueryKarmaRequest = {
   encode(message: QueryKarmaRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.address !== "") {
-      writer.uint32(10).string(message.address);
+    if (message.neuron !== "") {
+      writer.uint32(10).string(message.neuron);
     }
     return writer;
   },
@@ -901,7 +900,7 @@ export const QueryKarmaRequest = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.address = reader.string();
+          message.neuron = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -913,26 +912,26 @@ export const QueryKarmaRequest = {
 
   fromJSON(object: any): QueryKarmaRequest {
     const message = { ...baseQueryKarmaRequest } as QueryKarmaRequest;
-    if (object.address !== undefined && object.address !== null) {
-      message.address = String(object.address);
+    if (object.neuron !== undefined && object.neuron !== null) {
+      message.neuron = String(object.neuron);
     } else {
-      message.address = "";
+      message.neuron = "";
     }
     return message;
   },
 
   toJSON(message: QueryKarmaRequest): unknown {
     const obj: any = {};
-    message.address !== undefined && (obj.address = message.address);
+    message.neuron !== undefined && (obj.neuron = message.neuron);
     return obj;
   },
 
   fromPartial(object: DeepPartial<QueryKarmaRequest>): QueryKarmaRequest {
     const message = { ...baseQueryKarmaRequest } as QueryKarmaRequest;
-    if (object.address !== undefined && object.address !== null) {
-      message.address = object.address;
+    if (object.neuron !== undefined && object.neuron !== null) {
+      message.neuron = object.neuron;
     } else {
-      message.address = "";
+      message.neuron = "";
     }
     return message;
   },
@@ -1001,7 +1000,7 @@ export interface Query {
   Top(request: PageRequest): Promise<QuerySearchResponse>;
   IsLinkExist(request: QueryIsLinkExistRequest): Promise<QueryLinkExistResponse>;
   IsAnyLinkExist(request: QueryIsAnyLinkExistRequest): Promise<QueryLinkExistResponse>;
-  Entropy(request: QueryEntropyRequest): Promise<QueryEntropyResponse>;
+  ParticleNegentropy(request: QueryNegentropyPartilceRequest): Promise<QueryNegentropyParticleResponse>;
   Negentropy(request: QueryNegentropyRequest): Promise<QueryNegentropyResponse>;
   Karma(request: QueryKarmaRequest): Promise<QueryKarmaResponse>;
 }
@@ -1017,7 +1016,7 @@ export class QueryClientImpl implements Query {
     this.Top = this.Top.bind(this);
     this.IsLinkExist = this.IsLinkExist.bind(this);
     this.IsAnyLinkExist = this.IsAnyLinkExist.bind(this);
-    this.Entropy = this.Entropy.bind(this);
+    this.ParticleNegentropy = this.ParticleNegentropy.bind(this);
     this.Negentropy = this.Negentropy.bind(this);
     this.Karma = this.Karma.bind(this);
   }
@@ -1063,10 +1062,10 @@ export class QueryClientImpl implements Query {
     return promise.then((data) => QueryLinkExistResponse.decode(new _m0.Reader(data)));
   }
 
-  Entropy(request: QueryEntropyRequest): Promise<QueryEntropyResponse> {
-    const data = QueryEntropyRequest.encode(request).finish();
-    const promise = this.rpc.request("cyber.rank.v1beta1.Query", "Entropy", data);
-    return promise.then((data) => QueryEntropyResponse.decode(new _m0.Reader(data)));
+  ParticleNegentropy(request: QueryNegentropyPartilceRequest): Promise<QueryNegentropyParticleResponse> {
+    const data = QueryNegentropyPartilceRequest.encode(request).finish();
+    const promise = this.rpc.request("cyber.rank.v1beta1.Query", "ParticleNegentropy", data);
+    return promise.then((data) => QueryNegentropyParticleResponse.decode(new _m0.Reader(data)));
   }
 
   Negentropy(request: QueryNegentropyRequest): Promise<QueryNegentropyResponse> {

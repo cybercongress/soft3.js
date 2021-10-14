@@ -222,7 +222,7 @@ export class SigningCyberClient extends CyberClient {
   // Graph module
 
   public async cyberlink(
-    senderAddress: string,
+    neuron: string,
     from: string,
     to: string,
     fee: StdFee,
@@ -231,7 +231,7 @@ export class SigningCyberClient extends CyberClient {
     const cyberlinkMsg: MsgCyberlinkEncodeObject = {
       typeUrl: "/cyber.graph.v1beta1.MsgCyberlink",
       value: {
-        address: senderAddress,
+        neuron: neuron,
         links: [
           {
             from: from,
@@ -241,7 +241,7 @@ export class SigningCyberClient extends CyberClient {
       },
     };
 
-    return this.signAndBroadcast(senderAddress, [cyberlinkMsg], fee, memo);
+    return this.signAndBroadcast(neuron, [cyberlinkMsg], fee, memo);
   }
 
   // Resources module
@@ -257,7 +257,7 @@ export class SigningCyberClient extends CyberClient {
     const investmintMsg: MsgInvestmintEncodeObject = {
       typeUrl: "/cyber.resources.v1beta1.MsgInvestmint",
       value: MsgInvestmint.fromPartial({
-        agent: senderAddress,
+        neuron: senderAddress,
         amount: amount,
         resource: resource,
         length: Long.fromString(new Uint53(length).toString()),

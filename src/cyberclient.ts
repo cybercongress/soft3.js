@@ -428,18 +428,18 @@ export class CyberClient {
 
   // Rank module
 
-  public async search(cid: string, page?: number, perPage?: number): Promise<JsonObject> {
-    const response = await this.forceGetQueryClient().rank.search(cid, page, perPage);
+  public async search(particle: string, page?: number, perPage?: number): Promise<JsonObject> {
+    const response = await this.forceGetQueryClient().rank.search(particle, page, perPage);
     return QuerySearchResponse.toJSON(response);
   }
 
-  public async backlinks(cid: string, page?: number, perPage?: number): Promise<JsonObject> {
-    const response = await this.forceGetQueryClient().rank.backlinks(cid, page, perPage);
+  public async backlinks(particle: string, page?: number, perPage?: number): Promise<JsonObject> {
+    const response = await this.forceGetQueryClient().rank.backlinks(particle, page, perPage);
     return QuerySearchResponse.toJSON(response);
   }
 
-  public async rank(cid: string): Promise<JsonObject> {
-    const response = await this.forceGetQueryClient().rank.rank(cid);
+  public async rank(particle: string): Promise<JsonObject> {
+    const response = await this.forceGetQueryClient().rank.rank(particle);
     return QueryRankResponse.toJSON(response);
   }
 

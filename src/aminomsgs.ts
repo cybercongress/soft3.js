@@ -21,7 +21,7 @@ export function links(from: string, to: string): Link[] {
 export interface AminoMsgCyberlink extends AminoMsg {
     readonly type: "cyber/Link";
     readonly value: {
-      readonly address: string;
+      readonly neuron: string;
       readonly links: readonly Link[];
     };
   }
@@ -34,7 +34,7 @@ export interface AminoMsgCyberlink extends AminoMsg {
 export interface AminoMsgInvestmint extends AminoMsg {
     readonly type: "cyber/MsgInvestmint";
     readonly value: {
-      readonly agent: string;
+      readonly neuron: string;
       readonly amount: Coin;
       readonly resource: string;
       readonly length: string;
@@ -49,28 +49,28 @@ export function createCyberTypes(): Record<string, AminoConverter> {
     return {
         "/cyber.graph.v1beta1.MsgCyberlink": {
             aminoType: "cyber/Link",
-            toAmino: ({ address, links }: MsgCyberlink): AminoMsgCyberlink["value"] => ({
-                address: address,
+            toAmino: ({ neuron, links }: MsgCyberlink): AminoMsgCyberlink["value"] => ({
+                neuron: neuron,
                 links: links,
             }),
-            fromAmino: ({ address, links }: AminoMsgCyberlink["value"]): MsgCyberlink => ({
-                address: address,
+            fromAmino: ({ neuron, links }: AminoMsgCyberlink["value"]): MsgCyberlink => ({
+                neuron: neuron,
                 links: [...links],
             }),
         },
         "/cyber.resources.v1beta1.MsgInvestmint": {
             aminoType: "cyber/MsgInvestmint",
-            toAmino: ({ agent, amount, resource, length }: MsgInvestmint): AminoMsgInvestmint["value"] => {
+            toAmino: ({ neuron, amount, resource, length }: MsgInvestmint): AminoMsgInvestmint["value"] => {
                 assertDefinedAndNotNull(amount, "missing amount");
                 return {
-                    agent: agent,
+                    neuron: neuron,
                     amount: amount,
                     resource: resource,
                     length: length.toString(),
                 }
             },
-            fromAmino: ({ agent, amount, resource, length }: AminoMsgInvestmint["value"]): MsgInvestmint => ({
-                agent: agent,
+            fromAmino: ({ neuron, amount, resource, length }: AminoMsgInvestmint["value"]): MsgInvestmint => ({
+                neuron: neuron,
                 amount: amount,
                 resource: resource,
                 length: Long.fromString(length),
