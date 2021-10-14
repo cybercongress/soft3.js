@@ -96,12 +96,12 @@ import {
 } from "./codec/tendermint/liquidity/v1beta1/query";
 import {
   BandwidthExtension,
-  EnergyExtension,
+  GridExtension,
   GraphExtension,
   LiquidityExtension,
   RankExtension,
   setupBandwidthExtension,
-  setupEnergyExtension,
+  setupGridExtension,
   setupGraphExtension,
   setupLiquidityExtension,
   setupRankExtension,
@@ -126,7 +126,7 @@ export interface PrivateCyberClient {
         GraphExtension &
         RankExtension &
         BandwidthExtension &
-        EnergyExtension &
+        GridExtension &
         WasmExtension &
         LiquidityExtension &
         GovExtension)
@@ -146,7 +146,7 @@ export class CyberClient {
         GraphExtension &
         RankExtension &
         BandwidthExtension &
-        EnergyExtension &
+        GridExtension &
         WasmExtension &
         LiquidityExtension &
         GovExtension)
@@ -171,7 +171,7 @@ export class CyberClient {
         setupGraphExtension,
         setupRankExtension,
         setupBandwidthExtension,
-        setupEnergyExtension,
+        setupGridExtension,
         setupWasmExtension,
         setupLiquidityExtension,
         setupGovExtension,
@@ -201,7 +201,7 @@ export class CyberClient {
         GraphExtension &
         RankExtension &
         BandwidthExtension &
-        EnergyExtension &
+        GridExtension &
         WasmExtension &
         LiquidityExtension &
         GovExtension)
@@ -217,7 +217,7 @@ export class CyberClient {
     GraphExtension &
     RankExtension &
     BandwidthExtension &
-    EnergyExtension &
+    GridExtension &
     WasmExtension &
     LiquidityExtension &
     GovExtension {
@@ -650,32 +650,32 @@ export class CyberClient {
   // Energy module
 
   public async sourceRoutes(source: string): Promise<JsonObject> {
-    const response = await this.forceGetQueryClient().energy.sourceRoutes(source);
+    const response = await this.forceGetQueryClient().grid.sourceRoutes(source);
     return QueryRoutesResponse.toJSON(response);
   }
 
   public async destinationRoutes(destination: string): Promise<JsonObject> {
-    const response = await this.forceGetQueryClient().energy.destinationRoutes(destination);
+    const response = await this.forceGetQueryClient().grid.destinationRoutes(destination);
     return QueryRoutesResponse.toJSON(response);
   }
 
   public async destinationRoutedEnergy(destination: string): Promise<JsonObject> {
-    const response = await this.forceGetQueryClient().energy.destinationRoutedEnergy(destination);
+    const response = await this.forceGetQueryClient().grid.destinationRoutedEnergy(destination);
     return QueryRoutedEnergyResponse.toJSON(response);
   }
 
   public async sourceRoutedEnergy(source: string): Promise<JsonObject> {
-    const response = await this.forceGetQueryClient().energy.sourceRoutedEnergy(source);
+    const response = await this.forceGetQueryClient().grid.sourceRoutedEnergy(source);
     return QueryRoutedEnergyResponse.toJSON(response);
   }
 
   public async route(source: string, destination: string): Promise<JsonObject> {
-    const response = await this.forceGetQueryClient().energy.route(source, destination);
+    const response = await this.forceGetQueryClient().grid.route(source, destination);
     return QueryRouteResponse.toJSON(response);
   }
 
   public async routes(): Promise<JsonObject> {
-    const response = await this.forceGetQueryClient().energy.routes();
+    const response = await this.forceGetQueryClient().grid.routes();
     return QueryRoutesResponse.toJSON(response);
   }
 

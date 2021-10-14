@@ -6,10 +6,10 @@ import {
   QueryRoutedEnergyResponse,
   QueryRouteResponse,
   QueryRoutesResponse,
-} from "../codec/cyber/energy/v1beta1/query";
+} from "../codec/cyber/grid/v1beta1/query";
 
-export interface EnergyExtension {
-  readonly energy: {
+export interface GridExtension {
+  readonly grid: {
     readonly sourceRoutes: (source: string) => Promise<QueryRoutesResponse>;
     readonly destinationRoutes: (destination: string) => Promise<QueryRoutesResponse>;
     readonly destinationRoutedEnergy: (destination: string) => Promise<QueryRoutedEnergyResponse>;
@@ -19,14 +19,14 @@ export interface EnergyExtension {
   };
 }
 
-export function setupEnergyExtension(base: QueryClient): EnergyExtension {
+export function setupGridExtension(base: QueryClient): GridExtension {
   const rpc = createProtobufRpcClient(base);
   // Use this service to get easy typed access to query methods
   // This cannot be used for proof verification
   const queryService = new QueryClientImpl(rpc);
 
   return {
-    energy: {
+    grid: {
       sourceRoutes: async (source: string) => {
         const response = await queryService.SourceRoutes({ source: source });
         return response;
