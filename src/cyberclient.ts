@@ -79,6 +79,7 @@ import {
   QueryPriceResponse,
 } from "./codec/cyber/bandwidth/v1beta1/query";
 import {
+  QueryParamsResponse as QueryParamsResponseEnergy,
   QueryRoutedEnergyResponse,
   QueryRouteResponse,
   QueryRoutesResponse,
@@ -89,6 +90,7 @@ import {
   QueryRankResponse,
   QuerySearchResponse,
 } from "./codec/cyber/rank/v1beta1/query";
+import { QueryParamsResponse as QueryParamsResponseResources } from "./codec/cyber/resources/v1beta1/query";
 import {
   QueryLiquidityPoolResponse,
   QueryLiquidityPoolsResponse,
@@ -100,11 +102,13 @@ import {
   GraphExtension,
   LiquidityExtension,
   RankExtension,
+  ResourcesExtension,
   setupBandwidthExtension,
   setupEnergyExtension,
   setupGraphExtension,
   setupLiquidityExtension,
   setupRankExtension,
+  setupResourcesExtension,
 } from "./queries/index";
 
 export {
@@ -149,7 +153,8 @@ export class CyberClient {
         EnergyExtension &
         WasmExtension &
         LiquidityExtension &
-        GovExtension)
+        GovExtension &
+        ResourcesExtension)
     | undefined;
   private readonly codesCache = new Map<number, CodeDetails>();
   private chainId: string | undefined;
@@ -175,6 +180,7 @@ export class CyberClient {
         setupWasmExtension,
         setupLiquidityExtension,
         setupGovExtension,
+        setupResourcesExtension,
       );
     }
   }
@@ -204,7 +210,8 @@ export class CyberClient {
         EnergyExtension &
         WasmExtension &
         LiquidityExtension &
-        GovExtension)
+        GovExtension &
+        ResourcesExtension)
     | undefined {
     return this.queryClient;
   }
@@ -220,7 +227,8 @@ export class CyberClient {
     EnergyExtension &
     WasmExtension &
     LiquidityExtension &
-    GovExtension {
+    GovExtension &
+    ResourcesExtension {
     if (!this.queryClient) {
       throw new Error("Query client not available. You cannot use online functionality in offline mode.");
     }
@@ -677,6 +685,18 @@ export class CyberClient {
   public async routes(): Promise<JsonObject> {
     const response = await this.forceGetQueryClient().energy.routes();
     return QueryRoutesResponse.toJSON(response);
+  }
+
+  public async energyParams(): Promise<JsonObject> {
+    const response = await this.forceGetQueryClient().energy.params();
+    return QueryParamsResponseEnergy.toJSON(response);
+  }
+
+  // Resources module
+
+  public async resourcesParams(): Promise<JsonObject> {
+    const response = await this.forceGetQueryClient().resources.params();
+    return QueryParamsResponseResources.toJSON(response);
   }
 
   // Liquidity module

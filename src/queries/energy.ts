@@ -3,6 +3,7 @@ import { createProtobufRpcClient, QueryClient } from "@cosmjs/stargate";
 
 import {
   QueryClientImpl,
+  QueryParamsResponse,
   QueryRoutedEnergyResponse,
   QueryRouteResponse,
   QueryRoutesResponse,
@@ -16,6 +17,7 @@ export interface EnergyExtension {
     readonly sourceRoutedEnergy: (source: string) => Promise<QueryRoutedEnergyResponse>;
     readonly route: (source: string, destination: string) => Promise<QueryRouteResponse>;
     readonly routes: () => Promise<QueryRoutesResponse>;
+    readonly params: () => Promise<QueryParamsResponse>;
   };
 }
 
@@ -52,6 +54,11 @@ export function setupEnergyExtension(base: QueryClient): EnergyExtension {
       },
       routes: async () => {
         const response = await queryService.Routes({});
+        return response;
+      },
+
+      params: async () => {
+        const response = await queryService.Params({});
         return response;
       },
     },

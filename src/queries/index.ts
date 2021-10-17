@@ -3,3 +3,4 @@ export { setupRankExtension, RankExtension } from "./rank";
 export { setupBandwidthExtension, BandwidthExtension } from "./bandwidth";
 export { setupEnergyExtension, EnergyExtension } from "./energy";
 export { setupLiquidityExtension, LiquidityExtension } from "./liquidity";
+export { setupResourcesExtension, ResourcesExtension } from "./resources";
