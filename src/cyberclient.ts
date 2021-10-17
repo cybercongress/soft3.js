@@ -465,7 +465,7 @@ export class CyberClient {
     return QueryPriceResponse.toJSON(response);
   }
 
-  public async account(agent: string): Promise<JsonObject> {
+  public async accountBandwidth(agent: string): Promise<JsonObject> {
     const response = await this.forceGetQueryClient().bandwidth.account(agent);
     return QueryAccountResponse.toJSON(response);
   }

@@ -65,9 +65,8 @@ import { MsgTransfer } from "cosmjs-types/ibc/applications/transfer/v1/tx";
 import { Height } from "cosmjs-types/ibc/core/client/v1/client";
 import Long from "long";
 import pako from "pako";
-import { 
-  createCyberTypes
-} from "./aminomsgs";
+
+import { createCyberTypes } from "./aminomsgs";
 import {
   MsgCreateRoute,
   MsgDeleteRoute,
