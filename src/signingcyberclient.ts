@@ -67,13 +67,13 @@ import Long from "long";
 import pako from "pako";
 
 import { createCyberTypes } from "./aminomsgs";
+import { MsgCyberlink } from "./codec/cyber/graph/v1beta1/tx";
 import {
   MsgCreateRoute,
   MsgDeleteRoute,
   MsgEditRoute,
   MsgEditRouteAlias,
-} from "./codec/cyber/energy/v1beta1/tx";
-import { MsgCyberlink } from "./codec/cyber/graph/v1beta1/tx";
+} from "./codec/cyber/grid/v1beta1/tx";
 import { MsgInvestmint } from "./codec/cyber/resources/v1beta1/tx";
 import {
   MsgCreatePool,
@@ -144,10 +144,10 @@ function createDefaultRegistry(): Registry {
     ["/cosmwasm.wasm.v1beta1.MsgUpdateAdmin", MsgUpdateAdmin],
     ["/cyber.graph.v1beta1.MsgCyberlink", MsgCyberlink],
     ["/cyber.resources.v1beta1.MsgInvestmint", MsgInvestmint],
-    ["/cyber.energy.v1beta1.MsgCreateRoute", MsgCreateRoute],
-    ["/cyber.energy.v1beta1.MsgEditRoute", MsgEditRoute],
-    ["/cyber.energy.v1beta1.MsgEditRouteAlias", MsgEditRouteAlias],
-    ["/cyber.energy.v1beta1.MsgDeleteRoute", MsgDeleteRoute],
+    ["/cyber.grid.v1beta1.MsgCreateRoute", MsgCreateRoute],
+    ["/cyber.grid.v1beta1.MsgEditRoute", MsgEditRoute],
+    ["/cyber.grid.v1beta1.MsgEditRouteAlias", MsgEditRouteAlias],
+    ["/cyber.grid.v1beta1.MsgDeleteRoute", MsgDeleteRoute],
     ["/tendermint.liquidity.v1beta1.MsgSwapWithinBatch", MsgSwapWithinBatch],
     ["/tendermint.liquidity.v1beta1.MsgDepositWithinBatch", MsgDepositWithinBatch],
     ["/tendermint.liquidity.v1beta1.MsgWithdrawWithinBatch", MsgWithdrawWithinBatch],
@@ -275,7 +275,7 @@ export class SigningCyberClient extends CyberClient {
     memo = "",
   ): Promise<BroadcastTxResponse> {
     const createEnergyRouteMsg: MsgCreateRouteEncodeObject = {
-      typeUrl: "/cyber.energy.v1beta1.MsgCreateRoute",
+      typeUrl: "/cyber.grid.v1beta1.MsgCreateRoute",
       value: MsgCreateRoute.fromPartial({
         source: senderAddress,
         destination: destination,
@@ -293,7 +293,7 @@ export class SigningCyberClient extends CyberClient {
     memo = "",
   ): Promise<BroadcastTxResponse> {
     const editEnergyRouteMsg: MsgEditRouteEncodeObject = {
-      typeUrl: "/cyber.energy.v1beta1.MsgEditRoute",
+      typeUrl: "/cyber.grid.v1beta1.MsgEditRoute",
       value: MsgEditRoute.fromPartial({
         source: senderAddress,
         destination: destination,
@@ -310,7 +310,7 @@ export class SigningCyberClient extends CyberClient {
     memo = "",
   ): Promise<BroadcastTxResponse> {
     const deleteEnergyRouteMsg: MsgDeleteRouteEncodeObject = {
-      typeUrl: "/cyber.energy.v1beta1.MsgDeleteRoute",
+      typeUrl: "/cyber.grid.v1beta1.MsgDeleteRoute",
       value: MsgDeleteRoute.fromPartial({
         source: senderAddress,
         destination: destination,
@@ -327,7 +327,7 @@ export class SigningCyberClient extends CyberClient {
     memo = "",
   ): Promise<BroadcastTxResponse> {
     const editEnergyRouteAliasMsg: MsgEditRouteAliasEncodeObject = {
-      typeUrl: "/cyber.energy.v1beta1.MsgEditRouteAlias",
+      typeUrl: "/cyber.grid.v1beta1.MsgEditRouteAlias",
       value: MsgEditRouteAlias.fromPartial({
         source: senderAddress,
         destination: destination,
