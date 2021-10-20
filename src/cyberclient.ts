@@ -78,17 +78,18 @@ import {
   QueryLoadResponse,
   QueryPriceResponse,
 } from "./codec/cyber/bandwidth/v1beta1/query";
+import { QueryGraphStatsResponse } from "./codec/cyber/graph/v1beta1/query";
 import {
   QueryRoutedEnergyResponse,
   QueryRouteResponse,
   QueryRoutesResponse,
-} from "./codec/cyber/energy/v1beta1/query";
-import { QueryGraphStatsResponse } from "./codec/cyber/graph/v1beta1/query";
+} from "./codec/cyber/grid/v1beta1/query";
 import {
   QueryLinkExistResponse,
   QueryRankResponse,
   QuerySearchResponse,
 } from "./codec/cyber/rank/v1beta1/query";
+import { QueryParamsResponse as QueryParamsResponseResources } from "./codec/cyber/resources/v1beta1/query";
 import {
   QueryLiquidityPoolResponse,
   QueryLiquidityPoolsResponse,
@@ -96,15 +97,17 @@ import {
 } from "./codec/tendermint/liquidity/v1beta1/query";
 import {
   BandwidthExtension,
-  GridExtension,
   GraphExtension,
+  GridExtension,
   LiquidityExtension,
   RankExtension,
+  ResourcesExtension,
   setupBandwidthExtension,
-  setupGridExtension,
   setupGraphExtension,
+  setupGridExtension,
   setupLiquidityExtension,
   setupRankExtension,
+  setupResourcesExtension,
 } from "./queries/index";
 
 export {
@@ -129,7 +132,8 @@ export interface PrivateCyberClient {
         GridExtension &
         WasmExtension &
         LiquidityExtension &
-        GovExtension)
+        GovExtension &
+        ResourcesExtension)
     | undefined;
 }
 
@@ -149,7 +153,8 @@ export class CyberClient {
         GridExtension &
         WasmExtension &
         LiquidityExtension &
-        GovExtension)
+        GovExtension &
+        ResourcesExtension)
     | undefined;
   private readonly codesCache = new Map<number, CodeDetails>();
   private chainId: string | undefined;
@@ -175,6 +180,7 @@ export class CyberClient {
         setupWasmExtension,
         setupLiquidityExtension,
         setupGovExtension,
+        setupResourcesExtension,
       );
     }
   }
@@ -204,7 +210,8 @@ export class CyberClient {
         GridExtension &
         WasmExtension &
         LiquidityExtension &
-        GovExtension)
+        GovExtension &
+        ResourcesExtension)
     | undefined {
     return this.queryClient;
   }
@@ -220,7 +227,8 @@ export class CyberClient {
     GridExtension &
     WasmExtension &
     LiquidityExtension &
-    GovExtension {
+    GovExtension &
+    ResourcesExtension {
     if (!this.queryClient) {
       throw new Error("Query client not available. You cannot use online functionality in offline mode.");
     }
@@ -465,7 +473,7 @@ export class CyberClient {
     return QueryPriceResponse.toJSON(response);
   }
 
-  public async account(agent: string): Promise<JsonObject> {
+  public async accountBandwidth(agent: string): Promise<JsonObject> {
     const response = await this.forceGetQueryClient().bandwidth.account(agent);
     return QueryAccountResponse.toJSON(response);
   }
@@ -647,7 +655,7 @@ export class CyberClient {
     return QueryValidatorSlashesResponse.toJSON(response);
   }
 
-  // Energy module
+  // Grid module
 
   public async sourceRoutes(source: string): Promise<JsonObject> {
     const response = await this.forceGetQueryClient().grid.sourceRoutes(source);
@@ -677,6 +685,13 @@ export class CyberClient {
   public async routes(): Promise<JsonObject> {
     const response = await this.forceGetQueryClient().grid.routes();
     return QueryRoutesResponse.toJSON(response);
+  }
+
+  // Resources module
+
+  public async resourcesParams(): Promise<JsonObject> {
+    const response = await this.forceGetQueryClient().resources.params();
+    return QueryParamsResponseResources.toJSON(response);
   }
 
   // Liquidity module
