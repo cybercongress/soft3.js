@@ -23,7 +23,7 @@ Signing client transaction:
 - Energy
     - MsgCreateRoute
     - MsgEditRoute
-    - MsgEditRouteAlias
+    - MsgEditRouteName
     - MsgDeleteRoute
 - Wasm
     - MsgClearAdmin

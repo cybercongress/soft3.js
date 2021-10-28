@@ -33,18 +33,15 @@ export interface PageRequest {
   limit: Long;
   /**
    * count_total is set to true  to indicate that the result set should include
-   * a count of the total number of items available for pagination in UIs.
-   * count_total is only respected when offset is used. It is ignored when key
-   * is set.
+   * a count of the total number of items available for pagination in UIs. count_total
+   * is only respected when offset is used. It is ignored when key is set.
    */
   countTotal: boolean;
-  /** reverse is set to true if results are to be returned in the descending order. */
-  reverse: boolean;
 }
 
 /**
- * PageResponse is to be embedded in gRPC response messages where the
- * corresponding request message has used PageRequest.
+ * PageResponse is to be embedded in gRPC response messages where the corresponding
+ * request message has used PageRequest.
  *
  *  message SomeResponse {
  *          repeated Bar results = 1;
@@ -64,7 +61,7 @@ export interface PageResponse {
   total: Long;
 }
 
-const basePageRequest: object = { offset: Long.UZERO, limit: Long.UZERO, countTotal: false, reverse: false };
+const basePageRequest: object = { offset: Long.UZERO, limit: Long.UZERO, countTotal: false };
 
 export const PageRequest = {
   encode(message: PageRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
@@ -79,9 +76,6 @@ export const PageRequest = {
     }
     if (message.countTotal === true) {
       writer.uint32(32).bool(message.countTotal);
-    }
-    if (message.reverse === true) {
-      writer.uint32(40).bool(message.reverse);
     }
     return writer;
   },
@@ -105,9 +99,6 @@ export const PageRequest = {
           break;
         case 4:
           message.countTotal = reader.bool();
-          break;
-        case 5:
-          message.reverse = reader.bool();
           break;
         default:
           reader.skipType(tag & 7);
@@ -138,11 +129,6 @@ export const PageRequest = {
     } else {
       message.countTotal = false;
     }
-    if (object.reverse !== undefined && object.reverse !== null) {
-      message.reverse = Boolean(object.reverse);
-    } else {
-      message.reverse = false;
-    }
     return message;
   },
 
@@ -153,7 +139,6 @@ export const PageRequest = {
     message.offset !== undefined && (obj.offset = (message.offset || Long.UZERO).toString());
     message.limit !== undefined && (obj.limit = (message.limit || Long.UZERO).toString());
     message.countTotal !== undefined && (obj.countTotal = message.countTotal);
-    message.reverse !== undefined && (obj.reverse = message.reverse);
     return obj;
   },
 
@@ -178,11 +163,6 @@ export const PageRequest = {
       message.countTotal = object.countTotal;
     } else {
       message.countTotal = false;
-    }
-    if (object.reverse !== undefined && object.reverse !== null) {
-      message.reverse = object.reverse;
-    } else {
-      message.reverse = false;
     }
     return message;
   },
@@ -286,8 +266,8 @@ const btoa: (bin: string) => string =
   globalThis.btoa || ((bin) => globalThis.Buffer.from(bin, "binary").toString("base64"));
 function base64FromBytes(arr: Uint8Array): string {
   const bin: string[] = [];
-  for (const byte of arr) {
-    bin.push(String.fromCharCode(byte));
+  for (let i = 0; i < arr.byteLength; ++i) {
+    bin.push(String.fromCharCode(arr[i]));
   }
   return btoa(bin.join(""));
 }

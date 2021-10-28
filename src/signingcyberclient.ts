@@ -72,7 +72,7 @@ import {
   MsgCreateRoute,
   MsgDeleteRoute,
   MsgEditRoute,
-  MsgEditRouteAlias,
+  MsgEditRouteName,
 } from "./codec/cyber/grid/v1beta1/tx";
 import { MsgInvestmint } from "./codec/cyber/resources/v1beta1/tx";
 import {
@@ -90,7 +90,7 @@ import {
   MsgDeleteRouteEncodeObject,
   MsgDepositEncodeObject,
   MsgDepositWithinBatchEncodeObject,
-  MsgEditRouteAliasEncodeObject,
+  MsgEditRouteNameEncodeObject,
   MsgEditRouteEncodeObject,
   MsgInvestmintEncodeObject,
   MsgSubmitProposalEncodeObject,
@@ -124,7 +124,7 @@ export interface DeleteRouteResult {
   readonly transactionHash: string;
 }
 
-export interface EditRouteAliasResult {
+export interface EditRouteNameResult {
   readonly logs: readonly logs.Log[];
   readonly transactionHash: string;
 }
@@ -146,7 +146,7 @@ function createDefaultRegistry(): Registry {
     ["/cyber.resources.v1beta1.MsgInvestmint", MsgInvestmint],
     ["/cyber.grid.v1beta1.MsgCreateRoute", MsgCreateRoute],
     ["/cyber.grid.v1beta1.MsgEditRoute", MsgEditRoute],
-    ["/cyber.grid.v1beta1.MsgEditRouteAlias", MsgEditRouteAlias],
+    ["/cyber.grid.v1beta1.MsgEditRouteName", MsgEditRouteName],
     ["/cyber.grid.v1beta1.MsgDeleteRoute", MsgDeleteRoute],
     ["/tendermint.liquidity.v1beta1.MsgSwapWithinBatch", MsgSwapWithinBatch],
     ["/tendermint.liquidity.v1beta1.MsgDepositWithinBatch", MsgDepositWithinBatch],
@@ -270,7 +270,7 @@ export class SigningCyberClient extends CyberClient {
   public async createEnergyRoute(
     senderAddress: string,
     destination: string,
-    alias: string,
+    name: string,
     fee: StdFee,
     memo = "",
   ): Promise<BroadcastTxResponse> {
@@ -279,7 +279,7 @@ export class SigningCyberClient extends CyberClient {
       value: MsgCreateRoute.fromPartial({
         source: senderAddress,
         destination: destination,
-        alias: alias,
+        name: name,
       }),
     };
     return this.signAndBroadcast(senderAddress, [createEnergyRouteMsg], fee, memo);
@@ -319,23 +319,23 @@ export class SigningCyberClient extends CyberClient {
     return this.signAndBroadcast(senderAddress, [deleteEnergyRouteMsg], fee, memo);
   }
 
-  public async editEnergyRouteAlias(
+  public async editEnergyRouteName(
     senderAddress: string,
     destination: string,
-    alias: string,
+    name: string,
     fee: StdFee,
     memo = "",
   ): Promise<BroadcastTxResponse> {
-    const editEnergyRouteAliasMsg: MsgEditRouteAliasEncodeObject = {
-      typeUrl: "/cyber.grid.v1beta1.MsgEditRouteAlias",
-      value: MsgEditRouteAlias.fromPartial({
+    const editEnergyRouteNameMsg: MsgEditRouteNameEncodeObject = {
+      typeUrl: "/cyber.grid.v1beta1.MsgEditRouteName",
+      value: MsgEditRouteName.fromPartial({
         source: senderAddress,
         destination: destination,
-        alias: alias,
+        name: name,
       }),
     };
 
-    return this.signAndBroadcast(senderAddress, [editEnergyRouteAliasMsg], fee, memo);
+    return this.signAndBroadcast(senderAddress, [editEnergyRouteNameMsg], fee, memo);
   }
 
   // Wasm module

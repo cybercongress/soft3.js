@@ -7,7 +7,7 @@ import {
   MsgCreateRoute,
   MsgDeleteRoute,
   MsgEditRoute,
-  MsgEditRouteAlias,
+  MsgEditRouteName,
 } from "./codec/cyber/grid/v1beta1/tx";
 import { MsgInvestmint } from "./codec/cyber/resources/v1beta1/tx";
 import {
@@ -67,15 +67,15 @@ export function isMsgEditRouteEncodeObject(
   return (encodeObject as MsgEditRouteEncodeObject).typeUrl === "/cyber.grid.v1beta1.MsgEditRoute";
 }
 
-export interface MsgEditRouteAliasEncodeObject extends EncodeObject {
-  readonly typeUrl: "/cyber.grid.v1beta1.MsgEditRouteAlias";
-  readonly value: Partial<MsgEditRouteAlias>;
+export interface MsgEditRouteNameEncodeObject extends EncodeObject {
+  readonly typeUrl: "/cyber.grid.v1beta1.MsgEditRouteName";
+  readonly value: Partial<MsgEditRouteName>;
 }
 
-export function isMsgEditRouteAliasEncodeObject(
+export function isMsgEditRouteNameEncodeObject(
   encodeObject: EncodeObject,
-): encodeObject is MsgEditRouteAliasEncodeObject {
-  return (encodeObject as MsgEditRouteAliasEncodeObject).typeUrl === "/cyber.grid.v1beta1.MsgEditRouteAlias";
+): encodeObject is MsgEditRouteNameEncodeObject {
+  return (encodeObject as MsgEditRouteNameEncodeObject).typeUrl === "/cyber.grid.v1beta1.MsgEditRouteName";
 }
 
 // Graph module

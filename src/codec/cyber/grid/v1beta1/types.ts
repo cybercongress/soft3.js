@@ -12,7 +12,7 @@ export interface Params {
 export interface Route {
   source: string;
   destination: string;
-  alias: string;
+  name: string;
   value: Coin[];
 }
 
@@ -75,7 +75,7 @@ export const Params = {
   },
 };
 
-const baseRoute: object = { source: "", destination: "", alias: "" };
+const baseRoute: object = { source: "", destination: "", name: "" };
 
 export const Route = {
   encode(message: Route, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
@@ -85,8 +85,8 @@ export const Route = {
     if (message.destination !== "") {
       writer.uint32(18).string(message.destination);
     }
-    if (message.alias !== "") {
-      writer.uint32(26).string(message.alias);
+    if (message.name !== "") {
+      writer.uint32(26).string(message.name);
     }
     for (const v of message.value) {
       Coin.encode(v!, writer.uint32(34).fork()).ldelim();
@@ -109,7 +109,7 @@ export const Route = {
           message.destination = reader.string();
           break;
         case 3:
-          message.alias = reader.string();
+          message.name = reader.string();
           break;
         case 4:
           message.value.push(Coin.decode(reader, reader.uint32()));
@@ -135,10 +135,10 @@ export const Route = {
     } else {
       message.destination = "";
     }
-    if (object.alias !== undefined && object.alias !== null) {
-      message.alias = String(object.alias);
+    if (object.name !== undefined && object.name !== null) {
+      message.name = String(object.name);
     } else {
-      message.alias = "";
+      message.name = "";
     }
     if (object.value !== undefined && object.value !== null) {
       for (const e of object.value) {
@@ -152,7 +152,7 @@ export const Route = {
     const obj: any = {};
     message.source !== undefined && (obj.source = message.source);
     message.destination !== undefined && (obj.destination = message.destination);
-    message.alias !== undefined && (obj.alias = message.alias);
+    message.name !== undefined && (obj.name = message.name);
     if (message.value) {
       obj.value = message.value.map((e) => (e ? Coin.toJSON(e) : undefined));
     } else {
@@ -174,10 +174,10 @@ export const Route = {
     } else {
       message.destination = "";
     }
-    if (object.alias !== undefined && object.alias !== null) {
-      message.alias = object.alias;
+    if (object.name !== undefined && object.name !== null) {
+      message.name = object.name;
     } else {
-      message.alias = "";
+      message.name = "";
     }
     if (object.value !== undefined && object.value !== null) {
       for (const e of object.value) {

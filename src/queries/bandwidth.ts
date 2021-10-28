@@ -2,7 +2,7 @@
 import { createProtobufRpcClient, QueryClient } from "@cosmjs/stargate";
 
 import {
-  QueryAccountResponse,
+  QueryNeuronBandwidthResponse,
   QueryClientImpl,
   QueryLoadResponse,
   QueryPriceResponse,
@@ -12,7 +12,7 @@ export interface BandwidthExtension {
   readonly bandwidth: {
     readonly load: () => Promise<QueryLoadResponse>;
     readonly price: () => Promise<QueryPriceResponse>;
-    readonly account: (agent: string) => Promise<QueryAccountResponse>;
+    readonly account: (agent: string) => Promise<QueryNeuronBandwidthResponse>;
   };
 }
 
@@ -32,9 +32,9 @@ export function setupBandwidthExtension(base: QueryClient): BandwidthExtension {
         const response = await queryService.Price({});
         return response;
       },
-      account: async (agent: string) => {
-        const response = await queryService.Account({
-          address: agent,
+      account: async (neuron: string) => {
+        const response = await queryService.NeuronBandwidth({
+          neuron: neuron,
         });
         return response;
       },

@@ -74,7 +74,7 @@ import { CodeInfoResponse } from "cosmjs-types/cosmwasm/wasm/v1/query";
 import { ContractCodeHistoryOperationType } from "cosmjs-types/cosmwasm/wasm/v1/types";
 
 import {
-  QueryAccountResponse,
+  QueryNeuronBandwidthResponse,
   QueryLoadResponse,
   QueryPriceResponse,
 } from "./codec/cyber/bandwidth/v1beta1/query";
@@ -475,7 +475,7 @@ export class CyberClient {
 
   public async accountBandwidth(agent: string): Promise<JsonObject> {
     const response = await this.forceGetQueryClient().bandwidth.account(agent);
-    return QueryAccountResponse.toJSON(response);
+    return QueryNeuronBandwidthResponse.toJSON(response);
   }
 
   // Staking module
