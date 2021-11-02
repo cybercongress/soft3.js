@@ -91,8 +91,8 @@ import {
   MsgDeleteRouteEncodeObject,
   MsgDepositEncodeObject,
   MsgDepositWithinBatchEncodeObject,
-  MsgEditRouteNameEncodeObject,
   MsgEditRouteEncodeObject,
+  MsgEditRouteNameEncodeObject,
   MsgInvestmintEncodeObject,
   MsgSubmitProposalEncodeObject,
   MsgSwapWithinBatchEncodeObject,
@@ -131,11 +131,11 @@ export interface EditRouteNameResult {
 }
 
 export function link(from: string, to: string): Link {
-    return { from: from, to: to };
+  return { from: from, to: to };
 }
 
 export function links(from: string, to: string): Link[] {
-    return [link(from,to)];
+  return [link(from, to)];
 }
 
 function createBroadcastTxErrorMessage(result: BroadcastTxFailure): string {
@@ -240,7 +240,7 @@ export class SigningCyberClient extends CyberClient {
       typeUrl: "/cyber.graph.v1beta1.MsgCyberlink",
       value: MsgCyberlink.fromPartial({
         neuron: neuron,
-        links: links(from,to)
+        links: links(from, to),
       }),
     };
 

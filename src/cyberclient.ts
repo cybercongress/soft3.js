@@ -74,8 +74,8 @@ import { CodeInfoResponse } from "cosmjs-types/cosmwasm/wasm/v1/query";
 import { ContractCodeHistoryOperationType } from "cosmjs-types/cosmwasm/wasm/v1/types";
 
 import {
-  QueryNeuronBandwidthResponse,
   QueryLoadResponse,
+  QueryNeuronBandwidthResponse,
   QueryPriceResponse,
 } from "./codec/cyber/bandwidth/v1beta1/query";
 import { QueryGraphStatsResponse } from "./codec/cyber/graph/v1beta1/query";
