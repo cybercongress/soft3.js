@@ -68,6 +68,7 @@ import pako from "pako";
 
 import { createCyberTypes } from "./aminomsgs";
 import { MsgCyberlink } from "./codec/cyber/graph/v1beta1/tx";
+import { Link } from "./codec/cyber/graph/v1beta1/types";
 import {
   MsgCreateRoute,
   MsgDeleteRoute,
@@ -127,6 +128,14 @@ export interface DeleteRouteResult {
 export interface EditRouteNameResult {
   readonly logs: readonly logs.Log[];
   readonly transactionHash: string;
+}
+
+export function link(from: string, to: string): Link {
+    return { from: from, to: to };
+}
+
+export function links(from: string, to: string): Link[] {
+    return [link(from,to)];
 }
 
 function createBroadcastTxErrorMessage(result: BroadcastTxFailure): string {
@@ -229,15 +238,10 @@ export class SigningCyberClient extends CyberClient {
   ): Promise<BroadcastTxResponse> {
     const cyberlinkMsg: MsgCyberlinkEncodeObject = {
       typeUrl: "/cyber.graph.v1beta1.MsgCyberlink",
-      value: {
+      value: MsgCyberlink.fromPartial({
         neuron: neuron,
-        links: [
-          {
-            from: from,
-            to: to,
-          },
-        ],
-      },
+        links: links(from,to)
+      }),
     };
 
     return this.signAndBroadcast(neuron, [cyberlinkMsg], fee, memo);
