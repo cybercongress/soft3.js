@@ -24,7 +24,7 @@ export interface AminoMsgCyberlink extends AminoMsg {
   readonly type: "cyber/MsgCyberlink";
   readonly value: {
     readonly neuron: string;
-    readonly links: Link[];
+    readonly links: readonly Link[];
   };
 }
 
@@ -106,13 +106,13 @@ export function isAminoMsgEditRouteName(msg: AminoMsg): msg is AminoMsgEditRoute
 export interface AminoMsgSwapWithinBatch extends AminoMsg {
   readonly type: "liquidity/MsgSwapWithinBatch";
   readonly value: {
-    readonly swapRequesterAddress: string;
-    readonly poolId: string;
-    readonly swapTypeId: number;
-    readonly offerCoin: Coin;
-    readonly demandCoinDenom: string;
-    readonly offerCoinFee: Coin;
-    readonly orderPrice: string;
+    readonly swap_requester_address: string;
+    readonly pool_id: string;
+    readonly swap_type_id: number;
+    readonly offer_coin: Coin;
+    readonly demand_coin_denom: string;
+    readonly offer_coin_fee: Coin;
+    readonly order_price: string;
   };
 }
 
@@ -123,9 +123,9 @@ export function isAminoMsgSwapWithinBatch(msg: AminoMsg): msg is AminoMsgSwapWit
 export interface AminoMsgDepositWithinBatch extends AminoMsg {
   readonly type: "liquidity/MsgDepositWithinBatch";
   readonly value: {
-    readonly depositorAddress: string;
-    readonly poolId: string;
-    readonly depositCoins: Coin[];
+    readonly depositor_address: string;
+    readonly pool_id: string;
+    readonly deposit_coins: Coin[];
   };
 }
 
@@ -136,9 +136,9 @@ export function isAminoMsgDepositWithinBatch(msg: AminoMsg): msg is AminoMsgDepo
 export interface AminoMsgWithdrawWithinBatch extends AminoMsg {
   readonly type: "liquidity/MsgWithdrawWithinBatch";
   readonly value: {
-    readonly withdrawerAddress: string;
-    readonly poolId: string;
-    readonly poolCoin: Coin;
+    readonly withdrawer_address: string;
+    readonly pool_id: string;
+    readonly pool_coin: Coin;
   };
 }
 
@@ -251,34 +251,33 @@ export function createCyberTypes(): Record<string, AminoConverter> {
         assertDefinedAndNotNull(offerCoin, "missing offer coin");
         assertDefinedAndNotNull(offerCoinFee, "missing offer coin fee");
         return {
-          swapRequesterAddress: swapRequesterAddress,
-          poolId: poolId.toString(),
-          swapTypeId: swapTypeId,
-          offerCoin: offerCoin,
-          demandCoinDenom: demandCoinDenom,
-          offerCoinFee: offerCoinFee,
-          orderPrice: orderPrice,
+          swap_requester_address: swapRequesterAddress,
+          pool_id: poolId.toString(),
+          swap_type_id: swapTypeId,
+          offer_coin: offerCoin,
+          demand_coin_denom: demandCoinDenom,
+          offer_coin_fee: offerCoinFee,
+          order_price: orderPrice,
         };
       },
       fromAmino: ({
-        swapRequesterAddress,
-        poolId,
-        swapTypeId,
-        offerCoin,
-        demandCoinDenom,
-        offerCoinFee,
-        orderPrice,
+        swap_requester_address,
+        pool_id,
+        swap_type_id,
+        offer_coin,
+        demand_coin_denom,
+        offer_coin_fee,
+        order_price,
       }: AminoMsgSwapWithinBatch["value"]): MsgSwapWithinBatch => ({
-        swapRequesterAddress: swapRequesterAddress,
-        poolId: Long.fromString(poolId),
-        swapTypeId: swapTypeId,
-        offerCoin: offerCoin,
-        demandCoinDenom: demandCoinDenom,
-        offerCoinFee: offerCoinFee,
-        orderPrice: orderPrice,
+        swapRequesterAddress: swap_requester_address,
+        poolId: Long.fromString(pool_id),
+        swapTypeId: swap_type_id,
+        offerCoin: offer_coin,
+        demandCoinDenom: demand_coin_denom,
+        offerCoinFee: offer_coin_fee,
+        orderPrice: order_price,
       }),
     },
-    // not working (signature verification failed; lease verify account number (#), sequence (#) and chain-id (#): unauthorized)
     "/tendermint.liquidity.v1beta1.MsgDepositWithinBatch": {
       aminoType: "liquidity/MsgDepositWithinBatch",
       toAmino: ({
@@ -288,22 +287,21 @@ export function createCyberTypes(): Record<string, AminoConverter> {
       }: MsgDepositWithinBatch): AminoMsgDepositWithinBatch["value"] => {
         assertDefinedAndNotNull(depositCoins, "missing deposit coins");
         return {
-          depositorAddress: depositorAddress,
-          poolId: poolId.toString(),
-          depositCoins: depositCoins,
+          depositor_address: depositorAddress,
+          pool_id: poolId.toString(),
+          deposit_coins: depositCoins,
         };
       },
       fromAmino: ({
-        depositorAddress,
-        poolId,
-        depositCoins,
+        depositor_address,
+        pool_id,
+        deposit_coins,
       }: AminoMsgDepositWithinBatch["value"]): MsgDepositWithinBatch => ({
-        depositorAddress: depositorAddress,
-        poolId: Long.fromString(poolId),
-        depositCoins: depositCoins,
+        depositorAddress: depositor_address,
+        poolId: Long.fromString(pool_id),
+        depositCoins: deposit_coins,
       }),
     },
-    // not working (signature verification failed; lease verify account number (#), sequence (#) and chain-id (#): unauthorized)
     "/tendermint.liquidity.v1beta1.MsgWithdrawWithinBatch": {
       aminoType: "liquidity/MsgWithdrawWithinBatch",
       toAmino: ({
@@ -313,19 +311,19 @@ export function createCyberTypes(): Record<string, AminoConverter> {
       }: MsgWithdrawWithinBatch): AminoMsgWithdrawWithinBatch["value"] => {
         assertDefinedAndNotNull(poolCoin, "missing deposit coins");
         return {
-          withdrawerAddress: withdrawerAddress,
-          poolId: poolId.toString(),
-          poolCoin: poolCoin,
+          withdrawer_address: withdrawerAddress,
+          pool_id: poolId.toString(),
+          pool_coin: poolCoin,
         };
       },
       fromAmino: ({
-        withdrawerAddress,
-        poolId,
-        poolCoin,
+        withdrawer_address,
+        pool_id,
+        pool_coin,
       }: AminoMsgWithdrawWithinBatch["value"]): MsgWithdrawWithinBatch => ({
-        withdrawerAddress: withdrawerAddress,
-        poolId: Long.fromString(poolId),
-        poolCoin: poolCoin,
+        withdrawerAddress: withdrawer_address,
+        poolId: Long.fromString(pool_id),
+        poolCoin: pool_coin,
       }),
     },
   };
