@@ -30,15 +30,15 @@
     "format-text": "prettier --write \"./*.md\""
   },
   "dependencies": {
-    "@cosmjs/amino": "v0.26.3",
+    "@cosmjs/amino": "v0.26.4",
     "@cosmjs/cosmwasm-launchpad": "v0.25.6",
-    "@cosmjs/cosmwasm-stargate": "v0.26.3",
-    "@cosmjs/crypto": "v0.26.3",
-    "@cosmjs/math": "v0.26.3",
-    "@cosmjs/proto-signing": "v0.26.3",
-    "@cosmjs/stargate": "v0.26.3",
-    "@cosmjs/tendermint-rpc": "v0.26.3",
-    "@cosmjs/utils": "v0.26.3",
+    "@cosmjs/cosmwasm-stargate": "v0.26.4",
+    "@cosmjs/crypto": "v0.26.4",
+    "@cosmjs/math": "v0.26.4",
+    "@cosmjs/proto-signing": "v0.26.4",
+    "@cosmjs/stargate": "v0.26.4",
+    "@cosmjs/tendermint-rpc": "v0.26.4",
+    "@cosmjs/utils": "v0.26.4",
     "cosmjs-types": "^0.2.0",
     "long": "^4.0.0",
     "pako": "^2.0.3",
@@ -46,6 +46,7 @@
     "protobufjs": "~6.10.2"
   },
   "devDependencies": {
+    "@types/long": "^4.0.1",
     "@types/eslint-plugin-prettier": "^3.1.0",
     "@types/pako": "^1.0.1",
     "@typescript-eslint/eslint-plugin": "^4.29.1",
@@ -57,7 +58,7 @@
     "eslint-plugin-prettier": "^3.4.0",
     "eslint-plugin-simple-import-sort": "^7.0.0",
     "prettier": "^2.3.2",
-    "ts-proto": "^1.81.1",
+    "ts-proto": "^1.83.1",
     "typescript": "^4.3.5"
   }
 }
