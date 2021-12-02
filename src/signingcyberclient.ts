@@ -68,7 +68,7 @@ import pako from "pako";
 
 import { createCyberTypes } from "./aminomsgs";
 import { MsgCyberlink } from "./codec/cyber/graph/v1beta1/tx";
-import { Link } from "./codec/cyber/graph/v1beta1/types";
+// import { Link } from "./codec/cyber/graph/v1beta1/types";
 import {
   MsgCreateRoute,
   MsgDeleteRoute,
@@ -130,12 +130,17 @@ export interface EditRouteNameResult {
   readonly transactionHash: string;
 }
 
+export interface Link {
+  from: string,
+  to: string
+}
+
 export function link(from: string, to: string): Link {
-    return { from: from, to: to };
+  return { from: from, to: to };
 }
 
 export function links(from: string, to: string): Link[] {
-    return [link(from,to)];
+  return [link(from, to)];
 }
 
 function createBroadcastTxErrorMessage(result: BroadcastTxFailure): string {
@@ -240,7 +245,7 @@ export class SigningCyberClient extends CyberClient {
       typeUrl: "/cyber.graph.v1beta1.MsgCyberlink",
       value: MsgCyberlink.fromPartial({
         neuron: neuron,
-        links: links(from,to)
+        links: links(from, to),
       }),
     };
 
@@ -857,17 +862,36 @@ export class SigningCyberClient extends CyberClient {
     }
     const pubkey = encodePubkey(encodeSecp256k1Pubkey(accountFromSigner.pubkey));
     const signMode = SignMode.SIGN_MODE_LEGACY_AMINO_JSON;
-    const msgs = messages.map((msg) => this.aminoTypes.toAmino(msg));
-    const signDoc = makeSignDocAmino(msgs, fee, chainId, memo, accountNumber, sequence);
-    const { signature, signed } = await this.signer.signAmino(signerAddress, signDoc);
-    const signedTxBody: TxBodyEncodeObject = {
-      typeUrl: "/cosmos.tx.v1beta1.TxBody",
-      value: {
+    
+    // Need this temporary hack because there is issue with codec type binded to graph & resources messages
+    // TODO remove this after next upgrade
+    let msgs, signedTxBody
+    if (messages[0].typeUrl == "/cyber.graph.v1beta1.MsgCyberlink" || messages[0].typeUrl == "/cyber.resources.v1beta1.MsgInvestmint") {
+      msgs = messages.map((msg) => this.aminoTypes.toAmino(msg));
+      const signDocOriginal = makeSignDocAmino(msgs, fee, chainId, memo, accountNumber, sequence);
+  
+      const msgsValues = messages.map((msg) => this.aminoTypes.toAmino(msg).value);
+      const signDocWithValue = makeSignDocAmino(msgsValues, fee, chainId, memo, accountNumber, sequence);
+      
+      var { signature, signed } = await this.signer.signAmino(signerAddress, signDocWithValue);
+      signedTxBody = {
+        messages: signDocOriginal.msgs.map((msg) => this.aminoTypes.fromAmino(msg)),
+        memo: signed.memo,
+      };
+    } else {
+      msgs = messages.map((msg) => this.aminoTypes.toAmino(msg));
+      const signDoc = makeSignDocAmino(msgs, fee, chainId, memo, accountNumber, sequence);
+      var { signature, signed } = await this.signer.signAmino(signerAddress, signDoc);
+      signedTxBody = {
         messages: signed.msgs.map((msg) => this.aminoTypes.fromAmino(msg)),
         memo: signed.memo,
-      },
+      };
+    }
+    const signedTxBodyEncodeObject: TxBodyEncodeObject = {
+      typeUrl: "/cosmos.tx.v1beta1.TxBody",
+      value: signedTxBody,
     };
-    const signedTxBodyBytes = this.registry.encode(signedTxBody);
+    const signedTxBodyBytes = this.registry.encode(signedTxBodyEncodeObject);
     const signedGasLimit = Int53.fromString(signed.fee.gas).toNumber();
     const signedSequence = Int53.fromString(signed.sequence).toNumber();
     const signedAuthInfoBytes = makeAuthInfoBytes(
@@ -898,14 +922,14 @@ export class SigningCyberClient extends CyberClient {
       throw new Error("Failed to retrieve account from signer");
     }
     const pubkey = encodePubkey(encodeSecp256k1Pubkey(accountFromSigner.pubkey));
-    const txBody: TxBodyEncodeObject = {
+    const txBodyEncodeObject: TxBodyEncodeObject = {
       typeUrl: "/cosmos.tx.v1beta1.TxBody",
       value: {
         messages: messages,
         memo: memo,
       },
     };
-    const txBodyBytes = this.registry.encode(txBody);
+    const txBodyBytes = this.registry.encode(txBodyEncodeObject);
     const gasLimit = Int53.fromString(fee.gas).toNumber();
     const authInfoBytes = makeAuthInfoBytes([{ pubkey, sequence }], fee.amount, gasLimit);
     const signDoc = makeSignDoc(txBodyBytes, authInfoBytes, chainId, accountNumber);

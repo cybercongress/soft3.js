@@ -2,9 +2,9 @@
 import { createProtobufRpcClient, QueryClient } from "@cosmjs/stargate";
 
 import {
-  QueryNeuronBandwidthResponse,
   QueryClientImpl,
   QueryLoadResponse,
+  QueryNeuronBandwidthResponse,
   QueryPriceResponse,
 } from "../codec/cyber/bandwidth/v1beta1/query";
 
