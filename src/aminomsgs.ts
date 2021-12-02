@@ -4,7 +4,8 @@ import { assertDefinedAndNotNull } from "@cosmjs/utils";
 import Long from "long";
 
 import { MsgCyberlink } from "./codec/cyber/graph/v1beta1/tx";
-import { Link } from "./codec/cyber/graph/v1beta1/types";
+// import { Link } from "./codec/cyber/graph/v1beta1/types";
+import { Link } from "./signingcyberclient"
 import {
   MsgCreateRoute,
   MsgDeleteRoute,
@@ -148,7 +149,6 @@ export function isAminoMsgWithdrawWithinBatch(msg: AminoMsg): msg is AminoMsgWit
 
 export function createCyberTypes(): Record<string, AminoConverter> {
   return {
-    // not working (signature verification failed; lease verify account number (#), sequence (#) and chain-id (#): unauthorized)
     "/cyber.graph.v1beta1.MsgCyberlink": {
       aminoType: "cyber/MsgCyberlink",
       toAmino: ({ neuron, links }: MsgCyberlink): AminoMsgCyberlink["value"] => {
@@ -164,7 +164,6 @@ export function createCyberTypes(): Record<string, AminoConverter> {
         };
       },
     },
-    // not working (signature verification failed; lease verify account number (#), sequence (#) and chain-id (#): unauthorized)
     "/cyber.resources.v1beta1.MsgInvestmint": {
       aminoType: "cyber/MsgInvestmint",
       toAmino: ({ neuron, amount, resource, length }: MsgInvestmint): AminoMsgInvestmint["value"] => {
@@ -268,15 +267,17 @@ export function createCyberTypes(): Record<string, AminoConverter> {
         demand_coin_denom,
         offer_coin_fee,
         order_price,
-      }: AminoMsgSwapWithinBatch["value"]): MsgSwapWithinBatch => ({
-        swapRequesterAddress: swap_requester_address,
-        poolId: Long.fromString(pool_id),
-        swapTypeId: swap_type_id,
-        offerCoin: offer_coin,
-        demandCoinDenom: demand_coin_denom,
-        offerCoinFee: offer_coin_fee,
-        orderPrice: order_price,
-      }),
+      }: AminoMsgSwapWithinBatch["value"]): MsgSwapWithinBatch => {
+        return {
+          swapRequesterAddress: swap_requester_address,
+          poolId: Long.fromString(pool_id),
+          swapTypeId: swap_type_id,
+          offerCoin: offer_coin,
+          demandCoinDenom: demand_coin_denom,
+          offerCoinFee: offer_coin_fee,
+          orderPrice: order_price,
+        };
+      },
     },
     "/tendermint.liquidity.v1beta1.MsgDepositWithinBatch": {
       aminoType: "liquidity/MsgDepositWithinBatch",
