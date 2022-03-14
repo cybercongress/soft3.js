@@ -151,10 +151,10 @@ function createDefaultRegistry(): Registry {
   return new Registry([
     ...defaultRegistryTypes,
     ["/cosmwasm.wasm.v1beta1.MsgClearAdmin", MsgClearAdmin],
-    ["/cosmwasm.wasm.v1beta1.MsgExecuteContract", MsgExecuteContract],
+    // ["/cosmwasm.wasm.v1beta1.MsgExecuteContract", MsgExecuteContract],
     ["/cosmwasm.wasm.v1beta1.MsgMigrateContract", MsgMigrateContract],
-    ["/cosmwasm.wasm.v1beta1.MsgStoreCode", MsgStoreCode],
-    ["/cosmwasm.wasm.v1beta1.MsgInstantiateContract", MsgInstantiateContract],
+    // ["/cosmwasm.wasm.v1beta1.MsgStoreCode", MsgStoreCode],
+    // ["/cosmwasm.wasm.v1beta1.MsgInstantiateContract", MsgInstantiateContract],
     ["/cosmwasm.wasm.v1beta1.MsgUpdateAdmin", MsgUpdateAdmin],
     ["/cyber.graph.v1beta1.MsgCyberlink", MsgCyberlink],
     ["/cyber.resources.v1beta1.MsgInvestmint", MsgInvestmint],
@@ -166,7 +166,10 @@ function createDefaultRegistry(): Registry {
     ["/tendermint.liquidity.v1beta1.MsgDepositWithinBatch", MsgDepositWithinBatch],
     ["/tendermint.liquidity.v1beta1.MsgWithdrawWithinBatch", MsgWithdrawWithinBatch],
     ["/tendermint.liquidity.v1beta1.MsgCreatePool", MsgCreatePool],
-    ["/cosmos.gov.v1beta1.MsgVote", MsgDeposit],
+    ["/cosmos.gov.v1beta1.MsgDeposit", MsgDeposit],
+    ["/cosmwasm.wasm.v1.MsgExecuteContract", MsgExecuteContract],
+    ["/cosmwasm.wasm.v1.MsgInstantiateContract", MsgInstantiateContract],
+    ["/cosmwasm.wasm.v1.MsgStoreCode", MsgStoreCode],
   ]);
 }
 
@@ -355,7 +358,7 @@ export class SigningCyberClient extends CyberClient {
     wasmCode: Uint8Array,
     fee: StdFee,
     memo = "",
-  ): Promise<UploadResult> {
+  ): Promise<BroadcastTxResponse> {
     const compressed = pako.gzip(wasmCode, { level: 9 });
     const storeCodeMsg: MsgStoreCodeEncodeObject = {
       typeUrl: "/cosmwasm.wasm.v1.MsgStoreCode",
@@ -365,21 +368,24 @@ export class SigningCyberClient extends CyberClient {
       }),
     };
 
-    const result = await this.signAndBroadcast(senderAddress, [storeCodeMsg], fee, memo);
-    if (isBroadcastTxFailure(result)) {
-      throw new Error(createBroadcastTxErrorMessage(result));
-    }
-    const parsedLogs = logs.parseRawLog(result.rawLog);
-    const codeIdAttr = logs.findAttribute(parsedLogs, "message", "code_id");
-    return {
-      originalSize: wasmCode.length,
-      originalChecksum: toHex(sha256(wasmCode)),
-      compressedSize: compressed.length,
-      compressedChecksum: toHex(sha256(compressed)),
-      codeId: Number.parseInt(codeIdAttr.value, 10),
-      logs: parsedLogs,
-      transactionHash: result.transactionHash,
-    };
+    return this.signAndBroadcast(senderAddress, [storeCodeMsg], fee, memo);
+    // const result = await this.signAndBroadcast(senderAddress, [storeCodeMsg], fee, memo);
+    // console.log(`result`, result)
+    // if (isBroadcastTxFailure(result)) {
+    //   throw new Error(createBroadcastTxErrorMessage(result));
+    // }
+    // const parsedLogs = logs.parseRawLog(result.rawLog);
+    // console.log(`parsedLogs`, parsedLogs)
+    // const codeIdAttr = logs.findAttribute(parsedLogs, "message", "code_id");
+    // return {
+    //   originalSize: wasmCode.length,
+    //   originalChecksum: toHex(sha256(wasmCode)),
+    //   compressedSize: compressed.length,
+    //   compressedChecksum: toHex(sha256(compressed)),
+    //   codeId: Number.parseInt(codeIdAttr.value, 10),
+    //   logs: parsedLogs,
+    //   transactionHash: result.transactionHash,
+    // };
   }
 
   public async instantiate(
@@ -389,7 +395,7 @@ export class SigningCyberClient extends CyberClient {
     label: string,
     fee: StdFee,
     options: InstantiateOptions = {},
-  ): Promise<InstantiateResult> {
+  ): Promise<BroadcastTxResponse> {
     const instantiateContractMsg: MsgInstantiateContractEncodeObject = {
       typeUrl: "/cosmwasm.wasm.v1.MsgInstantiateContract",
       value: MsgInstantiateContract.fromPartial({
@@ -401,17 +407,19 @@ export class SigningCyberClient extends CyberClient {
         admin: options.admin,
       }),
     };
-    const result = await this.signAndBroadcast(senderAddress, [instantiateContractMsg], fee, options.memo);
-    if (isBroadcastTxFailure(result)) {
-      throw new Error(createBroadcastTxErrorMessage(result));
-    }
-    const parsedLogs = logs.parseRawLog(result.rawLog);
-    const contractAddressAttr = logs.findAttribute(parsedLogs, "message", "_contract_address");
-    return {
-      contractAddress: contractAddressAttr.value,
-      logs: parsedLogs,
-      transactionHash: result.transactionHash,
-    };
+    return this.signAndBroadcast(senderAddress, [instantiateContractMsg], fee, options.memo);
+    // const result = await this.signAndBroadcast(senderAddress, [instantiateContractMsg], fee, options.memo);
+    // console.log(`result`, result)
+    // if (isBroadcastTxFailure(result)) {
+    //   throw new Error(createBroadcastTxErrorMessage(result));
+    // }
+    // const parsedLogs = logs.parseRawLog(result.rawLog);
+    // const contractAddressAttr = logs.findAttribute(parsedLogs, "message", "_contract_address");
+    // return {
+    //   contractAddress: contractAddressAttr.value,
+    //   logs: parsedLogs,
+    //   transactionHash: result.transactionHash,
+    // };
   }
 
   public async updateAdmin(
@@ -496,7 +504,7 @@ export class SigningCyberClient extends CyberClient {
     fee: StdFee,
     memo = "",
     funds?: readonly Coin[],
-  ): Promise<ExecuteResult> {
+  ): Promise<BroadcastTxResponse> {
     const executeContractMsg: MsgExecuteContractEncodeObject = {
       typeUrl: "/cosmwasm.wasm.v1.MsgExecuteContract",
       value: MsgExecuteContract.fromPartial({
@@ -506,14 +514,16 @@ export class SigningCyberClient extends CyberClient {
         funds: [...(funds || [])],
       }),
     };
-    const result = await this.signAndBroadcast(senderAddress, [executeContractMsg], fee, memo);
-    if (isBroadcastTxFailure(result)) {
-      throw new Error(createBroadcastTxErrorMessage(result));
-    }
-    return {
-      logs: logs.parseRawLog(result.rawLog),
-      transactionHash: result.transactionHash,
-    };
+
+    return this.signAndBroadcast(senderAddress, [executeContractMsg], fee, memo);
+    // const result = await this.signAndBroadcast(senderAddress, [executeContractMsg], fee, memo);
+    // if (isBroadcastTxFailure(result)) {
+    //   throw new Error(createBroadcastTxErrorMessage(result));
+    // }
+    // return {
+    //   logs: logs.parseRawLog(result.rawLog),
+    //   transactionHash: result.transactionHash,
+    // };
   }
 
   // Bank module
@@ -862,17 +872,20 @@ export class SigningCyberClient extends CyberClient {
     }
     const pubkey = encodePubkey(encodeSecp256k1Pubkey(accountFromSigner.pubkey));
     const signMode = SignMode.SIGN_MODE_LEGACY_AMINO_JSON;
-    
+
     // Need this temporary hack because there is issue with codec type binded to graph & resources messages
     // TODO remove this after next upgrade
-    let msgs, signedTxBody
-    if (messages[0].typeUrl == "/cyber.graph.v1beta1.MsgCyberlink" || messages[0].typeUrl == "/cyber.resources.v1beta1.MsgInvestmint") {
+    let msgs, signedTxBody;
+    if (
+      messages[0].typeUrl == "/cyber.graph.v1beta1.MsgCyberlink" ||
+      messages[0].typeUrl == "/cyber.resources.v1beta1.MsgInvestmint"
+    ) {
       msgs = messages.map((msg) => this.aminoTypes.toAmino(msg));
       const signDocOriginal = makeSignDocAmino(msgs, fee, chainId, memo, accountNumber, sequence);
-  
+
       const msgsValues = messages.map((msg) => this.aminoTypes.toAmino(msg).value);
       const signDocWithValue = makeSignDocAmino(msgsValues, fee, chainId, memo, accountNumber, sequence);
-      
+
       var { signature, signed } = await this.signer.signAmino(signerAddress, signDocWithValue);
       signedTxBody = {
         messages: signDocOriginal.msgs.map((msg) => this.aminoTypes.fromAmino(msg)),

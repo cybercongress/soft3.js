@@ -4,6 +4,7 @@ import { createProtobufRpcClient, QueryClient } from "@cosmjs/stargate";
 import { PageRequest } from "../codec/cyber/base/query/v1beta1/pagination";
 import {
   QueryClientImpl,
+  QueryKarmaResponse,
   QueryLinkExistResponse,
   QueryRankResponse,
   QuerySearchResponse,
@@ -26,6 +27,7 @@ export interface RankExtension {
     readonly search: (particle: string, page?: number, perPage?: number) => Promise<QuerySearchResponse>;
     readonly backlinks: (particle: string, page?: number, perPage?: number) => Promise<QuerySearchResponse>;
     readonly rank: (particle: string) => Promise<QueryRankResponse>;
+    readonly karma: (neuron: string) => Promise<QueryKarmaResponse>;
     readonly isLinkExist: (from: string, to: string, agent: string) => Promise<QueryLinkExistResponse>;
     readonly isAnyLinkExist: (from: string, to: string) => Promise<QueryLinkExistResponse>;
   };
@@ -56,6 +58,12 @@ export function setupRankExtension(base: QueryClient): RankExtension {
       rank: async (particle: string) => {
         const response = await queryService.Rank({
           particle: particle,
+        });
+        return response;
+      },
+      karma: async (neuron: string) => {
+        const response = await queryService.Karma({
+          neuron: neuron,
         });
         return response;
       },

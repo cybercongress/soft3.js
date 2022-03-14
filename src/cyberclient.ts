@@ -85,6 +85,7 @@ import {
   QueryRoutesResponse,
 } from "./codec/cyber/grid/v1beta1/query";
 import {
+  QueryKarmaResponse,
   QueryLinkExistResponse,
   QueryRankResponse,
   QuerySearchResponse,
@@ -449,6 +450,11 @@ export class CyberClient {
   public async rank(particle: string): Promise<JsonObject> {
     const response = await this.forceGetQueryClient().rank.rank(particle);
     return QueryRankResponse.toJSON(response);
+  }
+
+  public async karma(neuron: string): Promise<JsonObject> {
+    const response = await this.forceGetQueryClient().rank.karma(neuron);
+    return QueryKarmaResponse.toJSON(response);
   }
 
   public async isLinkExist(from: string, to: string, agent: string): Promise<JsonObject> {
