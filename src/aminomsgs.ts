@@ -1,6 +1,6 @@
 import { AminoMsg, Coin } from "@cosmjs/amino";
 import { AminoConverter } from "@cosmjs/stargate";
-import { assertDefinedAndNotNull } from "@cosmjs/utils";
+import { assertDefinedAndNotNull, isNonNullObject } from "@cosmjs/utils";
 import Long from "long";
 
 import { MsgCyberlink } from "./codec/cyber/graph/v1beta1/tx";
@@ -145,6 +145,25 @@ export interface AminoMsgWithdrawWithinBatch extends AminoMsg {
 
 export function isAminoMsgWithdrawWithinBatch(msg: AminoMsg): msg is AminoMsgWithdrawWithinBatch {
   return msg.type === "liquidity/MsgWithdrawWithinBatch";
+}
+
+export interface MsgSignData extends AminoMsg {
+  readonly type: "sign/MsgSignData";
+  readonly value: {
+    /** Bech32 account address */
+    signer: string;
+    /** Base64 encoded data */
+    data: string;
+  };
+}
+
+export function isMsgSignData(msg: AminoMsg): msg is MsgSignData {
+  const castedMsg = msg as MsgSignData;
+  if (castedMsg.type !== "sign/MsgSignData") return false;
+  if (!isNonNullObject(castedMsg.value)) return false;
+  if (typeof castedMsg.value.signer !== "string") return false;
+  if (typeof castedMsg.value.data !== "string") return false;
+  return true;
 }
 
 export function createCyberTypes(): Record<string, AminoConverter> {
