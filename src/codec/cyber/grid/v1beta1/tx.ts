@@ -1,14 +1,14 @@
 /* eslint-disable */
 import Long from "long";
 import _m0 from "protobufjs/minimal";
-import { Coin } from "../../../cosmos_proto/coin";
+import { Coin } from "../../../cosmos/base/v1beta1/coin";
 
-export const protobufPackage = "cyber.energy.v1beta1";
+export const protobufPackage = "cyber.grid.v1beta1";
 
 export interface MsgCreateRoute {
   source: string;
   destination: string;
-  alias: string;
+  name: string;
 }
 
 export interface MsgEditRoute {
@@ -22,10 +22,10 @@ export interface MsgDeleteRoute {
   destination: string;
 }
 
-export interface MsgEditRouteAlias {
+export interface MsgEditRouteName {
   source: string;
   destination: string;
-  alias: string;
+  name: string;
 }
 
 export interface MsgCreateRouteResponse {}
@@ -34,9 +34,9 @@ export interface MsgEditRouteResponse {}
 
 export interface MsgDeleteRouteResponse {}
 
-export interface MsgEditRouteAliasResponse {}
+export interface MsgEditRouteNameResponse {}
 
-const baseMsgCreateRoute: object = { source: "", destination: "", alias: "" };
+const baseMsgCreateRoute: object = { source: "", destination: "", name: "" };
 
 export const MsgCreateRoute = {
   encode(message: MsgCreateRoute, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
@@ -46,8 +46,8 @@ export const MsgCreateRoute = {
     if (message.destination !== "") {
       writer.uint32(18).string(message.destination);
     }
-    if (message.alias !== "") {
-      writer.uint32(26).string(message.alias);
+    if (message.name !== "") {
+      writer.uint32(26).string(message.name);
     }
     return writer;
   },
@@ -66,7 +66,7 @@ export const MsgCreateRoute = {
           message.destination = reader.string();
           break;
         case 3:
-          message.alias = reader.string();
+          message.name = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -88,10 +88,10 @@ export const MsgCreateRoute = {
     } else {
       message.destination = "";
     }
-    if (object.alias !== undefined && object.alias !== null) {
-      message.alias = String(object.alias);
+    if (object.name !== undefined && object.name !== null) {
+      message.name = String(object.name);
     } else {
-      message.alias = "";
+      message.name = "";
     }
     return message;
   },
@@ -100,7 +100,7 @@ export const MsgCreateRoute = {
     const obj: any = {};
     message.source !== undefined && (obj.source = message.source);
     message.destination !== undefined && (obj.destination = message.destination);
-    message.alias !== undefined && (obj.alias = message.alias);
+    message.name !== undefined && (obj.name = message.name);
     return obj;
   },
 
@@ -116,10 +116,10 @@ export const MsgCreateRoute = {
     } else {
       message.destination = "";
     }
-    if (object.alias !== undefined && object.alias !== null) {
-      message.alias = object.alias;
+    if (object.name !== undefined && object.name !== null) {
+      message.name = object.name;
     } else {
-      message.alias = "";
+      message.name = "";
     }
     return message;
   },
@@ -286,26 +286,26 @@ export const MsgDeleteRoute = {
   },
 };
 
-const baseMsgEditRouteAlias: object = { source: "", destination: "", alias: "" };
+const baseMsgEditRouteName: object = { source: "", destination: "", name: "" };
 
-export const MsgEditRouteAlias = {
-  encode(message: MsgEditRouteAlias, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+export const MsgEditRouteName = {
+  encode(message: MsgEditRouteName, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.source !== "") {
       writer.uint32(10).string(message.source);
     }
     if (message.destination !== "") {
       writer.uint32(18).string(message.destination);
     }
-    if (message.alias !== "") {
-      writer.uint32(26).string(message.alias);
+    if (message.name !== "") {
+      writer.uint32(26).string(message.name);
     }
     return writer;
   },
 
-  decode(input: _m0.Reader | Uint8Array, length?: number): MsgEditRouteAlias {
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgEditRouteName {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseMsgEditRouteAlias } as MsgEditRouteAlias;
+    const message = { ...baseMsgEditRouteName } as MsgEditRouteName;
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -316,7 +316,7 @@ export const MsgEditRouteAlias = {
           message.destination = reader.string();
           break;
         case 3:
-          message.alias = reader.string();
+          message.name = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -326,8 +326,8 @@ export const MsgEditRouteAlias = {
     return message;
   },
 
-  fromJSON(object: any): MsgEditRouteAlias {
-    const message = { ...baseMsgEditRouteAlias } as MsgEditRouteAlias;
+  fromJSON(object: any): MsgEditRouteName {
+    const message = { ...baseMsgEditRouteName } as MsgEditRouteName;
     if (object.source !== undefined && object.source !== null) {
       message.source = String(object.source);
     } else {
@@ -338,24 +338,24 @@ export const MsgEditRouteAlias = {
     } else {
       message.destination = "";
     }
-    if (object.alias !== undefined && object.alias !== null) {
-      message.alias = String(object.alias);
+    if (object.name !== undefined && object.name !== null) {
+      message.name = String(object.name);
     } else {
-      message.alias = "";
+      message.name = "";
     }
     return message;
   },
 
-  toJSON(message: MsgEditRouteAlias): unknown {
+  toJSON(message: MsgEditRouteName): unknown {
     const obj: any = {};
     message.source !== undefined && (obj.source = message.source);
     message.destination !== undefined && (obj.destination = message.destination);
-    message.alias !== undefined && (obj.alias = message.alias);
+    message.name !== undefined && (obj.name = message.name);
     return obj;
   },
 
-  fromPartial(object: DeepPartial<MsgEditRouteAlias>): MsgEditRouteAlias {
-    const message = { ...baseMsgEditRouteAlias } as MsgEditRouteAlias;
+  fromPartial(object: DeepPartial<MsgEditRouteName>): MsgEditRouteName {
+    const message = { ...baseMsgEditRouteName } as MsgEditRouteName;
     if (object.source !== undefined && object.source !== null) {
       message.source = object.source;
     } else {
@@ -366,10 +366,10 @@ export const MsgEditRouteAlias = {
     } else {
       message.destination = "";
     }
-    if (object.alias !== undefined && object.alias !== null) {
-      message.alias = object.alias;
+    if (object.name !== undefined && object.name !== null) {
+      message.name = object.name;
     } else {
-      message.alias = "";
+      message.name = "";
     }
     return message;
   },
@@ -489,17 +489,17 @@ export const MsgDeleteRouteResponse = {
   },
 };
 
-const baseMsgEditRouteAliasResponse: object = {};
+const baseMsgEditRouteNameResponse: object = {};
 
-export const MsgEditRouteAliasResponse = {
-  encode(_: MsgEditRouteAliasResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+export const MsgEditRouteNameResponse = {
+  encode(_: MsgEditRouteNameResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     return writer;
   },
 
-  decode(input: _m0.Reader | Uint8Array, length?: number): MsgEditRouteAliasResponse {
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgEditRouteNameResponse {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseMsgEditRouteAliasResponse } as MsgEditRouteAliasResponse;
+    const message = { ...baseMsgEditRouteNameResponse } as MsgEditRouteNameResponse;
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -511,18 +511,18 @@ export const MsgEditRouteAliasResponse = {
     return message;
   },
 
-  fromJSON(_: any): MsgEditRouteAliasResponse {
-    const message = { ...baseMsgEditRouteAliasResponse } as MsgEditRouteAliasResponse;
+  fromJSON(_: any): MsgEditRouteNameResponse {
+    const message = { ...baseMsgEditRouteNameResponse } as MsgEditRouteNameResponse;
     return message;
   },
 
-  toJSON(_: MsgEditRouteAliasResponse): unknown {
+  toJSON(_: MsgEditRouteNameResponse): unknown {
     const obj: any = {};
     return obj;
   },
 
-  fromPartial(_: DeepPartial<MsgEditRouteAliasResponse>): MsgEditRouteAliasResponse {
-    const message = { ...baseMsgEditRouteAliasResponse } as MsgEditRouteAliasResponse;
+  fromPartial(_: DeepPartial<MsgEditRouteNameResponse>): MsgEditRouteNameResponse {
+    const message = { ...baseMsgEditRouteNameResponse } as MsgEditRouteNameResponse;
     return message;
   },
 };
@@ -531,7 +531,7 @@ export interface Msg {
   CreateRoute(request: MsgCreateRoute): Promise<MsgCreateRouteResponse>;
   EditRoute(request: MsgEditRoute): Promise<MsgEditRouteResponse>;
   DeleteRoute(request: MsgDeleteRoute): Promise<MsgDeleteRouteResponse>;
-  EditRouteAlias(request: MsgEditRouteAlias): Promise<MsgEditRouteAliasResponse>;
+  EditRouteName(request: MsgEditRouteName): Promise<MsgEditRouteNameResponse>;
 }
 
 export class MsgClientImpl implements Msg {
@@ -541,30 +541,30 @@ export class MsgClientImpl implements Msg {
     this.CreateRoute = this.CreateRoute.bind(this);
     this.EditRoute = this.EditRoute.bind(this);
     this.DeleteRoute = this.DeleteRoute.bind(this);
-    this.EditRouteAlias = this.EditRouteAlias.bind(this);
+    this.EditRouteName = this.EditRouteName.bind(this);
   }
   CreateRoute(request: MsgCreateRoute): Promise<MsgCreateRouteResponse> {
     const data = MsgCreateRoute.encode(request).finish();
-    const promise = this.rpc.request("cyber.energy.v1beta1.Msg", "CreateRoute", data);
+    const promise = this.rpc.request("cyber.grid.v1beta1.Msg", "CreateRoute", data);
     return promise.then((data) => MsgCreateRouteResponse.decode(new _m0.Reader(data)));
   }
 
   EditRoute(request: MsgEditRoute): Promise<MsgEditRouteResponse> {
     const data = MsgEditRoute.encode(request).finish();
-    const promise = this.rpc.request("cyber.energy.v1beta1.Msg", "EditRoute", data);
+    const promise = this.rpc.request("cyber.grid.v1beta1.Msg", "EditRoute", data);
     return promise.then((data) => MsgEditRouteResponse.decode(new _m0.Reader(data)));
   }
 
   DeleteRoute(request: MsgDeleteRoute): Promise<MsgDeleteRouteResponse> {
     const data = MsgDeleteRoute.encode(request).finish();
-    const promise = this.rpc.request("cyber.energy.v1beta1.Msg", "DeleteRoute", data);
+    const promise = this.rpc.request("cyber.grid.v1beta1.Msg", "DeleteRoute", data);
     return promise.then((data) => MsgDeleteRouteResponse.decode(new _m0.Reader(data)));
   }
 
-  EditRouteAlias(request: MsgEditRouteAlias): Promise<MsgEditRouteAliasResponse> {
-    const data = MsgEditRouteAlias.encode(request).finish();
-    const promise = this.rpc.request("cyber.energy.v1beta1.Msg", "EditRouteAlias", data);
-    return promise.then((data) => MsgEditRouteAliasResponse.decode(new _m0.Reader(data)));
+  EditRouteName(request: MsgEditRouteName): Promise<MsgEditRouteNameResponse> {
+    const data = MsgEditRouteName.encode(request).finish();
+    const promise = this.rpc.request("cyber.grid.v1beta1.Msg", "EditRouteName", data);
+    return promise.then((data) => MsgEditRouteNameResponse.decode(new _m0.Reader(data)));
   }
 }
 

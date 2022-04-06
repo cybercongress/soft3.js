@@ -1,6 +1,6 @@
 {
   "name": "@cybercongress/cyber-js",
-  "version": "0.1.0",
+  "version": "0.2.3",
   "description": "Cyber SDK",
   "license": "",
   "main": "build/index.js",
@@ -12,6 +12,7 @@
     "!**/testdata/"
   ],
   "repository": {
+    
     "type": "git",
     "url": "https://github.com/cybercongress/cyber-js"
   },
@@ -29,15 +30,15 @@
     "format-text": "prettier --write \"./*.md\""
   },
   "dependencies": {
-    "@cosmjs/amino": "v0.26.0",
+    "@cosmjs/amino": "v0.26.4",
     "@cosmjs/cosmwasm-launchpad": "v0.25.6",
-    "@cosmjs/cosmwasm-stargate": "v0.26.0-alpha2",
-    "@cosmjs/crypto": "v0.26.0-alpha2",
-    "@cosmjs/math": "v0.26.0-alpha2",
-    "@cosmjs/proto-signing": "v0.26.0",
-    "@cosmjs/stargate": "v0.26.0-alpha2",
-    "@cosmjs/tendermint-rpc": "v0.26.0-alpha2",
-    "@cosmjs/utils": "v0.26.0-alpha2",
+    "@cosmjs/cosmwasm-stargate": "v0.26.4",
+    "@cosmjs/crypto": "v0.26.4",
+    "@cosmjs/math": "v0.26.4",
+    "@cosmjs/proto-signing": "v0.26.4",
+    "@cosmjs/stargate": "v0.26.4",
+    "@cosmjs/tendermint-rpc": "v0.26.4",
+    "@cosmjs/utils": "v0.26.4",
     "cosmjs-types": "^0.2.0",
     "long": "^4.0.0",
     "pako": "^2.0.3",
@@ -46,6 +47,7 @@
   },
   "devDependencies": {
     "@cosmjs/encoding": "^0.26.0",
+    "@types/long": "^4.0.1",
     "@types/eslint-plugin-prettier": "^3.1.0",
     "@types/pako": "^1.0.1",
     "@typescript-eslint/eslint-plugin": "^4.29.1",
@@ -57,7 +59,7 @@
     "eslint-plugin-prettier": "^3.4.0",
     "eslint-plugin-simple-import-sort": "^7.0.0",
     "prettier": "^2.3.2",
-    "ts-proto": "^1.81.1",
+    "ts-proto": "^1.83.1",
     "typescript": "^4.3.5"
   }
 }

@@ -2,13 +2,13 @@ import { EncodeObject } from "@cosmjs/proto-signing";
 import { MsgDeposit, MsgSubmitProposal, MsgVote } from "cosmjs-types/cosmos/gov/v1beta1/tx";
 import { MsgBeginRedelegate } from "cosmjs-types/cosmos/staking/v1beta1/tx";
 
+import { MsgCyberlink } from "./codec/cyber/graph/v1beta1/tx";
 import {
   MsgCreateRoute,
   MsgDeleteRoute,
   MsgEditRoute,
-  MsgEditRouteAlias,
-} from "./codec/cyber/energy/v1beta1/tx";
-import { MsgCyberlink } from "./codec/cyber/graph/v1beta1/tx";
+  MsgEditRouteName,
+} from "./codec/cyber/grid/v1beta1/tx";
 import { MsgInvestmint } from "./codec/cyber/resources/v1beta1/tx";
 import {
   MsgCreatePool,
@@ -35,49 +35,47 @@ export function isMsgBeginRedelegateEncodeObject(
 // Energy module
 
 export interface MsgCreateRouteEncodeObject extends EncodeObject {
-  readonly typeUrl: "/cyber.energy.v1beta1.MsgCreateRoute";
+  readonly typeUrl: "/cyber.grid.v1beta1.MsgCreateRoute";
   readonly value: Partial<MsgCreateRoute>;
 }
 
 export function isMsgCreateRouteEncodeObject(
   encodeObject: EncodeObject,
 ): encodeObject is MsgCreateRouteEncodeObject {
-  return (encodeObject as MsgCreateRouteEncodeObject).typeUrl === "/cyber.energy.v1beta1.MsgCreateRoute";
+  return (encodeObject as MsgCreateRouteEncodeObject).typeUrl === "/cyber.grid.v1beta1.MsgCreateRoute";
 }
 
 export interface MsgDeleteRouteEncodeObject extends EncodeObject {
-  readonly typeUrl: "/cyber.energy.v1beta1.MsgDeleteRoute";
+  readonly typeUrl: "/cyber.grid.v1beta1.MsgDeleteRoute";
   readonly value: Partial<MsgDeleteRoute>;
 }
 
 export function isMsgDeleteRouteEncodeObject(
   encodeObject: EncodeObject,
 ): encodeObject is MsgDeleteRouteEncodeObject {
-  return (encodeObject as MsgDeleteRouteEncodeObject).typeUrl === "/cyber.energy.v1beta1.MsgDeleteRoute";
+  return (encodeObject as MsgDeleteRouteEncodeObject).typeUrl === "/cyber.grid.v1beta1.MsgDeleteRoute";
 }
 
 export interface MsgEditRouteEncodeObject extends EncodeObject {
-  readonly typeUrl: "/cyber.energy.v1beta1.MsgEditRoute";
+  readonly typeUrl: "/cyber.grid.v1beta1.MsgEditRoute";
   readonly value: Partial<MsgEditRoute>;
 }
 
 export function isMsgEditRouteEncodeObject(
   encodeObject: EncodeObject,
 ): encodeObject is MsgEditRouteEncodeObject {
-  return (encodeObject as MsgEditRouteEncodeObject).typeUrl === "/cyber.energy.v1beta1.MsgEditRoute";
+  return (encodeObject as MsgEditRouteEncodeObject).typeUrl === "/cyber.grid.v1beta1.MsgEditRoute";
 }
 
-export interface MsgEditRouteAliasEncodeObject extends EncodeObject {
-  readonly typeUrl: "/cyber.energy.v1beta1.MsgEditRouteAlias";
-  readonly value: Partial<MsgEditRouteAlias>;
+export interface MsgEditRouteNameEncodeObject extends EncodeObject {
+  readonly typeUrl: "/cyber.grid.v1beta1.MsgEditRouteName";
+  readonly value: Partial<MsgEditRouteName>;
 }
 
-export function isMsgEditRouteAliasEncodeObject(
+export function isMsgEditRouteNameEncodeObject(
   encodeObject: EncodeObject,
-): encodeObject is MsgEditRouteAliasEncodeObject {
-  return (
-    (encodeObject as MsgEditRouteAliasEncodeObject).typeUrl === "/cyber.energy.v1beta1.MsgEditRouteAlias"
-  );
+): encodeObject is MsgEditRouteNameEncodeObject {
+  return (encodeObject as MsgEditRouteNameEncodeObject).typeUrl === "/cyber.grid.v1beta1.MsgEditRouteName";
 }
 
 // Graph module

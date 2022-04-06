@@ -1,8 +1,8 @@
 /* eslint-disable */
 import Long from "long";
 import _m0 from "protobufjs/minimal";
-import { DecProto } from "../../../cosmos_proto/coin";
-import { AccountBandwidth, Params } from "../../../cyber/bandwidth/v1beta1/types";
+import { DecProto } from "../../../cosmos/base/v1beta1/coin";
+import { NeuronBandwidth, Params } from "../../../cyber/bandwidth/v1beta1/types";
 
 export const protobufPackage = "cyber.bandwidth.v1beta1";
 
@@ -18,18 +18,18 @@ export interface QueryPriceResponse {
   price?: DecProto;
 }
 
-export interface QueryDesirableBandwidthRequest {}
+export interface QueryTotalBandwidthRequest {}
 
-export interface QueryDesirableBandwidthResponse {
-  desirableBandwidth: Long;
+export interface QueryTotalBandwidthResponse {
+  totalBandwidth: Long;
 }
 
-export interface QueryAccountRequest {
-  address: string;
+export interface QueryNeuronBandwidthRequest {
+  neuron: string;
 }
 
-export interface QueryAccountResponse {
-  accountBandwidth?: AccountBandwidth;
+export interface QueryNeuronBandwidthResponse {
+  neuronBandwidth?: NeuronBandwidth;
 }
 
 export interface QueryParamsRequest {}
@@ -224,17 +224,17 @@ export const QueryPriceResponse = {
   },
 };
 
-const baseQueryDesirableBandwidthRequest: object = {};
+const baseQueryTotalBandwidthRequest: object = {};
 
-export const QueryDesirableBandwidthRequest = {
-  encode(_: QueryDesirableBandwidthRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+export const QueryTotalBandwidthRequest = {
+  encode(_: QueryTotalBandwidthRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     return writer;
   },
 
-  decode(input: _m0.Reader | Uint8Array, length?: number): QueryDesirableBandwidthRequest {
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryTotalBandwidthRequest {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseQueryDesirableBandwidthRequest } as QueryDesirableBandwidthRequest;
+    const message = { ...baseQueryTotalBandwidthRequest } as QueryTotalBandwidthRequest;
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -246,41 +246,41 @@ export const QueryDesirableBandwidthRequest = {
     return message;
   },
 
-  fromJSON(_: any): QueryDesirableBandwidthRequest {
-    const message = { ...baseQueryDesirableBandwidthRequest } as QueryDesirableBandwidthRequest;
+  fromJSON(_: any): QueryTotalBandwidthRequest {
+    const message = { ...baseQueryTotalBandwidthRequest } as QueryTotalBandwidthRequest;
     return message;
   },
 
-  toJSON(_: QueryDesirableBandwidthRequest): unknown {
+  toJSON(_: QueryTotalBandwidthRequest): unknown {
     const obj: any = {};
     return obj;
   },
 
-  fromPartial(_: DeepPartial<QueryDesirableBandwidthRequest>): QueryDesirableBandwidthRequest {
-    const message = { ...baseQueryDesirableBandwidthRequest } as QueryDesirableBandwidthRequest;
+  fromPartial(_: DeepPartial<QueryTotalBandwidthRequest>): QueryTotalBandwidthRequest {
+    const message = { ...baseQueryTotalBandwidthRequest } as QueryTotalBandwidthRequest;
     return message;
   },
 };
 
-const baseQueryDesirableBandwidthResponse: object = { desirableBandwidth: Long.UZERO };
+const baseQueryTotalBandwidthResponse: object = { totalBandwidth: Long.UZERO };
 
-export const QueryDesirableBandwidthResponse = {
-  encode(message: QueryDesirableBandwidthResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (!message.desirableBandwidth.isZero()) {
-      writer.uint32(8).uint64(message.desirableBandwidth);
+export const QueryTotalBandwidthResponse = {
+  encode(message: QueryTotalBandwidthResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (!message.totalBandwidth.isZero()) {
+      writer.uint32(8).uint64(message.totalBandwidth);
     }
     return writer;
   },
 
-  decode(input: _m0.Reader | Uint8Array, length?: number): QueryDesirableBandwidthResponse {
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryTotalBandwidthResponse {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseQueryDesirableBandwidthResponse } as QueryDesirableBandwidthResponse;
+    const message = { ...baseQueryTotalBandwidthResponse } as QueryTotalBandwidthResponse;
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.desirableBandwidth = reader.uint64() as Long;
+          message.totalBandwidth = reader.uint64() as Long;
           break;
         default:
           reader.skipType(tag & 7);
@@ -290,108 +290,53 @@ export const QueryDesirableBandwidthResponse = {
     return message;
   },
 
-  fromJSON(object: any): QueryDesirableBandwidthResponse {
-    const message = { ...baseQueryDesirableBandwidthResponse } as QueryDesirableBandwidthResponse;
-    if (object.desirableBandwidth !== undefined && object.desirableBandwidth !== null) {
-      message.desirableBandwidth = Long.fromString(object.desirableBandwidth);
+  fromJSON(object: any): QueryTotalBandwidthResponse {
+    const message = { ...baseQueryTotalBandwidthResponse } as QueryTotalBandwidthResponse;
+    if (object.totalBandwidth !== undefined && object.totalBandwidth !== null) {
+      message.totalBandwidth = Long.fromString(object.totalBandwidth);
     } else {
-      message.desirableBandwidth = Long.UZERO;
+      message.totalBandwidth = Long.UZERO;
     }
     return message;
   },
 
-  toJSON(message: QueryDesirableBandwidthResponse): unknown {
+  toJSON(message: QueryTotalBandwidthResponse): unknown {
     const obj: any = {};
-    message.desirableBandwidth !== undefined &&
-      (obj.desirableBandwidth = (message.desirableBandwidth || Long.UZERO).toString());
+    message.totalBandwidth !== undefined &&
+      (obj.totalBandwidth = (message.totalBandwidth || Long.UZERO).toString());
     return obj;
   },
 
-  fromPartial(object: DeepPartial<QueryDesirableBandwidthResponse>): QueryDesirableBandwidthResponse {
-    const message = { ...baseQueryDesirableBandwidthResponse } as QueryDesirableBandwidthResponse;
-    if (object.desirableBandwidth !== undefined && object.desirableBandwidth !== null) {
-      message.desirableBandwidth = object.desirableBandwidth as Long;
+  fromPartial(object: DeepPartial<QueryTotalBandwidthResponse>): QueryTotalBandwidthResponse {
+    const message = { ...baseQueryTotalBandwidthResponse } as QueryTotalBandwidthResponse;
+    if (object.totalBandwidth !== undefined && object.totalBandwidth !== null) {
+      message.totalBandwidth = object.totalBandwidth as Long;
     } else {
-      message.desirableBandwidth = Long.UZERO;
-    }
-    return message;
-  },
-};
-
-const baseQueryAccountRequest: object = { address: "" };
-
-export const QueryAccountRequest = {
-  encode(message: QueryAccountRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.address !== "") {
-      writer.uint32(10).string(message.address);
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): QueryAccountRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseQueryAccountRequest } as QueryAccountRequest;
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.address = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-
-  fromJSON(object: any): QueryAccountRequest {
-    const message = { ...baseQueryAccountRequest } as QueryAccountRequest;
-    if (object.address !== undefined && object.address !== null) {
-      message.address = String(object.address);
-    } else {
-      message.address = "";
-    }
-    return message;
-  },
-
-  toJSON(message: QueryAccountRequest): unknown {
-    const obj: any = {};
-    message.address !== undefined && (obj.address = message.address);
-    return obj;
-  },
-
-  fromPartial(object: DeepPartial<QueryAccountRequest>): QueryAccountRequest {
-    const message = { ...baseQueryAccountRequest } as QueryAccountRequest;
-    if (object.address !== undefined && object.address !== null) {
-      message.address = object.address;
-    } else {
-      message.address = "";
+      message.totalBandwidth = Long.UZERO;
     }
     return message;
   },
 };
 
-const baseQueryAccountResponse: object = {};
+const baseQueryNeuronBandwidthRequest: object = { neuron: "" };
 
-export const QueryAccountResponse = {
-  encode(message: QueryAccountResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.accountBandwidth !== undefined) {
-      AccountBandwidth.encode(message.accountBandwidth, writer.uint32(10).fork()).ldelim();
+export const QueryNeuronBandwidthRequest = {
+  encode(message: QueryNeuronBandwidthRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.neuron !== "") {
+      writer.uint32(10).string(message.neuron);
     }
     return writer;
   },
 
-  decode(input: _m0.Reader | Uint8Array, length?: number): QueryAccountResponse {
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryNeuronBandwidthRequest {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseQueryAccountResponse } as QueryAccountResponse;
+    const message = { ...baseQueryNeuronBandwidthRequest } as QueryNeuronBandwidthRequest;
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.accountBandwidth = AccountBandwidth.decode(reader, reader.uint32());
+          message.neuron = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -401,31 +346,86 @@ export const QueryAccountResponse = {
     return message;
   },
 
-  fromJSON(object: any): QueryAccountResponse {
-    const message = { ...baseQueryAccountResponse } as QueryAccountResponse;
-    if (object.accountBandwidth !== undefined && object.accountBandwidth !== null) {
-      message.accountBandwidth = AccountBandwidth.fromJSON(object.accountBandwidth);
+  fromJSON(object: any): QueryNeuronBandwidthRequest {
+    const message = { ...baseQueryNeuronBandwidthRequest } as QueryNeuronBandwidthRequest;
+    if (object.neuron !== undefined && object.neuron !== null) {
+      message.neuron = String(object.neuron);
     } else {
-      message.accountBandwidth = undefined;
+      message.neuron = "";
     }
     return message;
   },
 
-  toJSON(message: QueryAccountResponse): unknown {
+  toJSON(message: QueryNeuronBandwidthRequest): unknown {
     const obj: any = {};
-    message.accountBandwidth !== undefined &&
-      (obj.accountBandwidth = message.accountBandwidth
-        ? AccountBandwidth.toJSON(message.accountBandwidth)
+    message.neuron !== undefined && (obj.neuron = message.neuron);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<QueryNeuronBandwidthRequest>): QueryNeuronBandwidthRequest {
+    const message = { ...baseQueryNeuronBandwidthRequest } as QueryNeuronBandwidthRequest;
+    if (object.neuron !== undefined && object.neuron !== null) {
+      message.neuron = object.neuron;
+    } else {
+      message.neuron = "";
+    }
+    return message;
+  },
+};
+
+const baseQueryNeuronBandwidthResponse: object = {};
+
+export const QueryNeuronBandwidthResponse = {
+  encode(message: QueryNeuronBandwidthResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.neuronBandwidth !== undefined) {
+      NeuronBandwidth.encode(message.neuronBandwidth, writer.uint32(10).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryNeuronBandwidthResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryNeuronBandwidthResponse } as QueryNeuronBandwidthResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.neuronBandwidth = NeuronBandwidth.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryNeuronBandwidthResponse {
+    const message = { ...baseQueryNeuronBandwidthResponse } as QueryNeuronBandwidthResponse;
+    if (object.neuronBandwidth !== undefined && object.neuronBandwidth !== null) {
+      message.neuronBandwidth = NeuronBandwidth.fromJSON(object.neuronBandwidth);
+    } else {
+      message.neuronBandwidth = undefined;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryNeuronBandwidthResponse): unknown {
+    const obj: any = {};
+    message.neuronBandwidth !== undefined &&
+      (obj.neuronBandwidth = message.neuronBandwidth
+        ? NeuronBandwidth.toJSON(message.neuronBandwidth)
         : undefined);
     return obj;
   },
 
-  fromPartial(object: DeepPartial<QueryAccountResponse>): QueryAccountResponse {
-    const message = { ...baseQueryAccountResponse } as QueryAccountResponse;
-    if (object.accountBandwidth !== undefined && object.accountBandwidth !== null) {
-      message.accountBandwidth = AccountBandwidth.fromPartial(object.accountBandwidth);
+  fromPartial(object: DeepPartial<QueryNeuronBandwidthResponse>): QueryNeuronBandwidthResponse {
+    const message = { ...baseQueryNeuronBandwidthResponse } as QueryNeuronBandwidthResponse;
+    if (object.neuronBandwidth !== undefined && object.neuronBandwidth !== null) {
+      message.neuronBandwidth = NeuronBandwidth.fromPartial(object.neuronBandwidth);
     } else {
-      message.accountBandwidth = undefined;
+      message.neuronBandwidth = undefined;
     }
     return message;
   },
@@ -527,8 +527,8 @@ export const QueryParamsResponse = {
 export interface Query {
   Load(request: QueryLoadRequest): Promise<QueryLoadResponse>;
   Price(request: QueryPriceRequest): Promise<QueryPriceResponse>;
-  DesirableBandwidth(request: QueryDesirableBandwidthRequest): Promise<QueryDesirableBandwidthResponse>;
-  Account(request: QueryAccountRequest): Promise<QueryAccountResponse>;
+  TotalBandwidth(request: QueryTotalBandwidthRequest): Promise<QueryTotalBandwidthResponse>;
+  NeuronBandwidth(request: QueryNeuronBandwidthRequest): Promise<QueryNeuronBandwidthResponse>;
   Params(request: QueryParamsRequest): Promise<QueryParamsResponse>;
 }
 
@@ -538,8 +538,8 @@ export class QueryClientImpl implements Query {
     this.rpc = rpc;
     this.Load = this.Load.bind(this);
     this.Price = this.Price.bind(this);
-    this.DesirableBandwidth = this.DesirableBandwidth.bind(this);
-    this.Account = this.Account.bind(this);
+    this.TotalBandwidth = this.TotalBandwidth.bind(this);
+    this.NeuronBandwidth = this.NeuronBandwidth.bind(this);
     this.Params = this.Params.bind(this);
   }
   Load(request: QueryLoadRequest): Promise<QueryLoadResponse> {
@@ -554,16 +554,16 @@ export class QueryClientImpl implements Query {
     return promise.then((data) => QueryPriceResponse.decode(new _m0.Reader(data)));
   }
 
-  DesirableBandwidth(request: QueryDesirableBandwidthRequest): Promise<QueryDesirableBandwidthResponse> {
-    const data = QueryDesirableBandwidthRequest.encode(request).finish();
-    const promise = this.rpc.request("cyber.bandwidth.v1beta1.Query", "DesirableBandwidth", data);
-    return promise.then((data) => QueryDesirableBandwidthResponse.decode(new _m0.Reader(data)));
+  TotalBandwidth(request: QueryTotalBandwidthRequest): Promise<QueryTotalBandwidthResponse> {
+    const data = QueryTotalBandwidthRequest.encode(request).finish();
+    const promise = this.rpc.request("cyber.bandwidth.v1beta1.Query", "TotalBandwidth", data);
+    return promise.then((data) => QueryTotalBandwidthResponse.decode(new _m0.Reader(data)));
   }
 
-  Account(request: QueryAccountRequest): Promise<QueryAccountResponse> {
-    const data = QueryAccountRequest.encode(request).finish();
-    const promise = this.rpc.request("cyber.bandwidth.v1beta1.Query", "Account", data);
-    return promise.then((data) => QueryAccountResponse.decode(new _m0.Reader(data)));
+  NeuronBandwidth(request: QueryNeuronBandwidthRequest): Promise<QueryNeuronBandwidthResponse> {
+    const data = QueryNeuronBandwidthRequest.encode(request).finish();
+    const promise = this.rpc.request("cyber.bandwidth.v1beta1.Query", "NeuronBandwidth", data);
+    return promise.then((data) => QueryNeuronBandwidthResponse.decode(new _m0.Reader(data)));
   }
 
   Params(request: QueryParamsRequest): Promise<QueryParamsResponse> {

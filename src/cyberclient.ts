@@ -74,18 +74,19 @@ import { CodeInfoResponse } from "cosmjs-types/cosmwasm/wasm/v1/query";
 import { ContractCodeHistoryOperationType } from "cosmjs-types/cosmwasm/wasm/v1/types";
 
 import {
-  QueryAccountResponse,
   QueryLoadResponse,
+  QueryNeuronBandwidthResponse,
   QueryPriceResponse,
 } from "./codec/cyber/bandwidth/v1beta1/query";
+import { QueryGraphStatsResponse } from "./codec/cyber/graph/v1beta1/query";
 import {
   QueryParamsResponse as QueryParamsResponseEnergy,
   QueryRoutedEnergyResponse,
   QueryRouteResponse,
   QueryRoutesResponse,
-} from "./codec/cyber/energy/v1beta1/query";
-import { QueryGraphStatsResponse } from "./codec/cyber/graph/v1beta1/query";
+} from "./codec/cyber/grid/v1beta1/query";
 import {
+  QueryKarmaResponse,
   QueryLinkExistResponse,
   QueryRankResponse,
   QuerySearchResponse,
@@ -98,14 +99,14 @@ import {
 } from "./codec/tendermint/liquidity/v1beta1/query";
 import {
   BandwidthExtension,
-  EnergyExtension,
   GraphExtension,
+  GridExtension,
   LiquidityExtension,
   RankExtension,
   ResourcesExtension,
   setupBandwidthExtension,
-  setupEnergyExtension,
   setupGraphExtension,
+  setupGridExtension,
   setupLiquidityExtension,
   setupRankExtension,
   setupResourcesExtension,
@@ -130,10 +131,11 @@ export interface PrivateCyberClient {
         GraphExtension &
         RankExtension &
         BandwidthExtension &
-        EnergyExtension &
+        GridExtension &
         WasmExtension &
         LiquidityExtension &
-        GovExtension)
+        GovExtension &
+        ResourcesExtension)
     | undefined;
 }
 
@@ -150,7 +152,7 @@ export class CyberClient {
         GraphExtension &
         RankExtension &
         BandwidthExtension &
-        EnergyExtension &
+        GridExtension &
         WasmExtension &
         LiquidityExtension &
         GovExtension &
@@ -176,7 +178,7 @@ export class CyberClient {
         setupGraphExtension,
         setupRankExtension,
         setupBandwidthExtension,
-        setupEnergyExtension,
+        setupGridExtension,
         setupWasmExtension,
         setupLiquidityExtension,
         setupGovExtension,
@@ -207,7 +209,7 @@ export class CyberClient {
         GraphExtension &
         RankExtension &
         BandwidthExtension &
-        EnergyExtension &
+        GridExtension &
         WasmExtension &
         LiquidityExtension &
         GovExtension &
@@ -224,7 +226,7 @@ export class CyberClient {
     GraphExtension &
     RankExtension &
     BandwidthExtension &
-    EnergyExtension &
+    GridExtension &
     WasmExtension &
     LiquidityExtension &
     GovExtension &
@@ -436,19 +438,24 @@ export class CyberClient {
 
   // Rank module
 
-  public async search(cid: string, page?: number, perPage?: number): Promise<JsonObject> {
-    const response = await this.forceGetQueryClient().rank.search(cid, page, perPage);
+  public async search(particle: string, page?: number, perPage?: number): Promise<JsonObject> {
+    const response = await this.forceGetQueryClient().rank.search(particle, page, perPage);
     return QuerySearchResponse.toJSON(response);
   }
 
-  public async backlinks(cid: string, page?: number, perPage?: number): Promise<JsonObject> {
-    const response = await this.forceGetQueryClient().rank.backlinks(cid, page, perPage);
+  public async backlinks(particle: string, page?: number, perPage?: number): Promise<JsonObject> {
+    const response = await this.forceGetQueryClient().rank.backlinks(particle, page, perPage);
     return QuerySearchResponse.toJSON(response);
   }
 
-  public async rank(cid: string): Promise<JsonObject> {
-    const response = await this.forceGetQueryClient().rank.rank(cid);
+  public async rank(particle: string): Promise<JsonObject> {
+    const response = await this.forceGetQueryClient().rank.rank(particle);
     return QueryRankResponse.toJSON(response);
+  }
+
+  public async karma(neuron: string): Promise<JsonObject> {
+    const response = await this.forceGetQueryClient().rank.karma(neuron);
+    return QueryKarmaResponse.toJSON(response);
   }
 
   public async isLinkExist(from: string, to: string, agent: string): Promise<JsonObject> {
@@ -473,9 +480,9 @@ export class CyberClient {
     return QueryPriceResponse.toJSON(response);
   }
 
-  public async account(agent: string): Promise<JsonObject> {
+  public async accountBandwidth(agent: string): Promise<JsonObject> {
     const response = await this.forceGetQueryClient().bandwidth.account(agent);
-    return QueryAccountResponse.toJSON(response);
+    return QueryNeuronBandwidthResponse.toJSON(response);
   }
 
   // Staking module
@@ -655,40 +662,40 @@ export class CyberClient {
     return QueryValidatorSlashesResponse.toJSON(response);
   }
 
-  // Energy module
+  // Grid module
 
   public async sourceRoutes(source: string): Promise<JsonObject> {
-    const response = await this.forceGetQueryClient().energy.sourceRoutes(source);
+    const response = await this.forceGetQueryClient().grid.sourceRoutes(source);
     return QueryRoutesResponse.toJSON(response);
   }
 
   public async destinationRoutes(destination: string): Promise<JsonObject> {
-    const response = await this.forceGetQueryClient().energy.destinationRoutes(destination);
+    const response = await this.forceGetQueryClient().grid.destinationRoutes(destination);
     return QueryRoutesResponse.toJSON(response);
   }
 
   public async destinationRoutedEnergy(destination: string): Promise<JsonObject> {
-    const response = await this.forceGetQueryClient().energy.destinationRoutedEnergy(destination);
+    const response = await this.forceGetQueryClient().grid.destinationRoutedEnergy(destination);
     return QueryRoutedEnergyResponse.toJSON(response);
   }
 
   public async sourceRoutedEnergy(source: string): Promise<JsonObject> {
-    const response = await this.forceGetQueryClient().energy.sourceRoutedEnergy(source);
+    const response = await this.forceGetQueryClient().grid.sourceRoutedEnergy(source);
     return QueryRoutedEnergyResponse.toJSON(response);
   }
 
   public async route(source: string, destination: string): Promise<JsonObject> {
-    const response = await this.forceGetQueryClient().energy.route(source, destination);
+    const response = await this.forceGetQueryClient().grid.route(source, destination);
     return QueryRouteResponse.toJSON(response);
   }
 
   public async routes(): Promise<JsonObject> {
-    const response = await this.forceGetQueryClient().energy.routes();
+    const response = await this.forceGetQueryClient().grid.routes();
     return QueryRoutesResponse.toJSON(response);
   }
 
   public async energyParams(): Promise<JsonObject> {
-    const response = await this.forceGetQueryClient().energy.params();
+    const response = await this.forceGetQueryClient().grid.params();
     return QueryParamsResponseEnergy.toJSON(response);
   }
 

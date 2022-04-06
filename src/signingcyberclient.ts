@@ -66,16 +66,16 @@ import { MsgTransfer } from "cosmjs-types/ibc/applications/transfer/v1/tx";
 import { Height } from "cosmjs-types/ibc/core/client/v1/client";
 import Long from "long";
 import pako from "pako";
-import { 
-  createCyberTypes
-} from "./aminomsgs";
+
+import { createCyberTypes } from "./aminomsgs";
+import { MsgCyberlink } from "./codec/cyber/graph/v1beta1/tx";
+// import { Link } from "./codec/cyber/graph/v1beta1/types";
 import {
   MsgCreateRoute,
   MsgDeleteRoute,
   MsgEditRoute,
-  MsgEditRouteAlias,
-} from "./codec/cyber/energy/v1beta1/tx";
-import { MsgCyberlink } from "./codec/cyber/graph/v1beta1/tx";
+  MsgEditRouteName,
+} from "./codec/cyber/grid/v1beta1/tx";
 import { MsgInvestmint } from "./codec/cyber/resources/v1beta1/tx";
 import {
   MsgCreatePool,
@@ -92,8 +92,8 @@ import {
   MsgDeleteRouteEncodeObject,
   MsgDepositEncodeObject,
   MsgDepositWithinBatchEncodeObject,
-  MsgEditRouteAliasEncodeObject,
   MsgEditRouteEncodeObject,
+  MsgEditRouteNameEncodeObject,
   MsgInvestmintEncodeObject,
   MsgSubmitProposalEncodeObject,
   MsgSwapWithinBatchEncodeObject,
@@ -126,9 +126,22 @@ export interface DeleteRouteResult {
   readonly transactionHash: string;
 }
 
-export interface EditRouteAliasResult {
+export interface EditRouteNameResult {
   readonly logs: readonly logs.Log[];
   readonly transactionHash: string;
+}
+
+export interface Link {
+  from: string;
+  to: string;
+}
+
+export function link(from: string, to: string): Link {
+  return { from: from, to: to };
+}
+
+export function links(from: string, to: string): Link[] {
+  return [link(from, to)];
 }
 
 function createBroadcastTxErrorMessage(result: BroadcastTxFailure): string {
@@ -139,22 +152,25 @@ function createDefaultRegistry(): Registry {
   return new Registry([
     ...defaultRegistryTypes,
     ["/cosmwasm.wasm.v1beta1.MsgClearAdmin", MsgClearAdmin],
-    ["/cosmwasm.wasm.v1beta1.MsgExecuteContract", MsgExecuteContract],
+    // ["/cosmwasm.wasm.v1beta1.MsgExecuteContract", MsgExecuteContract],
     ["/cosmwasm.wasm.v1beta1.MsgMigrateContract", MsgMigrateContract],
-    ["/cosmwasm.wasm.v1beta1.MsgStoreCode", MsgStoreCode],
-    ["/cosmwasm.wasm.v1beta1.MsgInstantiateContract", MsgInstantiateContract],
+    // ["/cosmwasm.wasm.v1beta1.MsgStoreCode", MsgStoreCode],
+    // ["/cosmwasm.wasm.v1beta1.MsgInstantiateContract", MsgInstantiateContract],
     ["/cosmwasm.wasm.v1beta1.MsgUpdateAdmin", MsgUpdateAdmin],
     ["/cyber.graph.v1beta1.MsgCyberlink", MsgCyberlink],
     ["/cyber.resources.v1beta1.MsgInvestmint", MsgInvestmint],
-    ["/cyber.energy.v1beta1.MsgCreateRoute", MsgCreateRoute],
-    ["/cyber.energy.v1beta1.MsgEditRoute", MsgEditRoute],
-    ["/cyber.energy.v1beta1.MsgEditRouteAlias", MsgEditRouteAlias],
-    ["/cyber.energy.v1beta1.MsgDeleteRoute", MsgDeleteRoute],
+    ["/cyber.grid.v1beta1.MsgCreateRoute", MsgCreateRoute],
+    ["/cyber.grid.v1beta1.MsgEditRoute", MsgEditRoute],
+    ["/cyber.grid.v1beta1.MsgEditRouteName", MsgEditRouteName],
+    ["/cyber.grid.v1beta1.MsgDeleteRoute", MsgDeleteRoute],
     ["/tendermint.liquidity.v1beta1.MsgSwapWithinBatch", MsgSwapWithinBatch],
     ["/tendermint.liquidity.v1beta1.MsgDepositWithinBatch", MsgDepositWithinBatch],
     ["/tendermint.liquidity.v1beta1.MsgWithdrawWithinBatch", MsgWithdrawWithinBatch],
     ["/tendermint.liquidity.v1beta1.MsgCreatePool", MsgCreatePool],
     ["/cosmos.gov.v1beta1.MsgDeposit", MsgDeposit],
+    ["/cosmwasm.wasm.v1.MsgExecuteContract", MsgExecuteContract],
+    ["/cosmwasm.wasm.v1.MsgInstantiateContract", MsgInstantiateContract],
+    ["/cosmwasm.wasm.v1.MsgStoreCode", MsgStoreCode],
   ]);
 }
 
@@ -223,7 +239,7 @@ export class SigningCyberClient extends CyberClient {
   // Graph module
 
   public async cyberlink(
-    senderAddress: string,
+    neuron: string,
     from: string,
     to: string,
     fee: StdFee,
@@ -231,18 +247,13 @@ export class SigningCyberClient extends CyberClient {
   ): Promise<BroadcastTxResponse> {
     const cyberlinkMsg: MsgCyberlinkEncodeObject = {
       typeUrl: "/cyber.graph.v1beta1.MsgCyberlink",
-      value: {
-        address: senderAddress,
-        links: [
-          {
-            from: from,
-            to: to,
-          },
-        ],
-      },
+      value: MsgCyberlink.fromPartial({
+        neuron: neuron,
+        links: links(from, to),
+      }),
     };
 
-    return this.signAndBroadcast(senderAddress, [cyberlinkMsg], fee, memo);
+    return this.signAndBroadcast(neuron, [cyberlinkMsg], fee, memo);
   }
 
   // Resources module
@@ -258,7 +269,7 @@ export class SigningCyberClient extends CyberClient {
     const investmintMsg: MsgInvestmintEncodeObject = {
       typeUrl: "/cyber.resources.v1beta1.MsgInvestmint",
       value: MsgInvestmint.fromPartial({
-        agent: senderAddress,
+        neuron: senderAddress,
         amount: amount,
         resource: resource,
         length: Long.fromString(new Uint53(length).toString()),
@@ -272,16 +283,16 @@ export class SigningCyberClient extends CyberClient {
   public async createEnergyRoute(
     senderAddress: string,
     destination: string,
-    alias: string,
+    name: string,
     fee: StdFee,
     memo = "",
   ): Promise<BroadcastTxResponse> {
     const createEnergyRouteMsg: MsgCreateRouteEncodeObject = {
-      typeUrl: "/cyber.energy.v1beta1.MsgCreateRoute",
+      typeUrl: "/cyber.grid.v1beta1.MsgCreateRoute",
       value: MsgCreateRoute.fromPartial({
         source: senderAddress,
         destination: destination,
-        alias: alias,
+        name: name,
       }),
     };
     return this.signAndBroadcast(senderAddress, [createEnergyRouteMsg], fee, memo);
@@ -295,7 +306,7 @@ export class SigningCyberClient extends CyberClient {
     memo = "",
   ): Promise<BroadcastTxResponse> {
     const editEnergyRouteMsg: MsgEditRouteEncodeObject = {
-      typeUrl: "/cyber.energy.v1beta1.MsgEditRoute",
+      typeUrl: "/cyber.grid.v1beta1.MsgEditRoute",
       value: MsgEditRoute.fromPartial({
         source: senderAddress,
         destination: destination,
@@ -312,7 +323,7 @@ export class SigningCyberClient extends CyberClient {
     memo = "",
   ): Promise<BroadcastTxResponse> {
     const deleteEnergyRouteMsg: MsgDeleteRouteEncodeObject = {
-      typeUrl: "/cyber.energy.v1beta1.MsgDeleteRoute",
+      typeUrl: "/cyber.grid.v1beta1.MsgDeleteRoute",
       value: MsgDeleteRoute.fromPartial({
         source: senderAddress,
         destination: destination,
@@ -321,23 +332,23 @@ export class SigningCyberClient extends CyberClient {
     return this.signAndBroadcast(senderAddress, [deleteEnergyRouteMsg], fee, memo);
   }
 
-  public async editEnergyRouteAlias(
+  public async editEnergyRouteName(
     senderAddress: string,
     destination: string,
-    alias: string,
+    name: string,
     fee: StdFee,
     memo = "",
   ): Promise<BroadcastTxResponse> {
-    const editEnergyRouteAliasMsg: MsgEditRouteAliasEncodeObject = {
-      typeUrl: "/cyber.energy.v1beta1.MsgEditRouteAlias",
-      value: MsgEditRouteAlias.fromPartial({
+    const editEnergyRouteNameMsg: MsgEditRouteNameEncodeObject = {
+      typeUrl: "/cyber.grid.v1beta1.MsgEditRouteName",
+      value: MsgEditRouteName.fromPartial({
         source: senderAddress,
         destination: destination,
-        alias: alias,
+        name: name,
       }),
     };
 
-    return this.signAndBroadcast(senderAddress, [editEnergyRouteAliasMsg], fee, memo);
+    return this.signAndBroadcast(senderAddress, [editEnergyRouteNameMsg], fee, memo);
   }
 
   // Wasm module
@@ -348,7 +359,7 @@ export class SigningCyberClient extends CyberClient {
     wasmCode: Uint8Array,
     fee: StdFee,
     memo = "",
-  ): Promise<UploadResult> {
+  ): Promise<BroadcastTxResponse> {
     const compressed = pako.gzip(wasmCode, { level: 9 });
     const storeCodeMsg: MsgStoreCodeEncodeObject = {
       typeUrl: "/cosmwasm.wasm.v1.MsgStoreCode",
@@ -358,21 +369,24 @@ export class SigningCyberClient extends CyberClient {
       }),
     };
 
-    const result = await this.signAndBroadcast(senderAddress, [storeCodeMsg], fee, memo);
-    if (isBroadcastTxFailure(result)) {
-      throw new Error(createBroadcastTxErrorMessage(result));
-    }
-    const parsedLogs = logs.parseRawLog(result.rawLog);
-    const codeIdAttr = logs.findAttribute(parsedLogs, "message", "code_id");
-    return {
-      originalSize: wasmCode.length,
-      originalChecksum: toHex(sha256(wasmCode)),
-      compressedSize: compressed.length,
-      compressedChecksum: toHex(sha256(compressed)),
-      codeId: Number.parseInt(codeIdAttr.value, 10),
-      logs: parsedLogs,
-      transactionHash: result.transactionHash,
-    };
+    return this.signAndBroadcast(senderAddress, [storeCodeMsg], fee, memo);
+    // const result = await this.signAndBroadcast(senderAddress, [storeCodeMsg], fee, memo);
+    // console.log(`result`, result)
+    // if (isBroadcastTxFailure(result)) {
+    //   throw new Error(createBroadcastTxErrorMessage(result));
+    // }
+    // const parsedLogs = logs.parseRawLog(result.rawLog);
+    // console.log(`parsedLogs`, parsedLogs)
+    // const codeIdAttr = logs.findAttribute(parsedLogs, "message", "code_id");
+    // return {
+    //   originalSize: wasmCode.length,
+    //   originalChecksum: toHex(sha256(wasmCode)),
+    //   compressedSize: compressed.length,
+    //   compressedChecksum: toHex(sha256(compressed)),
+    //   codeId: Number.parseInt(codeIdAttr.value, 10),
+    //   logs: parsedLogs,
+    //   transactionHash: result.transactionHash,
+    // };
   }
 
   public async instantiate(
@@ -382,7 +396,7 @@ export class SigningCyberClient extends CyberClient {
     label: string,
     fee: StdFee,
     options: InstantiateOptions = {},
-  ): Promise<InstantiateResult> {
+  ): Promise<BroadcastTxResponse> {
     const instantiateContractMsg: MsgInstantiateContractEncodeObject = {
       typeUrl: "/cosmwasm.wasm.v1.MsgInstantiateContract",
       value: MsgInstantiateContract.fromPartial({
@@ -394,17 +408,19 @@ export class SigningCyberClient extends CyberClient {
         admin: options.admin,
       }),
     };
-    const result = await this.signAndBroadcast(senderAddress, [instantiateContractMsg], fee, options.memo);
-    if (isBroadcastTxFailure(result)) {
-      throw new Error(createBroadcastTxErrorMessage(result));
-    }
-    const parsedLogs = logs.parseRawLog(result.rawLog);
-    const contractAddressAttr = logs.findAttribute(parsedLogs, "message", "_contract_address");
-    return {
-      contractAddress: contractAddressAttr.value,
-      logs: parsedLogs,
-      transactionHash: result.transactionHash,
-    };
+    return this.signAndBroadcast(senderAddress, [instantiateContractMsg], fee, options.memo);
+    // const result = await this.signAndBroadcast(senderAddress, [instantiateContractMsg], fee, options.memo);
+    // console.log(`result`, result)
+    // if (isBroadcastTxFailure(result)) {
+    //   throw new Error(createBroadcastTxErrorMessage(result));
+    // }
+    // const parsedLogs = logs.parseRawLog(result.rawLog);
+    // const contractAddressAttr = logs.findAttribute(parsedLogs, "message", "_contract_address");
+    // return {
+    //   contractAddress: contractAddressAttr.value,
+    //   logs: parsedLogs,
+    //   transactionHash: result.transactionHash,
+    // };
   }
 
   public async updateAdmin(
@@ -489,7 +505,7 @@ export class SigningCyberClient extends CyberClient {
     fee: StdFee,
     memo = "",
     funds?: readonly Coin[],
-  ): Promise<ExecuteResult> {
+  ): Promise<BroadcastTxResponse> {
     const executeContractMsg: MsgExecuteContractEncodeObject = {
       typeUrl: "/cosmwasm.wasm.v1.MsgExecuteContract",
       value: MsgExecuteContract.fromPartial({
@@ -499,14 +515,16 @@ export class SigningCyberClient extends CyberClient {
         funds: [...(funds || [])],
       }),
     };
-    const result = await this.signAndBroadcast(senderAddress, [executeContractMsg], fee, memo);
-    if (isBroadcastTxFailure(result)) {
-      throw new Error(createBroadcastTxErrorMessage(result));
-    }
-    return {
-      logs: logs.parseRawLog(result.rawLog),
-      transactionHash: result.transactionHash,
-    };
+
+    return this.signAndBroadcast(senderAddress, [executeContractMsg], fee, memo);
+    // const result = await this.signAndBroadcast(senderAddress, [executeContractMsg], fee, memo);
+    // if (isBroadcastTxFailure(result)) {
+    //   throw new Error(createBroadcastTxErrorMessage(result));
+    // }
+    // return {
+    //   logs: logs.parseRawLog(result.rawLog),
+    //   transactionHash: result.transactionHash,
+    // };
   }
 
   // Bank module
@@ -858,17 +876,39 @@ export class SigningCyberClient extends CyberClient {
     }
     const pubkey = encodePubkey(encodeSecp256k1Pubkey(accountFromSigner.pubkey));
     const signMode = SignMode.SIGN_MODE_LEGACY_AMINO_JSON;
-    const msgs = messages.map((msg) => this.aminoTypes.toAmino(msg));
-    const signDoc = makeSignDocAmino(msgs, fee, chainId, memo, accountNumber, sequence);
-    const { signature, signed } = await this.signer.signAmino(signerAddress, signDoc);
-    const signedTxBody: TxBodyEncodeObject = {
-      typeUrl: "/cosmos.tx.v1beta1.TxBody",
-      value: {
+
+    // Need this temporary hack because there is issue with codec type binded to graph & resources messages
+    // TODO remove this after next upgrade
+    let msgs, signedTxBody;
+    if (
+      messages[0].typeUrl == "/cyber.graph.v1beta1.MsgCyberlink" ||
+      messages[0].typeUrl == "/cyber.resources.v1beta1.MsgInvestmint"
+    ) {
+      msgs = messages.map((msg) => this.aminoTypes.toAmino(msg));
+      const signDocOriginal = makeSignDocAmino(msgs, fee, chainId, memo, accountNumber, sequence);
+
+      const msgsValues = messages.map((msg) => this.aminoTypes.toAmino(msg).value);
+      const signDocWithValue = makeSignDocAmino(msgsValues, fee, chainId, memo, accountNumber, sequence);
+
+      var { signature, signed } = await this.signer.signAmino(signerAddress, signDocWithValue);
+      signedTxBody = {
+        messages: signDocOriginal.msgs.map((msg) => this.aminoTypes.fromAmino(msg)),
+        memo: signed.memo,
+      };
+    } else {
+      msgs = messages.map((msg) => this.aminoTypes.toAmino(msg));
+      const signDoc = makeSignDocAmino(msgs, fee, chainId, memo, accountNumber, sequence);
+      var { signature, signed } = await this.signer.signAmino(signerAddress, signDoc);
+      signedTxBody = {
         messages: signed.msgs.map((msg) => this.aminoTypes.fromAmino(msg)),
         memo: signed.memo,
-      },
+      };
+    }
+    const signedTxBodyEncodeObject: TxBodyEncodeObject = {
+      typeUrl: "/cosmos.tx.v1beta1.TxBody",
+      value: signedTxBody,
     };
-    const signedTxBodyBytes = this.registry.encode(signedTxBody);
+    const signedTxBodyBytes = this.registry.encode(signedTxBodyEncodeObject);
     const signedGasLimit = Int53.fromString(signed.fee.gas).toNumber();
     const signedSequence = Int53.fromString(signed.sequence).toNumber();
     const signedAuthInfoBytes = makeAuthInfoBytes(
@@ -899,14 +939,14 @@ export class SigningCyberClient extends CyberClient {
       throw new Error("Failed to retrieve account from signer");
     }
     const pubkey = encodePubkey(encodeSecp256k1Pubkey(accountFromSigner.pubkey));
-    const txBody: TxBodyEncodeObject = {
+    const txBodyEncodeObject: TxBodyEncodeObject = {
       typeUrl: "/cosmos.tx.v1beta1.TxBody",
       value: {
         messages: messages,
         memo: memo,
       },
     };
-    const txBodyBytes = this.registry.encode(txBody);
+    const txBodyBytes = this.registry.encode(txBodyEncodeObject);
     const gasLimit = Int53.fromString(fee.gas).toNumber();
     const authInfoBytes = makeAuthInfoBytes([{ pubkey, sequence }], fee.amount, gasLimit);
     const signDoc = makeSignDoc(txBodyBytes, authInfoBytes, chainId, accountNumber);

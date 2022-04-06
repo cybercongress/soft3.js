@@ -10,8 +10,8 @@ export interface Params {
   tolerance: string;
 }
 
-export interface RankedCid {
-  cid: string;
+export interface RankedParticle {
+  particle: string;
   rank: Long;
 }
 
@@ -105,12 +105,12 @@ export const Params = {
   },
 };
 
-const baseRankedCid: object = { cid: "", rank: Long.UZERO };
+const baseRankedParticle: object = { particle: "", rank: Long.UZERO };
 
-export const RankedCid = {
-  encode(message: RankedCid, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.cid !== "") {
-      writer.uint32(10).string(message.cid);
+export const RankedParticle = {
+  encode(message: RankedParticle, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.particle !== "") {
+      writer.uint32(10).string(message.particle);
     }
     if (!message.rank.isZero()) {
       writer.uint32(16).uint64(message.rank);
@@ -118,15 +118,15 @@ export const RankedCid = {
     return writer;
   },
 
-  decode(input: _m0.Reader | Uint8Array, length?: number): RankedCid {
+  decode(input: _m0.Reader | Uint8Array, length?: number): RankedParticle {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseRankedCid } as RankedCid;
+    const message = { ...baseRankedParticle } as RankedParticle;
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.cid = reader.string();
+          message.particle = reader.string();
           break;
         case 2:
           message.rank = reader.uint64() as Long;
@@ -139,12 +139,12 @@ export const RankedCid = {
     return message;
   },
 
-  fromJSON(object: any): RankedCid {
-    const message = { ...baseRankedCid } as RankedCid;
-    if (object.cid !== undefined && object.cid !== null) {
-      message.cid = String(object.cid);
+  fromJSON(object: any): RankedParticle {
+    const message = { ...baseRankedParticle } as RankedParticle;
+    if (object.particle !== undefined && object.particle !== null) {
+      message.particle = String(object.particle);
     } else {
-      message.cid = "";
+      message.particle = "";
     }
     if (object.rank !== undefined && object.rank !== null) {
       message.rank = Long.fromString(object.rank);
@@ -154,19 +154,19 @@ export const RankedCid = {
     return message;
   },
 
-  toJSON(message: RankedCid): unknown {
+  toJSON(message: RankedParticle): unknown {
     const obj: any = {};
-    message.cid !== undefined && (obj.cid = message.cid);
+    message.particle !== undefined && (obj.particle = message.particle);
     message.rank !== undefined && (obj.rank = (message.rank || Long.UZERO).toString());
     return obj;
   },
 
-  fromPartial(object: DeepPartial<RankedCid>): RankedCid {
-    const message = { ...baseRankedCid } as RankedCid;
-    if (object.cid !== undefined && object.cid !== null) {
-      message.cid = object.cid;
+  fromPartial(object: DeepPartial<RankedParticle>): RankedParticle {
+    const message = { ...baseRankedParticle } as RankedParticle;
+    if (object.particle !== undefined && object.particle !== null) {
+      message.particle = object.particle;
     } else {
-      message.cid = "";
+      message.particle = "";
     }
     if (object.rank !== undefined && object.rank !== null) {
       message.rank = object.rank as Long;

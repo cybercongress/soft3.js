@@ -102,9 +102,9 @@ async function main() {
     console.log(error);
   }
 
-  console.log("Edit Route Alias");
+  console.log("Edit Route Name");
   try {
-    var response = await client.editEnergyRouteAlias(
+    var response = await client.editEnergyRouteName(
       myAddress,
       "cyber1njj4p35u8pggm7nypg3y66rypgvk2atjcy7ngp",
       "synapse1",

@@ -8,11 +8,12 @@ export interface Params {
   recoveryPeriod: Long;
   adjustPricePeriod: Long;
   basePrice: string;
+  baseLoad: string;
   maxBlockBandwidth: Long;
 }
 
-export interface AccountBandwidth {
-  address: string;
+export interface NeuronBandwidth {
+  neuron: string;
   remainedValue: Long;
   lastUpdatedBlock: Long;
   maxValue: Long;
@@ -26,6 +27,7 @@ const baseParams: object = {
   recoveryPeriod: Long.UZERO,
   adjustPricePeriod: Long.UZERO,
   basePrice: "",
+  baseLoad: "",
   maxBlockBandwidth: Long.UZERO,
 };
 
@@ -40,8 +42,11 @@ export const Params = {
     if (message.basePrice !== "") {
       writer.uint32(26).string(message.basePrice);
     }
+    if (message.baseLoad !== "") {
+      writer.uint32(34).string(message.baseLoad);
+    }
     if (!message.maxBlockBandwidth.isZero()) {
-      writer.uint32(32).uint64(message.maxBlockBandwidth);
+      writer.uint32(40).uint64(message.maxBlockBandwidth);
     }
     return writer;
   },
@@ -63,6 +68,9 @@ export const Params = {
           message.basePrice = reader.string();
           break;
         case 4:
+          message.baseLoad = reader.string();
+          break;
+        case 5:
           message.maxBlockBandwidth = reader.uint64() as Long;
           break;
         default:
@@ -90,6 +98,11 @@ export const Params = {
     } else {
       message.basePrice = "";
     }
+    if (object.baseLoad !== undefined && object.baseLoad !== null) {
+      message.baseLoad = String(object.baseLoad);
+    } else {
+      message.baseLoad = "";
+    }
     if (object.maxBlockBandwidth !== undefined && object.maxBlockBandwidth !== null) {
       message.maxBlockBandwidth = Long.fromString(object.maxBlockBandwidth);
     } else {
@@ -105,6 +118,7 @@ export const Params = {
     message.adjustPricePeriod !== undefined &&
       (obj.adjustPricePeriod = (message.adjustPricePeriod || Long.UZERO).toString());
     message.basePrice !== undefined && (obj.basePrice = message.basePrice);
+    message.baseLoad !== undefined && (obj.baseLoad = message.baseLoad);
     message.maxBlockBandwidth !== undefined &&
       (obj.maxBlockBandwidth = (message.maxBlockBandwidth || Long.UZERO).toString());
     return obj;
@@ -127,6 +141,11 @@ export const Params = {
     } else {
       message.basePrice = "";
     }
+    if (object.baseLoad !== undefined && object.baseLoad !== null) {
+      message.baseLoad = object.baseLoad;
+    } else {
+      message.baseLoad = "";
+    }
     if (object.maxBlockBandwidth !== undefined && object.maxBlockBandwidth !== null) {
       message.maxBlockBandwidth = object.maxBlockBandwidth as Long;
     } else {
@@ -136,17 +155,17 @@ export const Params = {
   },
 };
 
-const baseAccountBandwidth: object = {
-  address: "",
+const baseNeuronBandwidth: object = {
+  neuron: "",
   remainedValue: Long.UZERO,
   lastUpdatedBlock: Long.UZERO,
   maxValue: Long.UZERO,
 };
 
-export const AccountBandwidth = {
-  encode(message: AccountBandwidth, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.address !== "") {
-      writer.uint32(10).string(message.address);
+export const NeuronBandwidth = {
+  encode(message: NeuronBandwidth, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.neuron !== "") {
+      writer.uint32(10).string(message.neuron);
     }
     if (!message.remainedValue.isZero()) {
       writer.uint32(16).uint64(message.remainedValue);
@@ -160,15 +179,15 @@ export const AccountBandwidth = {
     return writer;
   },
 
-  decode(input: _m0.Reader | Uint8Array, length?: number): AccountBandwidth {
+  decode(input: _m0.Reader | Uint8Array, length?: number): NeuronBandwidth {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseAccountBandwidth } as AccountBandwidth;
+    const message = { ...baseNeuronBandwidth } as NeuronBandwidth;
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.address = reader.string();
+          message.neuron = reader.string();
           break;
         case 2:
           message.remainedValue = reader.uint64() as Long;
@@ -187,12 +206,12 @@ export const AccountBandwidth = {
     return message;
   },
 
-  fromJSON(object: any): AccountBandwidth {
-    const message = { ...baseAccountBandwidth } as AccountBandwidth;
-    if (object.address !== undefined && object.address !== null) {
-      message.address = String(object.address);
+  fromJSON(object: any): NeuronBandwidth {
+    const message = { ...baseNeuronBandwidth } as NeuronBandwidth;
+    if (object.neuron !== undefined && object.neuron !== null) {
+      message.neuron = String(object.neuron);
     } else {
-      message.address = "";
+      message.neuron = "";
     }
     if (object.remainedValue !== undefined && object.remainedValue !== null) {
       message.remainedValue = Long.fromString(object.remainedValue);
@@ -212,9 +231,9 @@ export const AccountBandwidth = {
     return message;
   },
 
-  toJSON(message: AccountBandwidth): unknown {
+  toJSON(message: NeuronBandwidth): unknown {
     const obj: any = {};
-    message.address !== undefined && (obj.address = message.address);
+    message.neuron !== undefined && (obj.neuron = message.neuron);
     message.remainedValue !== undefined &&
       (obj.remainedValue = (message.remainedValue || Long.UZERO).toString());
     message.lastUpdatedBlock !== undefined &&
@@ -223,12 +242,12 @@ export const AccountBandwidth = {
     return obj;
   },
 
-  fromPartial(object: DeepPartial<AccountBandwidth>): AccountBandwidth {
-    const message = { ...baseAccountBandwidth } as AccountBandwidth;
-    if (object.address !== undefined && object.address !== null) {
-      message.address = object.address;
+  fromPartial(object: DeepPartial<NeuronBandwidth>): NeuronBandwidth {
+    const message = { ...baseNeuronBandwidth } as NeuronBandwidth;
+    if (object.neuron !== undefined && object.neuron !== null) {
+      message.neuron = object.neuron;
     } else {
-      message.address = "";
+      message.neuron = "";
     }
     if (object.remainedValue !== undefined && object.remainedValue !== null) {
       message.remainedValue = object.remainedValue as Long;

@@ -9,12 +9,6 @@ export interface Link {
   to: string;
 }
 
-export interface CompactLink {
-  from: Long;
-  to: Long;
-  account: Long;
-}
-
 const baseLink: object = { from: "", to: "" };
 
 export const Link = {
@@ -82,95 +76,6 @@ export const Link = {
       message.to = object.to;
     } else {
       message.to = "";
-    }
-    return message;
-  },
-};
-
-const baseCompactLink: object = { from: Long.UZERO, to: Long.UZERO, account: Long.UZERO };
-
-export const CompactLink = {
-  encode(message: CompactLink, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (!message.from.isZero()) {
-      writer.uint32(8).uint64(message.from);
-    }
-    if (!message.to.isZero()) {
-      writer.uint32(16).uint64(message.to);
-    }
-    if (!message.account.isZero()) {
-      writer.uint32(24).uint64(message.account);
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): CompactLink {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseCompactLink } as CompactLink;
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.from = reader.uint64() as Long;
-          break;
-        case 2:
-          message.to = reader.uint64() as Long;
-          break;
-        case 3:
-          message.account = reader.uint64() as Long;
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-
-  fromJSON(object: any): CompactLink {
-    const message = { ...baseCompactLink } as CompactLink;
-    if (object.from !== undefined && object.from !== null) {
-      message.from = Long.fromString(object.from);
-    } else {
-      message.from = Long.UZERO;
-    }
-    if (object.to !== undefined && object.to !== null) {
-      message.to = Long.fromString(object.to);
-    } else {
-      message.to = Long.UZERO;
-    }
-    if (object.account !== undefined && object.account !== null) {
-      message.account = Long.fromString(object.account);
-    } else {
-      message.account = Long.UZERO;
-    }
-    return message;
-  },
-
-  toJSON(message: CompactLink): unknown {
-    const obj: any = {};
-    message.from !== undefined && (obj.from = (message.from || Long.UZERO).toString());
-    message.to !== undefined && (obj.to = (message.to || Long.UZERO).toString());
-    message.account !== undefined && (obj.account = (message.account || Long.UZERO).toString());
-    return obj;
-  },
-
-  fromPartial(object: DeepPartial<CompactLink>): CompactLink {
-    const message = { ...baseCompactLink } as CompactLink;
-    if (object.from !== undefined && object.from !== null) {
-      message.from = object.from as Long;
-    } else {
-      message.from = Long.UZERO;
-    }
-    if (object.to !== undefined && object.to !== null) {
-      message.to = object.to as Long;
-    } else {
-      message.to = Long.UZERO;
-    }
-    if (object.account !== undefined && object.account !== null) {
-      message.account = object.account as Long;
-    } else {
-      message.account = Long.UZERO;
     }
     return message;
   },

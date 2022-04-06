@@ -1,11 +1,11 @@
 /* eslint-disable */
 import Long from "long";
 import _m0 from "protobufjs/minimal";
-import { Params, Route } from "../../../cyber/energy/v1beta1/types";
+import { Params, Route } from "../../../cyber/grid/v1beta1/types";
 import { PageRequest, PageResponse } from "../../../cosmos/base/query/v1beta1/pagination";
-import { Coin } from "../../../cosmos_proto/coin";
+import { Coin } from "../../../cosmos/base/v1beta1/coin";
 
-export const protobufPackage = "cyber.energy.v1beta1";
+export const protobufPackage = "cyber.grid.v1beta1";
 
 export interface QueryParamsRequest {}
 
@@ -595,43 +595,43 @@ export class QueryClientImpl implements Query {
   }
   Params(request: QueryParamsRequest): Promise<QueryParamsResponse> {
     const data = QueryParamsRequest.encode(request).finish();
-    const promise = this.rpc.request("cyber.energy.v1beta1.Query", "Params", data);
+    const promise = this.rpc.request("cyber.grid.v1beta1.Query", "Params", data);
     return promise.then((data) => QueryParamsResponse.decode(new _m0.Reader(data)));
   }
 
   SourceRoutes(request: QuerySourceRequest): Promise<QueryRoutesResponse> {
     const data = QuerySourceRequest.encode(request).finish();
-    const promise = this.rpc.request("cyber.energy.v1beta1.Query", "SourceRoutes", data);
+    const promise = this.rpc.request("cyber.grid.v1beta1.Query", "SourceRoutes", data);
     return promise.then((data) => QueryRoutesResponse.decode(new _m0.Reader(data)));
   }
 
   DestinationRoutes(request: QueryDestinationRequest): Promise<QueryRoutesResponse> {
     const data = QueryDestinationRequest.encode(request).finish();
-    const promise = this.rpc.request("cyber.energy.v1beta1.Query", "DestinationRoutes", data);
+    const promise = this.rpc.request("cyber.grid.v1beta1.Query", "DestinationRoutes", data);
     return promise.then((data) => QueryRoutesResponse.decode(new _m0.Reader(data)));
   }
 
   DestinationRoutedEnergy(request: QueryDestinationRequest): Promise<QueryRoutedEnergyResponse> {
     const data = QueryDestinationRequest.encode(request).finish();
-    const promise = this.rpc.request("cyber.energy.v1beta1.Query", "DestinationRoutedEnergy", data);
+    const promise = this.rpc.request("cyber.grid.v1beta1.Query", "DestinationRoutedEnergy", data);
     return promise.then((data) => QueryRoutedEnergyResponse.decode(new _m0.Reader(data)));
   }
 
   SourceRoutedEnergy(request: QuerySourceRequest): Promise<QueryRoutedEnergyResponse> {
     const data = QuerySourceRequest.encode(request).finish();
-    const promise = this.rpc.request("cyber.energy.v1beta1.Query", "SourceRoutedEnergy", data);
+    const promise = this.rpc.request("cyber.grid.v1beta1.Query", "SourceRoutedEnergy", data);
     return promise.then((data) => QueryRoutedEnergyResponse.decode(new _m0.Reader(data)));
   }
 
   Route(request: QueryRouteRequest): Promise<QueryRouteResponse> {
     const data = QueryRouteRequest.encode(request).finish();
-    const promise = this.rpc.request("cyber.energy.v1beta1.Query", "Route", data);
+    const promise = this.rpc.request("cyber.grid.v1beta1.Query", "Route", data);
     return promise.then((data) => QueryRouteResponse.decode(new _m0.Reader(data)));
   }
 
   Routes(request: QueryRoutesRequest): Promise<QueryRoutesResponse> {
     const data = QueryRoutesRequest.encode(request).finish();
-    const promise = this.rpc.request("cyber.energy.v1beta1.Query", "Routes", data);
+    const promise = this.rpc.request("cyber.grid.v1beta1.Query", "Routes", data);
     return promise.then((data) => QueryRoutesResponse.decode(new _m0.Reader(data)));
   }
 }

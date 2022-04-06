@@ -6,18 +6,18 @@ import { Link } from "../../../cyber/graph/v1beta1/types";
 export const protobufPackage = "cyber.graph.v1beta1";
 
 export interface MsgCyberlink {
-  address: string;
+  neuron: string;
   links: Link[];
 }
 
 export interface MsgCyberlinkResponse {}
 
-const baseMsgCyberlink: object = { address: "" };
+const baseMsgCyberlink: object = { neuron: "" };
 
 export const MsgCyberlink = {
   encode(message: MsgCyberlink, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.address !== "") {
-      writer.uint32(10).string(message.address);
+    if (message.neuron !== "") {
+      writer.uint32(10).string(message.neuron);
     }
     for (const v of message.links) {
       Link.encode(v!, writer.uint32(18).fork()).ldelim();
@@ -34,7 +34,7 @@ export const MsgCyberlink = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.address = reader.string();
+          message.neuron = reader.string();
           break;
         case 2:
           message.links.push(Link.decode(reader, reader.uint32()));
@@ -50,10 +50,10 @@ export const MsgCyberlink = {
   fromJSON(object: any): MsgCyberlink {
     const message = { ...baseMsgCyberlink } as MsgCyberlink;
     message.links = [];
-    if (object.address !== undefined && object.address !== null) {
-      message.address = String(object.address);
+    if (object.neuron !== undefined && object.neuron !== null) {
+      message.neuron = String(object.neuron);
     } else {
-      message.address = "";
+      message.neuron = "";
     }
     if (object.links !== undefined && object.links !== null) {
       for (const e of object.links) {
@@ -65,7 +65,7 @@ export const MsgCyberlink = {
 
   toJSON(message: MsgCyberlink): unknown {
     const obj: any = {};
-    message.address !== undefined && (obj.address = message.address);
+    message.neuron !== undefined && (obj.neuron = message.neuron);
     if (message.links) {
       obj.links = message.links.map((e) => (e ? Link.toJSON(e) : undefined));
     } else {
@@ -77,10 +77,10 @@ export const MsgCyberlink = {
   fromPartial(object: DeepPartial<MsgCyberlink>): MsgCyberlink {
     const message = { ...baseMsgCyberlink } as MsgCyberlink;
     message.links = [];
-    if (object.address !== undefined && object.address !== null) {
-      message.address = object.address;
+    if (object.neuron !== undefined && object.neuron !== null) {
+      message.neuron = object.neuron;
     } else {
-      message.address = "";
+      message.neuron = "";
     }
     if (object.links !== undefined && object.links !== null) {
       for (const e of object.links) {

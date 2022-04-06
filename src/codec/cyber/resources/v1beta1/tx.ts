@@ -1,31 +1,25 @@
 /* eslint-disable */
 import Long from "long";
 import _m0 from "protobufjs/minimal";
-import { Coin } from "../../../cosmos_proto/coin";
+import { Coin } from "../../../cosmos/base/v1beta1/coin";
 
 export const protobufPackage = "cyber.resources.v1beta1";
 
 export interface MsgInvestmint {
-  agent: string;
+  neuron: string;
   amount?: Coin;
   resource: string;
   length: Long;
 }
 
-/**
- * cosmos.base.v1beta1.Coin investmint_resource = 1 [
- *        (gogoproto.moretags) = "yaml:\"investmint_resource\"",
- *        (gogoproto.nullable) = false
- *    ];
- */
 export interface MsgInvestmintResponse {}
 
-const baseMsgInvestmint: object = { agent: "", resource: "", length: Long.UZERO };
+const baseMsgInvestmint: object = { neuron: "", resource: "", length: Long.UZERO };
 
 export const MsgInvestmint = {
   encode(message: MsgInvestmint, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.agent !== "") {
-      writer.uint32(10).string(message.agent);
+    if (message.neuron !== "") {
+      writer.uint32(10).string(message.neuron);
     }
     if (message.amount !== undefined) {
       Coin.encode(message.amount, writer.uint32(18).fork()).ldelim();
@@ -47,7 +41,7 @@ export const MsgInvestmint = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.agent = reader.string();
+          message.neuron = reader.string();
           break;
         case 2:
           message.amount = Coin.decode(reader, reader.uint32());
@@ -68,10 +62,10 @@ export const MsgInvestmint = {
 
   fromJSON(object: any): MsgInvestmint {
     const message = { ...baseMsgInvestmint } as MsgInvestmint;
-    if (object.agent !== undefined && object.agent !== null) {
-      message.agent = String(object.agent);
+    if (object.neuron !== undefined && object.neuron !== null) {
+      message.neuron = String(object.neuron);
     } else {
-      message.agent = "";
+      message.neuron = "";
     }
     if (object.amount !== undefined && object.amount !== null) {
       message.amount = Coin.fromJSON(object.amount);
@@ -93,7 +87,7 @@ export const MsgInvestmint = {
 
   toJSON(message: MsgInvestmint): unknown {
     const obj: any = {};
-    message.agent !== undefined && (obj.agent = message.agent);
+    message.neuron !== undefined && (obj.neuron = message.neuron);
     message.amount !== undefined && (obj.amount = message.amount ? Coin.toJSON(message.amount) : undefined);
     message.resource !== undefined && (obj.resource = message.resource);
     message.length !== undefined && (obj.length = (message.length || Long.UZERO).toString());
@@ -102,10 +96,10 @@ export const MsgInvestmint = {
 
   fromPartial(object: DeepPartial<MsgInvestmint>): MsgInvestmint {
     const message = { ...baseMsgInvestmint } as MsgInvestmint;
-    if (object.agent !== undefined && object.agent !== null) {
-      message.agent = object.agent;
+    if (object.neuron !== undefined && object.neuron !== null) {
+      message.neuron = object.neuron;
     } else {
-      message.agent = "";
+      message.neuron = "";
     }
     if (object.amount !== undefined && object.amount !== null) {
       message.amount = Coin.fromPartial(object.amount);

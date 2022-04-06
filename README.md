@@ -1,8 +1,10 @@
 # cyber-js
 
+[![version](https://img.shields.io/npm/v/@cybercongress/cyber-js)](https://www.npmjs.com/package/@cybercongress/cyber-js)
+
 ### Modules support:
 
-Query client extensions:
+Query client extensions support for modules:
 - Auth
 - Bank
 - Distribution
@@ -10,20 +12,20 @@ Query client extensions:
 - Graph
 - Rank
 - Bandwidth
-- Energy
+- Grid
 - Wasm
 - Liquidity
 - Gov
 
-Signing client transaction:
+Signing client messages support for modules:
 - Graph
     - MsgCyberlink
 - Resources
     - MsgInvestmint
-- Energy
+- Grid
     - MsgCreateRoute
     - MsgEditRoute
-    - MsgEditRouteAlias
+    - MsgEditRouteName
     - MsgDeleteRoute
 - Wasm
     - MsgClearAdmin
@@ -62,4 +64,6 @@ yarn define-proto
 yarn postdefine-proto
 
 yarn build
+
+yarn lint-fix
 ```
