@@ -167,6 +167,7 @@ export function isMsgSignData(msg: AminoMsg): msg is MsgSignData {
   if (typeof castedMsg.value.signer !== "string") return false;
   if (typeof castedMsg.value.data !== "string") return false;
   return true;
+}
 
 export interface AminoMsgExecuteContract extends AminoMsg {
   type: "wasm/MsgExecuteContract";
