@@ -1,7 +1,7 @@
 import { AminoMsg, Coin } from "@cosmjs/amino";
 import { fromBase64, toBase64 } from "@cosmjs/encoding";
 import { AminoConverter } from "@cosmjs/stargate";
-import { assertDefinedAndNotNull } from "@cosmjs/utils";
+import { assertDefinedAndNotNull, isNonNullObject } from "@cosmjs/utils";
 import { MsgExecuteContract } from "cosmjs-types/cosmwasm/wasm/v1/tx";
 import Long from "long";
 
@@ -150,7 +150,23 @@ export function isAminoMsgWithdrawWithinBatch(msg: AminoMsg): msg is AminoMsgWit
   return msg.type === "liquidity/MsgWithdrawWithinBatch";
 }
 
-// wasm
+export interface MsgSignData extends AminoMsg {
+  readonly type: "sign/MsgSignData";
+  readonly value: {
+    /** Bech32 account address */
+    signer: string;
+    /** Base64 encoded data */
+    data: string;
+  };
+}
+
+export function isMsgSignData(msg: AminoMsg): msg is MsgSignData {
+  const castedMsg = msg as MsgSignData;
+  if (castedMsg.type !== "sign/MsgSignData") return false;
+  if (!isNonNullObject(castedMsg.value)) return false;
+  if (typeof castedMsg.value.signer !== "string") return false;
+  if (typeof castedMsg.value.data !== "string") return false;
+  return true;
 
 export interface AminoMsgExecuteContract extends AminoMsg {
   type: "wasm/MsgExecuteContract";
