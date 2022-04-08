@@ -42,7 +42,7 @@ import {
   QueryValidatorOutstandingRewardsResponse,
   QueryValidatorSlashesResponse,
 } from "cosmjs-types/cosmos/distribution/v1beta1/query";
-import { ProposalStatus } from "cosmjs-types/cosmos/gov/v1beta1/gov";
+import { ProposalStatus, TextProposal } from "cosmjs-types/cosmos/gov/v1beta1/gov";
 import {
   QueryDepositResponse,
   QueryDepositsResponse,
@@ -80,6 +80,7 @@ import {
 } from "./codec/cyber/bandwidth/v1beta1/query";
 import { QueryGraphStatsResponse } from "./codec/cyber/graph/v1beta1/query";
 import {
+  QueryParamsResponse as QueryParamsResponseEnergy,
   QueryRoutedEnergyResponse,
   QueryRouteResponse,
   QueryRoutesResponse,
@@ -691,6 +692,11 @@ export class CyberClient {
   public async routes(): Promise<JsonObject> {
     const response = await this.forceGetQueryClient().grid.routes();
     return QueryRoutesResponse.toJSON(response);
+  }
+
+  public async energyParams(): Promise<JsonObject> {
+    const response = await this.forceGetQueryClient().grid.params();
+    return QueryParamsResponseEnergy.toJSON(response);
   }
 
   // Resources module

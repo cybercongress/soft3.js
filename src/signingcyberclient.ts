@@ -16,7 +16,7 @@ import {
 } from "@cosmjs/cosmwasm-stargate";
 import { JsonObject } from "@cosmjs/cosmwasm-stargate";
 import { sha256 } from "@cosmjs/crypto";
-import { fromBase64, toHex, toUtf8 } from "@cosmjs/encoding";
+import { fromBase64, toAscii, toHex, toUtf8 } from "@cosmjs/encoding";
 import { Int53, Uint53 } from "@cosmjs/math";
 import {
   EncodeObject,
@@ -48,7 +48,7 @@ import { longify } from "@cosmjs/stargate/build/queries/utils";
 import { Tendermint34Client } from "@cosmjs/tendermint-rpc";
 import { assert } from "@cosmjs/utils";
 import { MsgWithdrawDelegatorReward } from "cosmjs-types/cosmos/distribution/v1beta1/tx";
-import { VoteOption } from "cosmjs-types/cosmos/gov/v1beta1/gov";
+import { TextProposal, VoteOption } from "cosmjs-types/cosmos/gov/v1beta1/gov";
 import { MsgDeposit, MsgSubmitProposal, MsgVote } from "cosmjs-types/cosmos/gov/v1beta1/tx";
 import { MsgBeginRedelegate, MsgDelegate, MsgUndelegate } from "cosmjs-types/cosmos/staking/v1beta1/tx";
 import { SignMode } from "cosmjs-types/cosmos/tx/signing/v1beta1/signing";
@@ -61,6 +61,7 @@ import {
   MsgStoreCode,
   MsgUpdateAdmin,
 } from "cosmjs-types/cosmwasm/wasm/v1/tx";
+import { Any } from "cosmjs-types/google/protobuf/any";
 import { MsgTransfer } from "cosmjs-types/ibc/applications/transfer/v1/tx";
 import { Height } from "cosmjs-types/ibc/core/client/v1/client";
 import Long from "long";
@@ -131,8 +132,8 @@ export interface EditRouteNameResult {
 }
 
 export interface Link {
-  from: string,
-  to: string
+  from: string;
+  to: string;
 }
 
 export function link(from: string, to: string): Link {
@@ -667,7 +668,10 @@ export class SigningCyberClient extends CyberClient {
     const sumbitProposalMsg: MsgSubmitProposalEncodeObject = {
       typeUrl: "/cosmos.gov.v1beta1.MsgSubmitProposal",
       value: MsgSubmitProposal.fromPartial({
-        content: content,
+        content: Any.fromPartial({
+          typeUrl: content.typeUrl,
+          value: Uint8Array.from(TextProposal.encode(content.value).finish()),
+        }),
         initialDeposit: initialDeposit,
         proposer: proposer,
       }),
