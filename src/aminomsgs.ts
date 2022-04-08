@@ -1,11 +1,12 @@
 import { AminoMsg, Coin } from "@cosmjs/amino";
+import { fromBase64, toBase64 } from "@cosmjs/encoding";
 import { AminoConverter } from "@cosmjs/stargate";
 import { assertDefinedAndNotNull, isNonNullObject } from "@cosmjs/utils";
+import { MsgExecuteContract } from "cosmjs-types/cosmwasm/wasm/v1/tx";
 import Long from "long";
 
 import { MsgCyberlink } from "./codec/cyber/graph/v1beta1/tx";
 // import { Link } from "./codec/cyber/graph/v1beta1/types";
-import { Link } from "./signingcyberclient"
 import {
   MsgCreateRoute,
   MsgDeleteRoute,
@@ -18,6 +19,8 @@ import {
   MsgSwapWithinBatch,
   MsgWithdrawWithinBatch,
 } from "./codec/tendermint/liquidity/v1beta1/tx";
+
+import { Link } from "./signingcyberclient";
 
 // Graph module
 
@@ -164,6 +167,22 @@ export function isMsgSignData(msg: AminoMsg): msg is MsgSignData {
   if (typeof castedMsg.value.signer !== "string") return false;
   if (typeof castedMsg.value.data !== "string") return false;
   return true;
+
+export interface AminoMsgExecuteContract extends AminoMsg {
+  type: "wasm/MsgExecuteContract";
+  value: {
+    /** Bech32 account address */
+    readonly contract: string;
+    readonly funds: readonly Coin[];
+    /** Execute message as JavaScript object */
+    readonly msg: string;
+    /** Bech32 account address */
+    readonly sender: string;
+  };
+}
+
+export function isAminoMsgExecuteContract(msg: AminoMsg): msg is AminoMsgExecuteContract {
+  return msg.type === "wasm/MsgExecuteContract";
 }
 
 export function createCyberTypes(): Record<string, AminoConverter> {
@@ -344,6 +363,26 @@ export function createCyberTypes(): Record<string, AminoConverter> {
         withdrawerAddress: withdrawer_address,
         poolId: Long.fromString(pool_id),
         poolCoin: pool_coin,
+      }),
+    },
+    "/cosmwasm.wasm.v1.MsgExecuteContract": {
+      aminoType: "wasm/MsgExecuteContract",
+      toAmino: ({ sender, contract, msg, funds }: MsgExecuteContract): AminoMsgExecuteContract["value"] => ({
+        sender: sender,
+        contract: contract,
+        msg: toBase64(msg),
+        funds: funds,
+      }),
+      fromAmino: ({
+        sender,
+        contract,
+        msg,
+        funds,
+      }: AminoMsgExecuteContract["value"]): MsgExecuteContract => ({
+        sender: sender,
+        contract: contract,
+        msg: fromBase64(msg),
+        funds: [...funds],
       }),
     },
   };
