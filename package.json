@@ -1,6 +1,6 @@
 {
   "name": "@cybercongress/cyber-js",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Cyber SDK",
   "license": "",
   "main": "build/index.js",
