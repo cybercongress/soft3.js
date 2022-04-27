@@ -1,5 +1,5 @@
 import { Code, CodeDetails, Contract, ContractCodeHistoryEntry, JsonObject } from "@cosmjs/cosmwasm-stargate";
-import { setupWasmExtension, WasmExtension } from "@cosmjs/cosmwasm-stargate/build/queries";
+import { setupWasmExtension, WasmExtension } from "@cosmjs/cosmwasm-stargate";
 import { fromAscii, toHex } from "@cosmjs/encoding";
 import { Uint53 } from "@cosmjs/math";
 import {
@@ -8,8 +8,8 @@ import {
   AuthExtension,
   BankExtension,
   Block,
-  BroadcastTxResponse,
   Coin,
+  DeliverTxResponse,
   DistributionExtension,
   GovExtension,
   GovParamsType,
@@ -27,7 +27,9 @@ import {
   setupDistributionExtension,
   setupGovExtension,
   setupStakingExtension,
+  setupTxExtension,
   StakingExtension,
+  TxExtension,
 } from "@cosmjs/stargate";
 import { Tendermint34Client, toRfc3339WithNanoseconds } from "@cosmjs/tendermint-rpc";
 import { assert } from "@cosmjs/utils";
@@ -42,7 +44,7 @@ import {
   QueryValidatorOutstandingRewardsResponse,
   QueryValidatorSlashesResponse,
 } from "cosmjs-types/cosmos/distribution/v1beta1/query";
-import { ProposalStatus, TextProposal } from "cosmjs-types/cosmos/gov/v1beta1/gov";
+import { ProposalStatus } from "cosmjs-types/cosmos/gov/v1beta1/gov";
 import {
   QueryDepositResponse,
   QueryDepositsResponse,
@@ -70,7 +72,11 @@ import {
   QueryValidatorUnbondingDelegationsResponse,
 } from "cosmjs-types/cosmos/staking/v1beta1/query";
 import { BondStatus } from "cosmjs-types/cosmos/staking/v1beta1/staking";
-import { CodeInfoResponse } from "cosmjs-types/cosmwasm/wasm/v1/query";
+import {
+  CodeInfoResponse,
+  QueryCodesResponse,
+  QueryContractsByCodeResponse,
+} from "cosmjs-types/cosmwasm/wasm/v1/query";
 import { ContractCodeHistoryOperationType } from "cosmjs-types/cosmwasm/wasm/v1/types";
 
 import {
@@ -111,14 +117,7 @@ import {
   setupRankExtension,
   setupResourcesExtension,
 } from "./queries/index";
-
-export {
-  Code, // returned by CosmWasmClient.getCode
-  CodeDetails, // returned by CosmWasmClient.getCodeDetails
-  Contract, // returned by CosmWasmClient.getContract
-  ContractCodeHistoryEntry, // returned by CosmWasmClient.getContractCodeHistory
-  JsonObject, // returned by CosmWasmClient.queryContractSmart
-};
+export { Code, CodeDetails, Contract, ContractCodeHistoryEntry, JsonObject };
 
 export interface PrivateCyberClient {
   readonly tmClient: Tendermint34Client | undefined;
@@ -135,7 +134,8 @@ export interface PrivateCyberClient {
         WasmExtension &
         LiquidityExtension &
         GovExtension &
-        ResourcesExtension)
+        ResourcesExtension &
+        TxExtension)
     | undefined;
 }
 
@@ -156,7 +156,8 @@ export class CyberClient {
         WasmExtension &
         LiquidityExtension &
         GovExtension &
-        ResourcesExtension)
+        ResourcesExtension &
+        TxExtension)
     | undefined;
   private readonly codesCache = new Map<number, CodeDetails>();
   private chainId: string | undefined;
@@ -183,6 +184,7 @@ export class CyberClient {
         setupLiquidityExtension,
         setupGovExtension,
         setupResourcesExtension,
+        setupTxExtension,
       );
     }
   }
@@ -213,7 +215,8 @@ export class CyberClient {
         WasmExtension &
         LiquidityExtension &
         GovExtension &
-        ResourcesExtension)
+        ResourcesExtension &
+        TxExtension)
     | undefined {
     return this.queryClient;
   }
@@ -230,7 +233,8 @@ export class CyberClient {
     WasmExtension &
     LiquidityExtension &
     GovExtension &
-    ResourcesExtension {
+    ResourcesExtension &
+    TxExtension {
     if (!this.queryClient) {
       throw new Error("Query client not available. You cannot use online functionality in offline mode.");
     }
@@ -354,57 +358,8 @@ export class CyberClient {
     if (this.tmClient) this.tmClient.disconnect();
   }
 
-  /**
-   * Broadcasts a signed transaction to the network and monitors its inclusion in a block.
-   *
-   * If broadcasting is rejected by the node for some reason (e.g. because of a CheckTx failure),
-   * an error is thrown.
-   *
-   * If the transaction is not included in a block before the provided timeout, this errors with a `TimeoutError`.
-   *
-   * If the transaction is included in a block, a `BroadcastTxResponse` is returned. The caller then
-   * usually needs to check for execution success or failure.
-   */
-  // NOTE: This method is tested against slow chains and timeouts in the @cosmjs/stargate package.
-  // Make sure it is kept in sync!
-  public async broadcastTx(
-    tx: Uint8Array,
-    // timeoutMs = 60_000,
-    // pollIntervalMs = 3_000,
-  ): Promise<BroadcastTxResponse> {
-    // let timedOut = false;
-    // const txPollTimeout = setTimeout(() => {
-    //   timedOut = true;
-    // }, timeoutMs);
-
-    // const pollForTx = async (txId: string): Promise<BroadcastTxResponse> => {
-    //   // if (timedOut) {
-    //   //   throw new TimeoutError(
-    //   //     `Transaction with ID ${txId} was submitted but was not yet found on the chain. You might want to check later.`,
-    //   //     txId
-    //   //   );
-    //   // }
-    //   // await sleep(pollIntervalMs);
-    //   const result = await this.getTx(txId);
-    //   return result
-    //     ? {
-    //         code: result.code,
-    //         height: result.height,
-    //         rawLog: result.rawLog,
-    //         transactionHash: txId,
-    //         gasUsed: result.gasUsed,
-    //         gasWanted: result.gasWanted,
-    //       }
-    //     : pollForTx(txId);
-    // };
-
+  public async broadcastTx(tx: Uint8Array): Promise<DeliverTxResponse> {
     const broadcasted = await this.forceGetTmClient().broadcastTxSync({ tx });
-    // console.log(`broadcasted`, broadcasted);
-    // if (broadcasted.code) {
-    //   throw new Error(
-    //     `Broadcasting transaction failed with code ${broadcasted.code} (codespace: ${broadcasted.codeSpace}). Log: ${broadcasted.log}`
-    //   );
-    // }
     const transactionId = toHex(broadcasted.hash).toUpperCase();
     return {
       code: broadcasted.code,
@@ -414,19 +369,6 @@ export class CyberClient {
       gasUsed: broadcasted.gasUsed,
       gasWanted: broadcasted.gasWanted,
     };
-    // console.log(`transactionId`, transactionId)
-    // return new Promise((resolve, reject) =>
-    //   pollForTx(transactionId).then(
-    //     (value) => {
-    //       // clearTimeout(txPollTimeout);
-    //       resolve(value);
-    //     },
-    //     (error) => {
-    //       // clearTimeout(txPollTimeout);
-    //       reject(error);
-    //     }
-    //   )
-    // );
   }
 
   // Graph module
@@ -734,11 +676,13 @@ export class CyberClient {
     proposalStatus: ProposalStatus,
     depositorAddress: string,
     voterAddress: string,
+    paginationKey?: Uint8Array,
   ): Promise<JsonObject> {
     const response = await this.forceGetQueryClient().gov.proposals(
       proposalStatus,
       depositorAddress,
       voterAddress,
+      paginationKey,
     );
     return QueryProposalsResponse.toJSON(response);
   }
@@ -776,8 +720,18 @@ export class CyberClient {
   // Wasm module
 
   public async getCodes(): Promise<readonly Code[]> {
-    const { codeInfos } = await this.forceGetQueryClient().wasm.listCodeInfo();
-    return (codeInfos || []).map((entry: CodeInfoResponse): Code => {
+    const allCodes = [];
+
+    let startAtKey: Uint8Array | undefined = undefined;
+    do {
+      const { codeInfos, pagination }: QueryCodesResponse =
+        await this.forceGetQueryClient().wasm.listCodeInfo(startAtKey);
+      const loadedCodes = codeInfos || [];
+      allCodes.push(...loadedCodes);
+      startAtKey = pagination?.nextKey;
+    } while (startAtKey?.length !== 0);
+
+    return allCodes.map((entry: CodeInfoResponse): Code => {
       assert(entry.creator && entry.codeId && entry.dataHash, "entry incomplete");
       return {
         id: entry.codeId.toNumber(),
@@ -807,9 +761,17 @@ export class CyberClient {
   }
 
   public async getContracts(codeId: number): Promise<readonly string[]> {
-    // TODO: handle pagination - accept as arg or auto-loop
-    const { contracts } = await this.forceGetQueryClient().wasm.listContractsByCodeId(codeId);
-    return contracts;
+    const allContracts = [];
+    let startAtKey: Uint8Array | undefined = undefined;
+    do {
+      const { contracts, pagination }: QueryContractsByCodeResponse =
+        await this.forceGetQueryClient().wasm.listContractsByCodeId(codeId, startAtKey);
+      const loadedContracts = contracts || [];
+      allContracts.push(...loadedContracts);
+      startAtKey = pagination?.nextKey;
+    } while (startAtKey?.length !== 0 && startAtKey !== undefined);
+
+    return allContracts;
   }
 
   /**
