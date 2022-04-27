@@ -822,33 +822,15 @@ export class SigningCyberClient extends CyberClient {
     const pubkey = encodePubkey(encodeSecp256k1Pubkey(accountFromSigner.pubkey));
     const signMode = SignMode.SIGN_MODE_LEGACY_AMINO_JSON;
 
-    // Need this temporary hack because there is issue with codec type binded to graph & resources messages
-    // TODO remove this after next upgrade
     let msgs, signedTxBody;
-    if (
-      messages[0].typeUrl == "/cyber.graph.v1beta1.MsgCyberlink" ||
-      messages[0].typeUrl == "/cyber.resources.v1beta1.MsgInvestmint"
-    ) {
-      msgs = messages.map((msg) => this.aminoTypes.toAmino(msg));
-      const signDocOriginal = makeSignDocAmino(msgs, fee, chainId, memo, accountNumber, sequence);
-
-      const msgsValues = messages.map((msg) => this.aminoTypes.toAmino(msg).value);
-      const signDocWithValue = makeSignDocAmino(msgsValues, fee, chainId, memo, accountNumber, sequence);
-
-      var { signature, signed } = await this.signer.signAmino(signerAddress, signDocWithValue);
-      signedTxBody = {
-        messages: signDocOriginal.msgs.map((msg) => this.aminoTypes.fromAmino(msg)),
-        memo: signed.memo,
-      };
-    } else {
-      msgs = messages.map((msg) => this.aminoTypes.toAmino(msg));
-      const signDoc = makeSignDocAmino(msgs, fee, chainId, memo, accountNumber, sequence);
-      var { signature, signed } = await this.signer.signAmino(signerAddress, signDoc);
-      signedTxBody = {
-        messages: signed.msgs.map((msg) => this.aminoTypes.fromAmino(msg)),
-        memo: signed.memo,
-      };
-    }
+    msgs = messages.map((msg) => this.aminoTypes.toAmino(msg));
+    const signDoc = makeSignDocAmino(msgs, fee, chainId, memo, accountNumber, sequence);
+    var { signature, signed } = await this.signer.signAmino(signerAddress, signDoc);
+    signedTxBody = {
+      messages: signed.msgs.map((msg) => this.aminoTypes.fromAmino(msg)),
+      memo: signed.memo,
+    };
+    
     const signedTxBodyEncodeObject: TxBodyEncodeObject = {
       typeUrl: "/cosmos.tx.v1beta1.TxBody",
       value: signedTxBody,
