@@ -52,7 +52,7 @@ import {
 } from "@cosmjs/stargate";
 import { longify } from "@cosmjs/stargate/build/queryclient";
 import { Tendermint34Client } from "@cosmjs/tendermint-rpc";
-import { arrayContentEquals, assert } from "@cosmjs/utils";
+import { arrayContentEquals, assert, assertDefined } from "@cosmjs/utils";
 import { MsgWithdrawDelegatorReward } from "cosmjs-types/cosmos/distribution/v1beta1/tx";
 import { TextProposal, VoteOption } from "cosmjs-types/cosmos/gov/v1beta1/gov";
 import { MsgDeposit, MsgSubmitProposal, MsgVote } from "cosmjs-types/cosmos/gov/v1beta1/tx";
@@ -239,6 +239,25 @@ export class SigningCyberClient extends CyberClient {
     this.signer = signer;
     this.broadcastTimeoutMs = options.broadcastTimeoutMs;
     this.broadcastPollIntervalMs = options.broadcastPollIntervalMs;
+  }
+
+  public async simulate(
+    signerAddress: string,
+    messages: readonly EncodeObject[],
+    memo: string | undefined,
+  ): Promise<number> {
+    const anyMsgs = messages.map((m) => this.registry.encodeAsAny(m));
+    const accountFromSigner = (await this.signer.getAccounts()).find(
+      (account) => account.address === signerAddress,
+    );
+    if (!accountFromSigner) {
+      throw new Error("Failed to retrieve account from signer");
+    }
+    const pubkey = encodeSecp256k1Pubkey(accountFromSigner.pubkey);
+    const { sequence } = await this.getSequence(signerAddress);
+    const { gasInfo } = await this.forceGetQueryClient().tx.simulate(anyMsgs, memo, pubkey, sequence);
+    assertDefined(gasInfo);
+    return Uint53.fromString(gasInfo.gasUsed.toString()).toNumber();
   }
 
   // Graph module
