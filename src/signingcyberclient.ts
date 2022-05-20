@@ -474,6 +474,27 @@ export class SigningCyberClient extends CyberClient {
     return this.signAndBroadcast(senderAddress, [executeContractMsg], fee, memo);
   }
 
+  public async executeArray(
+    senderAddress: string,
+    contractAddress: string,
+    msg: string[],
+    fee: StdFee,
+    memo = "",
+    funds?: readonly Coin[],
+  ): Promise<DeliverTxResponse> {
+    const msgs = msg.map((item) => ({
+      typeUrl: "/cosmwasm.wasm.v1.MsgExecuteContract",
+      value: MsgExecuteContract.fromPartial({
+        sender: senderAddress,
+        contract: contractAddress,
+        msg: toUtf8(JSON.stringify(item)),
+        funds: [...(funds || [])],
+      }),
+    }));
+
+    return this.signAndBroadcast(senderAddress, msgs, fee, memo);
+  }
+
   // Bank module
 
   public async sendTokens(
@@ -830,7 +851,7 @@ export class SigningCyberClient extends CyberClient {
       messages: signed.msgs.map((msg) => this.aminoTypes.fromAmino(msg)),
       memo: signed.memo,
     };
-    
+
     const signedTxBodyEncodeObject: TxBodyEncodeObject = {
       typeUrl: "/cosmos.tx.v1beta1.TxBody",
       value: signedTxBody,
