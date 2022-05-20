@@ -2,12 +2,13 @@
     "compilerOptions": {
         "baseUrl": ".",
         "outDir": "build",
-        "experimentalDecorators": true,
         "rootDir": "src",
+        "experimentalDecorators": true,
         "declaration": true,
         "esModuleInterop": true,
         "forceConsistentCasingInFileNames": true,
-        "lib": ["es2017"],
+        "lib": ["es2018"],
+        "target": "es2018",
         "module": "commonjs",
         "moduleResolution": "node",
         "newLine": "LF",
@@ -21,7 +22,6 @@
         "resolveJsonModule": true,
         "sourceMap": true,
         "strict": true,
-        "target": "es2017"
       },
     "include": [
       "src/**/*"
