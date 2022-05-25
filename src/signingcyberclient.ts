@@ -225,13 +225,13 @@ export class SigningCyberClient extends CyberClient {
     const {
       registry = createDefaultRegistry(),
       aminoTypes = new AminoTypes({
-        ...createCyberAminoConverters,
-        ...createWasmAminoConverters,
-        ...createBankAminoConverters,
-        ...createDistributionAminoConverters,
+        ...createCyberAminoConverters(),
+        ...createWasmAminoConverters(),
+        ...createBankAminoConverters(),
+        ...createDistributionAminoConverters(),
         ...createStakingAminoConverters(prefix),
-        ...createGovAminoConverters,
-        ...createIbcAminoConverters,
+        ...createGovAminoConverters(),
+        ...createIbcAminoConverters(),
       }),
     } = options;
     this.registry = registry;
@@ -865,7 +865,7 @@ export class SigningCyberClient extends CyberClient {
     let msgs, signedTxBody;
     msgs = messages.map((msg) => this.aminoTypes.toAmino(msg));
     const signDoc = makeSignDocAmino(msgs, fee, chainId, memo, accountNumber, sequence);
-    var { signature, signed } = await this.signer.signAmino(signerAddress, signDoc);
+    const { signature, signed } = await this.signer.signAmino(signerAddress, signDoc);
     signedTxBody = {
       messages: signed.msgs.map((msg) => this.aminoTypes.fromAmino(msg)),
       memo: signed.memo,
