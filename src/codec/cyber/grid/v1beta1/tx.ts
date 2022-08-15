@@ -1,7 +1,7 @@
 /* eslint-disable */
+import { Coin } from "../../../cosmos/base/v1beta1/coin";
 import Long from "long";
 import _m0 from "protobufjs/minimal";
-import { Coin } from "../../../cosmos/base/v1beta1/coin";
 
 export const protobufPackage = "cyber.grid.v1beta1";
 
@@ -36,7 +36,9 @@ export interface MsgDeleteRouteResponse {}
 
 export interface MsgEditRouteNameResponse {}
 
-const baseMsgCreateRoute: object = { source: "", destination: "", name: "" };
+function createBaseMsgCreateRoute(): MsgCreateRoute {
+  return { source: "", destination: "", name: "" };
+}
 
 export const MsgCreateRoute = {
   encode(message: MsgCreateRoute, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
@@ -55,7 +57,7 @@ export const MsgCreateRoute = {
   decode(input: _m0.Reader | Uint8Array, length?: number): MsgCreateRoute {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseMsgCreateRoute } as MsgCreateRoute;
+    const message = createBaseMsgCreateRoute();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -77,23 +79,11 @@ export const MsgCreateRoute = {
   },
 
   fromJSON(object: any): MsgCreateRoute {
-    const message = { ...baseMsgCreateRoute } as MsgCreateRoute;
-    if (object.source !== undefined && object.source !== null) {
-      message.source = String(object.source);
-    } else {
-      message.source = "";
-    }
-    if (object.destination !== undefined && object.destination !== null) {
-      message.destination = String(object.destination);
-    } else {
-      message.destination = "";
-    }
-    if (object.name !== undefined && object.name !== null) {
-      message.name = String(object.name);
-    } else {
-      message.name = "";
-    }
-    return message;
+    return {
+      source: isSet(object.source) ? String(object.source) : "",
+      destination: isSet(object.destination) ? String(object.destination) : "",
+      name: isSet(object.name) ? String(object.name) : "",
+    };
   },
 
   toJSON(message: MsgCreateRoute): unknown {
@@ -104,28 +94,18 @@ export const MsgCreateRoute = {
     return obj;
   },
 
-  fromPartial(object: DeepPartial<MsgCreateRoute>): MsgCreateRoute {
-    const message = { ...baseMsgCreateRoute } as MsgCreateRoute;
-    if (object.source !== undefined && object.source !== null) {
-      message.source = object.source;
-    } else {
-      message.source = "";
-    }
-    if (object.destination !== undefined && object.destination !== null) {
-      message.destination = object.destination;
-    } else {
-      message.destination = "";
-    }
-    if (object.name !== undefined && object.name !== null) {
-      message.name = object.name;
-    } else {
-      message.name = "";
-    }
+  fromPartial<I extends Exact<DeepPartial<MsgCreateRoute>, I>>(object: I): MsgCreateRoute {
+    const message = createBaseMsgCreateRoute();
+    message.source = object.source ?? "";
+    message.destination = object.destination ?? "";
+    message.name = object.name ?? "";
     return message;
   },
 };
 
-const baseMsgEditRoute: object = { source: "", destination: "" };
+function createBaseMsgEditRoute(): MsgEditRoute {
+  return { source: "", destination: "", value: undefined };
+}
 
 export const MsgEditRoute = {
   encode(message: MsgEditRoute, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
@@ -144,7 +124,7 @@ export const MsgEditRoute = {
   decode(input: _m0.Reader | Uint8Array, length?: number): MsgEditRoute {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseMsgEditRoute } as MsgEditRoute;
+    const message = createBaseMsgEditRoute();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -166,23 +146,11 @@ export const MsgEditRoute = {
   },
 
   fromJSON(object: any): MsgEditRoute {
-    const message = { ...baseMsgEditRoute } as MsgEditRoute;
-    if (object.source !== undefined && object.source !== null) {
-      message.source = String(object.source);
-    } else {
-      message.source = "";
-    }
-    if (object.destination !== undefined && object.destination !== null) {
-      message.destination = String(object.destination);
-    } else {
-      message.destination = "";
-    }
-    if (object.value !== undefined && object.value !== null) {
-      message.value = Coin.fromJSON(object.value);
-    } else {
-      message.value = undefined;
-    }
-    return message;
+    return {
+      source: isSet(object.source) ? String(object.source) : "",
+      destination: isSet(object.destination) ? String(object.destination) : "",
+      value: isSet(object.value) ? Coin.fromJSON(object.value) : undefined,
+    };
   },
 
   toJSON(message: MsgEditRoute): unknown {
@@ -193,28 +161,19 @@ export const MsgEditRoute = {
     return obj;
   },
 
-  fromPartial(object: DeepPartial<MsgEditRoute>): MsgEditRoute {
-    const message = { ...baseMsgEditRoute } as MsgEditRoute;
-    if (object.source !== undefined && object.source !== null) {
-      message.source = object.source;
-    } else {
-      message.source = "";
-    }
-    if (object.destination !== undefined && object.destination !== null) {
-      message.destination = object.destination;
-    } else {
-      message.destination = "";
-    }
-    if (object.value !== undefined && object.value !== null) {
-      message.value = Coin.fromPartial(object.value);
-    } else {
-      message.value = undefined;
-    }
+  fromPartial<I extends Exact<DeepPartial<MsgEditRoute>, I>>(object: I): MsgEditRoute {
+    const message = createBaseMsgEditRoute();
+    message.source = object.source ?? "";
+    message.destination = object.destination ?? "";
+    message.value =
+      object.value !== undefined && object.value !== null ? Coin.fromPartial(object.value) : undefined;
     return message;
   },
 };
 
-const baseMsgDeleteRoute: object = { source: "", destination: "" };
+function createBaseMsgDeleteRoute(): MsgDeleteRoute {
+  return { source: "", destination: "" };
+}
 
 export const MsgDeleteRoute = {
   encode(message: MsgDeleteRoute, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
@@ -230,7 +189,7 @@ export const MsgDeleteRoute = {
   decode(input: _m0.Reader | Uint8Array, length?: number): MsgDeleteRoute {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseMsgDeleteRoute } as MsgDeleteRoute;
+    const message = createBaseMsgDeleteRoute();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -249,18 +208,10 @@ export const MsgDeleteRoute = {
   },
 
   fromJSON(object: any): MsgDeleteRoute {
-    const message = { ...baseMsgDeleteRoute } as MsgDeleteRoute;
-    if (object.source !== undefined && object.source !== null) {
-      message.source = String(object.source);
-    } else {
-      message.source = "";
-    }
-    if (object.destination !== undefined && object.destination !== null) {
-      message.destination = String(object.destination);
-    } else {
-      message.destination = "";
-    }
-    return message;
+    return {
+      source: isSet(object.source) ? String(object.source) : "",
+      destination: isSet(object.destination) ? String(object.destination) : "",
+    };
   },
 
   toJSON(message: MsgDeleteRoute): unknown {
@@ -270,23 +221,17 @@ export const MsgDeleteRoute = {
     return obj;
   },
 
-  fromPartial(object: DeepPartial<MsgDeleteRoute>): MsgDeleteRoute {
-    const message = { ...baseMsgDeleteRoute } as MsgDeleteRoute;
-    if (object.source !== undefined && object.source !== null) {
-      message.source = object.source;
-    } else {
-      message.source = "";
-    }
-    if (object.destination !== undefined && object.destination !== null) {
-      message.destination = object.destination;
-    } else {
-      message.destination = "";
-    }
+  fromPartial<I extends Exact<DeepPartial<MsgDeleteRoute>, I>>(object: I): MsgDeleteRoute {
+    const message = createBaseMsgDeleteRoute();
+    message.source = object.source ?? "";
+    message.destination = object.destination ?? "";
     return message;
   },
 };
 
-const baseMsgEditRouteName: object = { source: "", destination: "", name: "" };
+function createBaseMsgEditRouteName(): MsgEditRouteName {
+  return { source: "", destination: "", name: "" };
+}
 
 export const MsgEditRouteName = {
   encode(message: MsgEditRouteName, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
@@ -305,7 +250,7 @@ export const MsgEditRouteName = {
   decode(input: _m0.Reader | Uint8Array, length?: number): MsgEditRouteName {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseMsgEditRouteName } as MsgEditRouteName;
+    const message = createBaseMsgEditRouteName();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -327,23 +272,11 @@ export const MsgEditRouteName = {
   },
 
   fromJSON(object: any): MsgEditRouteName {
-    const message = { ...baseMsgEditRouteName } as MsgEditRouteName;
-    if (object.source !== undefined && object.source !== null) {
-      message.source = String(object.source);
-    } else {
-      message.source = "";
-    }
-    if (object.destination !== undefined && object.destination !== null) {
-      message.destination = String(object.destination);
-    } else {
-      message.destination = "";
-    }
-    if (object.name !== undefined && object.name !== null) {
-      message.name = String(object.name);
-    } else {
-      message.name = "";
-    }
-    return message;
+    return {
+      source: isSet(object.source) ? String(object.source) : "",
+      destination: isSet(object.destination) ? String(object.destination) : "",
+      name: isSet(object.name) ? String(object.name) : "",
+    };
   },
 
   toJSON(message: MsgEditRouteName): unknown {
@@ -354,28 +287,18 @@ export const MsgEditRouteName = {
     return obj;
   },
 
-  fromPartial(object: DeepPartial<MsgEditRouteName>): MsgEditRouteName {
-    const message = { ...baseMsgEditRouteName } as MsgEditRouteName;
-    if (object.source !== undefined && object.source !== null) {
-      message.source = object.source;
-    } else {
-      message.source = "";
-    }
-    if (object.destination !== undefined && object.destination !== null) {
-      message.destination = object.destination;
-    } else {
-      message.destination = "";
-    }
-    if (object.name !== undefined && object.name !== null) {
-      message.name = object.name;
-    } else {
-      message.name = "";
-    }
+  fromPartial<I extends Exact<DeepPartial<MsgEditRouteName>, I>>(object: I): MsgEditRouteName {
+    const message = createBaseMsgEditRouteName();
+    message.source = object.source ?? "";
+    message.destination = object.destination ?? "";
+    message.name = object.name ?? "";
     return message;
   },
 };
 
-const baseMsgCreateRouteResponse: object = {};
+function createBaseMsgCreateRouteResponse(): MsgCreateRouteResponse {
+  return {};
+}
 
 export const MsgCreateRouteResponse = {
   encode(_: MsgCreateRouteResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
@@ -385,7 +308,7 @@ export const MsgCreateRouteResponse = {
   decode(input: _m0.Reader | Uint8Array, length?: number): MsgCreateRouteResponse {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseMsgCreateRouteResponse } as MsgCreateRouteResponse;
+    const message = createBaseMsgCreateRouteResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -398,8 +321,7 @@ export const MsgCreateRouteResponse = {
   },
 
   fromJSON(_: any): MsgCreateRouteResponse {
-    const message = { ...baseMsgCreateRouteResponse } as MsgCreateRouteResponse;
-    return message;
+    return {};
   },
 
   toJSON(_: MsgCreateRouteResponse): unknown {
@@ -407,13 +329,15 @@ export const MsgCreateRouteResponse = {
     return obj;
   },
 
-  fromPartial(_: DeepPartial<MsgCreateRouteResponse>): MsgCreateRouteResponse {
-    const message = { ...baseMsgCreateRouteResponse } as MsgCreateRouteResponse;
+  fromPartial<I extends Exact<DeepPartial<MsgCreateRouteResponse>, I>>(_: I): MsgCreateRouteResponse {
+    const message = createBaseMsgCreateRouteResponse();
     return message;
   },
 };
 
-const baseMsgEditRouteResponse: object = {};
+function createBaseMsgEditRouteResponse(): MsgEditRouteResponse {
+  return {};
+}
 
 export const MsgEditRouteResponse = {
   encode(_: MsgEditRouteResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
@@ -423,7 +347,7 @@ export const MsgEditRouteResponse = {
   decode(input: _m0.Reader | Uint8Array, length?: number): MsgEditRouteResponse {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseMsgEditRouteResponse } as MsgEditRouteResponse;
+    const message = createBaseMsgEditRouteResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -436,8 +360,7 @@ export const MsgEditRouteResponse = {
   },
 
   fromJSON(_: any): MsgEditRouteResponse {
-    const message = { ...baseMsgEditRouteResponse } as MsgEditRouteResponse;
-    return message;
+    return {};
   },
 
   toJSON(_: MsgEditRouteResponse): unknown {
@@ -445,13 +368,15 @@ export const MsgEditRouteResponse = {
     return obj;
   },
 
-  fromPartial(_: DeepPartial<MsgEditRouteResponse>): MsgEditRouteResponse {
-    const message = { ...baseMsgEditRouteResponse } as MsgEditRouteResponse;
+  fromPartial<I extends Exact<DeepPartial<MsgEditRouteResponse>, I>>(_: I): MsgEditRouteResponse {
+    const message = createBaseMsgEditRouteResponse();
     return message;
   },
 };
 
-const baseMsgDeleteRouteResponse: object = {};
+function createBaseMsgDeleteRouteResponse(): MsgDeleteRouteResponse {
+  return {};
+}
 
 export const MsgDeleteRouteResponse = {
   encode(_: MsgDeleteRouteResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
@@ -461,7 +386,7 @@ export const MsgDeleteRouteResponse = {
   decode(input: _m0.Reader | Uint8Array, length?: number): MsgDeleteRouteResponse {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseMsgDeleteRouteResponse } as MsgDeleteRouteResponse;
+    const message = createBaseMsgDeleteRouteResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -474,8 +399,7 @@ export const MsgDeleteRouteResponse = {
   },
 
   fromJSON(_: any): MsgDeleteRouteResponse {
-    const message = { ...baseMsgDeleteRouteResponse } as MsgDeleteRouteResponse;
-    return message;
+    return {};
   },
 
   toJSON(_: MsgDeleteRouteResponse): unknown {
@@ -483,13 +407,15 @@ export const MsgDeleteRouteResponse = {
     return obj;
   },
 
-  fromPartial(_: DeepPartial<MsgDeleteRouteResponse>): MsgDeleteRouteResponse {
-    const message = { ...baseMsgDeleteRouteResponse } as MsgDeleteRouteResponse;
+  fromPartial<I extends Exact<DeepPartial<MsgDeleteRouteResponse>, I>>(_: I): MsgDeleteRouteResponse {
+    const message = createBaseMsgDeleteRouteResponse();
     return message;
   },
 };
 
-const baseMsgEditRouteNameResponse: object = {};
+function createBaseMsgEditRouteNameResponse(): MsgEditRouteNameResponse {
+  return {};
+}
 
 export const MsgEditRouteNameResponse = {
   encode(_: MsgEditRouteNameResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
@@ -499,7 +425,7 @@ export const MsgEditRouteNameResponse = {
   decode(input: _m0.Reader | Uint8Array, length?: number): MsgEditRouteNameResponse {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseMsgEditRouteNameResponse } as MsgEditRouteNameResponse;
+    const message = createBaseMsgEditRouteNameResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -512,8 +438,7 @@ export const MsgEditRouteNameResponse = {
   },
 
   fromJSON(_: any): MsgEditRouteNameResponse {
-    const message = { ...baseMsgEditRouteNameResponse } as MsgEditRouteNameResponse;
-    return message;
+    return {};
   },
 
   toJSON(_: MsgEditRouteNameResponse): unknown {
@@ -521,8 +446,8 @@ export const MsgEditRouteNameResponse = {
     return obj;
   },
 
-  fromPartial(_: DeepPartial<MsgEditRouteNameResponse>): MsgEditRouteNameResponse {
-    const message = { ...baseMsgEditRouteNameResponse } as MsgEditRouteNameResponse;
+  fromPartial<I extends Exact<DeepPartial<MsgEditRouteNameResponse>, I>>(_: I): MsgEditRouteNameResponse {
+    const message = createBaseMsgEditRouteNameResponse();
     return message;
   },
 };
@@ -572,9 +497,12 @@ interface Rpc {
   request(service: string, method: string, data: Uint8Array): Promise<Uint8Array>;
 }
 
-type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined | Long;
+type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
+
 export type DeepPartial<T> = T extends Builtin
   ? T
+  : T extends Long
+  ? string | number | Long
   : T extends Array<infer U>
   ? Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U>
@@ -583,7 +511,16 @@ export type DeepPartial<T> = T extends Builtin
   ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
+type KeysOfUnion<T> = T extends T ? keyof T : never;
+export type Exact<P, I extends P> = P extends Builtin
+  ? P
+  : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
+
 if (_m0.util.Long !== Long) {
   _m0.util.Long = Long as any;
   _m0.configure();
+}
+
+function isSet(value: any): boolean {
+  return value !== null && value !== undefined;
 }

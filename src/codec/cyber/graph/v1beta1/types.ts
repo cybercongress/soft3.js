@@ -9,7 +9,9 @@ export interface Link {
   to: string;
 }
 
-const baseLink: object = { from: "", to: "" };
+function createBaseLink(): Link {
+  return { from: "", to: "" };
+}
 
 export const Link = {
   encode(message: Link, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
@@ -25,7 +27,7 @@ export const Link = {
   decode(input: _m0.Reader | Uint8Array, length?: number): Link {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseLink } as Link;
+    const message = createBaseLink();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -44,18 +46,10 @@ export const Link = {
   },
 
   fromJSON(object: any): Link {
-    const message = { ...baseLink } as Link;
-    if (object.from !== undefined && object.from !== null) {
-      message.from = String(object.from);
-    } else {
-      message.from = "";
-    }
-    if (object.to !== undefined && object.to !== null) {
-      message.to = String(object.to);
-    } else {
-      message.to = "";
-    }
-    return message;
+    return {
+      from: isSet(object.from) ? String(object.from) : "",
+      to: isSet(object.to) ? String(object.to) : "",
+    };
   },
 
   toJSON(message: Link): unknown {
@@ -65,25 +59,20 @@ export const Link = {
     return obj;
   },
 
-  fromPartial(object: DeepPartial<Link>): Link {
-    const message = { ...baseLink } as Link;
-    if (object.from !== undefined && object.from !== null) {
-      message.from = object.from;
-    } else {
-      message.from = "";
-    }
-    if (object.to !== undefined && object.to !== null) {
-      message.to = object.to;
-    } else {
-      message.to = "";
-    }
+  fromPartial<I extends Exact<DeepPartial<Link>, I>>(object: I): Link {
+    const message = createBaseLink();
+    message.from = object.from ?? "";
+    message.to = object.to ?? "";
     return message;
   },
 };
 
-type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined | Long;
+type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
+
 export type DeepPartial<T> = T extends Builtin
   ? T
+  : T extends Long
+  ? string | number | Long
   : T extends Array<infer U>
   ? Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U>
@@ -92,7 +81,16 @@ export type DeepPartial<T> = T extends Builtin
   ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
+type KeysOfUnion<T> = T extends T ? keyof T : never;
+export type Exact<P, I extends P> = P extends Builtin
+  ? P
+  : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
+
 if (_m0.util.Long !== Long) {
   _m0.util.Long = Long as any;
   _m0.configure();
+}
+
+function isSet(value: any): boolean {
+  return value !== null && value !== undefined;
 }

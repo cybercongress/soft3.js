@@ -1,7 +1,7 @@
 /* eslint-disable */
 import Long from "long";
-import _m0 from "protobufjs/minimal";
 import { Coin } from "../../../cosmos/base/v1beta1/coin";
+import _m0 from "protobufjs/minimal";
 
 export const protobufPackage = "cyber.grid.v1beta1";
 
@@ -20,7 +20,9 @@ export interface Value {
   value: Coin[];
 }
 
-const baseParams: object = { maxRoutes: 0 };
+function createBaseParams(): Params {
+  return { maxRoutes: 0 };
+}
 
 export const Params = {
   encode(message: Params, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
@@ -33,7 +35,7 @@ export const Params = {
   decode(input: _m0.Reader | Uint8Array, length?: number): Params {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseParams } as Params;
+    const message = createBaseParams();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -49,33 +51,27 @@ export const Params = {
   },
 
   fromJSON(object: any): Params {
-    const message = { ...baseParams } as Params;
-    if (object.maxRoutes !== undefined && object.maxRoutes !== null) {
-      message.maxRoutes = Number(object.maxRoutes);
-    } else {
-      message.maxRoutes = 0;
-    }
-    return message;
+    return {
+      maxRoutes: isSet(object.maxRoutes) ? Number(object.maxRoutes) : 0,
+    };
   },
 
   toJSON(message: Params): unknown {
     const obj: any = {};
-    message.maxRoutes !== undefined && (obj.maxRoutes = message.maxRoutes);
+    message.maxRoutes !== undefined && (obj.maxRoutes = Math.round(message.maxRoutes));
     return obj;
   },
 
-  fromPartial(object: DeepPartial<Params>): Params {
-    const message = { ...baseParams } as Params;
-    if (object.maxRoutes !== undefined && object.maxRoutes !== null) {
-      message.maxRoutes = object.maxRoutes;
-    } else {
-      message.maxRoutes = 0;
-    }
+  fromPartial<I extends Exact<DeepPartial<Params>, I>>(object: I): Params {
+    const message = createBaseParams();
+    message.maxRoutes = object.maxRoutes ?? 0;
     return message;
   },
 };
 
-const baseRoute: object = { source: "", destination: "", name: "" };
+function createBaseRoute(): Route {
+  return { source: "", destination: "", name: "", value: [] };
+}
 
 export const Route = {
   encode(message: Route, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
@@ -97,8 +93,7 @@ export const Route = {
   decode(input: _m0.Reader | Uint8Array, length?: number): Route {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseRoute } as Route;
-    message.value = [];
+    const message = createBaseRoute();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -123,29 +118,12 @@ export const Route = {
   },
 
   fromJSON(object: any): Route {
-    const message = { ...baseRoute } as Route;
-    message.value = [];
-    if (object.source !== undefined && object.source !== null) {
-      message.source = String(object.source);
-    } else {
-      message.source = "";
-    }
-    if (object.destination !== undefined && object.destination !== null) {
-      message.destination = String(object.destination);
-    } else {
-      message.destination = "";
-    }
-    if (object.name !== undefined && object.name !== null) {
-      message.name = String(object.name);
-    } else {
-      message.name = "";
-    }
-    if (object.value !== undefined && object.value !== null) {
-      for (const e of object.value) {
-        message.value.push(Coin.fromJSON(e));
-      }
-    }
-    return message;
+    return {
+      source: isSet(object.source) ? String(object.source) : "",
+      destination: isSet(object.destination) ? String(object.destination) : "",
+      name: isSet(object.name) ? String(object.name) : "",
+      value: Array.isArray(object?.value) ? object.value.map((e: any) => Coin.fromJSON(e)) : [],
+    };
   },
 
   toJSON(message: Route): unknown {
@@ -161,34 +139,19 @@ export const Route = {
     return obj;
   },
 
-  fromPartial(object: DeepPartial<Route>): Route {
-    const message = { ...baseRoute } as Route;
-    message.value = [];
-    if (object.source !== undefined && object.source !== null) {
-      message.source = object.source;
-    } else {
-      message.source = "";
-    }
-    if (object.destination !== undefined && object.destination !== null) {
-      message.destination = object.destination;
-    } else {
-      message.destination = "";
-    }
-    if (object.name !== undefined && object.name !== null) {
-      message.name = object.name;
-    } else {
-      message.name = "";
-    }
-    if (object.value !== undefined && object.value !== null) {
-      for (const e of object.value) {
-        message.value.push(Coin.fromPartial(e));
-      }
-    }
+  fromPartial<I extends Exact<DeepPartial<Route>, I>>(object: I): Route {
+    const message = createBaseRoute();
+    message.source = object.source ?? "";
+    message.destination = object.destination ?? "";
+    message.name = object.name ?? "";
+    message.value = object.value?.map((e) => Coin.fromPartial(e)) || [];
     return message;
   },
 };
 
-const baseValue: object = {};
+function createBaseValue(): Value {
+  return { value: [] };
+}
 
 export const Value = {
   encode(message: Value, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
@@ -201,8 +164,7 @@ export const Value = {
   decode(input: _m0.Reader | Uint8Array, length?: number): Value {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseValue } as Value;
-    message.value = [];
+    const message = createBaseValue();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -218,14 +180,9 @@ export const Value = {
   },
 
   fromJSON(object: any): Value {
-    const message = { ...baseValue } as Value;
-    message.value = [];
-    if (object.value !== undefined && object.value !== null) {
-      for (const e of object.value) {
-        message.value.push(Coin.fromJSON(e));
-      }
-    }
-    return message;
+    return {
+      value: Array.isArray(object?.value) ? object.value.map((e: any) => Coin.fromJSON(e)) : [],
+    };
   },
 
   toJSON(message: Value): unknown {
@@ -238,21 +195,19 @@ export const Value = {
     return obj;
   },
 
-  fromPartial(object: DeepPartial<Value>): Value {
-    const message = { ...baseValue } as Value;
-    message.value = [];
-    if (object.value !== undefined && object.value !== null) {
-      for (const e of object.value) {
-        message.value.push(Coin.fromPartial(e));
-      }
-    }
+  fromPartial<I extends Exact<DeepPartial<Value>, I>>(object: I): Value {
+    const message = createBaseValue();
+    message.value = object.value?.map((e) => Coin.fromPartial(e)) || [];
     return message;
   },
 };
 
-type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined | Long;
+type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
+
 export type DeepPartial<T> = T extends Builtin
   ? T
+  : T extends Long
+  ? string | number | Long
   : T extends Array<infer U>
   ? Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U>
@@ -261,7 +216,16 @@ export type DeepPartial<T> = T extends Builtin
   ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
+type KeysOfUnion<T> = T extends T ? keyof T : never;
+export type Exact<P, I extends P> = P extends Builtin
+  ? P
+  : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
+
 if (_m0.util.Long !== Long) {
   _m0.util.Long = Long as any;
   _m0.configure();
+}
+
+function isSet(value: any): boolean {
+  return value !== null && value !== undefined;
 }

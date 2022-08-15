@@ -1,7 +1,7 @@
 /* eslint-disable */
 import Long from "long";
+import { Link } from "./types";
 import _m0 from "protobufjs/minimal";
-import { Link } from "../../../cyber/graph/v1beta1/types";
 
 export const protobufPackage = "cyber.graph.v1beta1";
 
@@ -12,7 +12,9 @@ export interface MsgCyberlink {
 
 export interface MsgCyberlinkResponse {}
 
-const baseMsgCyberlink: object = { neuron: "" };
+function createBaseMsgCyberlink(): MsgCyberlink {
+  return { neuron: "", links: [] };
+}
 
 export const MsgCyberlink = {
   encode(message: MsgCyberlink, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
@@ -28,8 +30,7 @@ export const MsgCyberlink = {
   decode(input: _m0.Reader | Uint8Array, length?: number): MsgCyberlink {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseMsgCyberlink } as MsgCyberlink;
-    message.links = [];
+    const message = createBaseMsgCyberlink();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -48,19 +49,10 @@ export const MsgCyberlink = {
   },
 
   fromJSON(object: any): MsgCyberlink {
-    const message = { ...baseMsgCyberlink } as MsgCyberlink;
-    message.links = [];
-    if (object.neuron !== undefined && object.neuron !== null) {
-      message.neuron = String(object.neuron);
-    } else {
-      message.neuron = "";
-    }
-    if (object.links !== undefined && object.links !== null) {
-      for (const e of object.links) {
-        message.links.push(Link.fromJSON(e));
-      }
-    }
-    return message;
+    return {
+      neuron: isSet(object.neuron) ? String(object.neuron) : "",
+      links: Array.isArray(object?.links) ? object.links.map((e: any) => Link.fromJSON(e)) : [],
+    };
   },
 
   toJSON(message: MsgCyberlink): unknown {
@@ -74,24 +66,17 @@ export const MsgCyberlink = {
     return obj;
   },
 
-  fromPartial(object: DeepPartial<MsgCyberlink>): MsgCyberlink {
-    const message = { ...baseMsgCyberlink } as MsgCyberlink;
-    message.links = [];
-    if (object.neuron !== undefined && object.neuron !== null) {
-      message.neuron = object.neuron;
-    } else {
-      message.neuron = "";
-    }
-    if (object.links !== undefined && object.links !== null) {
-      for (const e of object.links) {
-        message.links.push(Link.fromPartial(e));
-      }
-    }
+  fromPartial<I extends Exact<DeepPartial<MsgCyberlink>, I>>(object: I): MsgCyberlink {
+    const message = createBaseMsgCyberlink();
+    message.neuron = object.neuron ?? "";
+    message.links = object.links?.map((e) => Link.fromPartial(e)) || [];
     return message;
   },
 };
 
-const baseMsgCyberlinkResponse: object = {};
+function createBaseMsgCyberlinkResponse(): MsgCyberlinkResponse {
+  return {};
+}
 
 export const MsgCyberlinkResponse = {
   encode(_: MsgCyberlinkResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
@@ -101,7 +86,7 @@ export const MsgCyberlinkResponse = {
   decode(input: _m0.Reader | Uint8Array, length?: number): MsgCyberlinkResponse {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseMsgCyberlinkResponse } as MsgCyberlinkResponse;
+    const message = createBaseMsgCyberlinkResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -114,8 +99,7 @@ export const MsgCyberlinkResponse = {
   },
 
   fromJSON(_: any): MsgCyberlinkResponse {
-    const message = { ...baseMsgCyberlinkResponse } as MsgCyberlinkResponse;
-    return message;
+    return {};
   },
 
   toJSON(_: MsgCyberlinkResponse): unknown {
@@ -123,8 +107,8 @@ export const MsgCyberlinkResponse = {
     return obj;
   },
 
-  fromPartial(_: DeepPartial<MsgCyberlinkResponse>): MsgCyberlinkResponse {
-    const message = { ...baseMsgCyberlinkResponse } as MsgCyberlinkResponse;
+  fromPartial<I extends Exact<DeepPartial<MsgCyberlinkResponse>, I>>(_: I): MsgCyberlinkResponse {
+    const message = createBaseMsgCyberlinkResponse();
     return message;
   },
 };
@@ -150,9 +134,12 @@ interface Rpc {
   request(service: string, method: string, data: Uint8Array): Promise<Uint8Array>;
 }
 
-type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined | Long;
+type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
+
 export type DeepPartial<T> = T extends Builtin
   ? T
+  : T extends Long
+  ? string | number | Long
   : T extends Array<infer U>
   ? Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U>
@@ -161,7 +148,16 @@ export type DeepPartial<T> = T extends Builtin
   ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
+type KeysOfUnion<T> = T extends T ? keyof T : never;
+export type Exact<P, I extends P> = P extends Builtin
+  ? P
+  : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
+
 if (_m0.util.Long !== Long) {
   _m0.util.Long = Long as any;
   _m0.configure();
+}
+
+function isSet(value: any): boolean {
+  return value !== null && value !== undefined;
 }
