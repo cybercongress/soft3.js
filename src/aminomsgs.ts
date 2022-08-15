@@ -344,7 +344,7 @@ export function createCyberAminoConverters(): AminoConverters {
           offerCoin: offer_coin,
           demandCoinDenom: demand_coin_denom,
           offerCoinFee: offer_coin_fee,
-          orderPrice: parseFloat(order_price).toFixed(18).replace('.', '').replace(/(^0+)/, ''),
+          orderPrice: order_price.replace('.',''),
         };
       },
     },
