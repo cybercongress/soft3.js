@@ -1,9 +1,9 @@
 /* eslint-disable */
-import Long from "long";
-import _m0 from "protobufjs/minimal";
-import { Params, Route } from "../../../cyber/grid/v1beta1/types";
+import { Params, Route } from "./types";
 import { PageRequest, PageResponse } from "../../../cosmos/base/query/v1beta1/pagination";
+import Long from "long";
 import { Coin } from "../../../cosmos/base/v1beta1/coin";
+import _m0 from "protobufjs/minimal";
 
 export const protobufPackage = "cyber.grid.v1beta1";
 
@@ -43,7 +43,9 @@ export interface QueryRoutesResponse {
   pagination?: PageResponse;
 }
 
-const baseQueryParamsRequest: object = {};
+function createBaseQueryParamsRequest(): QueryParamsRequest {
+  return {};
+}
 
 export const QueryParamsRequest = {
   encode(_: QueryParamsRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
@@ -53,7 +55,7 @@ export const QueryParamsRequest = {
   decode(input: _m0.Reader | Uint8Array, length?: number): QueryParamsRequest {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseQueryParamsRequest } as QueryParamsRequest;
+    const message = createBaseQueryParamsRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -66,8 +68,7 @@ export const QueryParamsRequest = {
   },
 
   fromJSON(_: any): QueryParamsRequest {
-    const message = { ...baseQueryParamsRequest } as QueryParamsRequest;
-    return message;
+    return {};
   },
 
   toJSON(_: QueryParamsRequest): unknown {
@@ -75,13 +76,15 @@ export const QueryParamsRequest = {
     return obj;
   },
 
-  fromPartial(_: DeepPartial<QueryParamsRequest>): QueryParamsRequest {
-    const message = { ...baseQueryParamsRequest } as QueryParamsRequest;
+  fromPartial<I extends Exact<DeepPartial<QueryParamsRequest>, I>>(_: I): QueryParamsRequest {
+    const message = createBaseQueryParamsRequest();
     return message;
   },
 };
 
-const baseQueryParamsResponse: object = {};
+function createBaseQueryParamsResponse(): QueryParamsResponse {
+  return { params: undefined };
+}
 
 export const QueryParamsResponse = {
   encode(message: QueryParamsResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
@@ -94,7 +97,7 @@ export const QueryParamsResponse = {
   decode(input: _m0.Reader | Uint8Array, length?: number): QueryParamsResponse {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseQueryParamsResponse } as QueryParamsResponse;
+    const message = createBaseQueryParamsResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -110,13 +113,9 @@ export const QueryParamsResponse = {
   },
 
   fromJSON(object: any): QueryParamsResponse {
-    const message = { ...baseQueryParamsResponse } as QueryParamsResponse;
-    if (object.params !== undefined && object.params !== null) {
-      message.params = Params.fromJSON(object.params);
-    } else {
-      message.params = undefined;
-    }
-    return message;
+    return {
+      params: isSet(object.params) ? Params.fromJSON(object.params) : undefined,
+    };
   },
 
   toJSON(message: QueryParamsResponse): unknown {
@@ -125,18 +124,17 @@ export const QueryParamsResponse = {
     return obj;
   },
 
-  fromPartial(object: DeepPartial<QueryParamsResponse>): QueryParamsResponse {
-    const message = { ...baseQueryParamsResponse } as QueryParamsResponse;
-    if (object.params !== undefined && object.params !== null) {
-      message.params = Params.fromPartial(object.params);
-    } else {
-      message.params = undefined;
-    }
+  fromPartial<I extends Exact<DeepPartial<QueryParamsResponse>, I>>(object: I): QueryParamsResponse {
+    const message = createBaseQueryParamsResponse();
+    message.params =
+      object.params !== undefined && object.params !== null ? Params.fromPartial(object.params) : undefined;
     return message;
   },
 };
 
-const baseQuerySourceRequest: object = { source: "" };
+function createBaseQuerySourceRequest(): QuerySourceRequest {
+  return { source: "" };
+}
 
 export const QuerySourceRequest = {
   encode(message: QuerySourceRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
@@ -149,7 +147,7 @@ export const QuerySourceRequest = {
   decode(input: _m0.Reader | Uint8Array, length?: number): QuerySourceRequest {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseQuerySourceRequest } as QuerySourceRequest;
+    const message = createBaseQuerySourceRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -165,13 +163,9 @@ export const QuerySourceRequest = {
   },
 
   fromJSON(object: any): QuerySourceRequest {
-    const message = { ...baseQuerySourceRequest } as QuerySourceRequest;
-    if (object.source !== undefined && object.source !== null) {
-      message.source = String(object.source);
-    } else {
-      message.source = "";
-    }
-    return message;
+    return {
+      source: isSet(object.source) ? String(object.source) : "",
+    };
   },
 
   toJSON(message: QuerySourceRequest): unknown {
@@ -180,18 +174,16 @@ export const QuerySourceRequest = {
     return obj;
   },
 
-  fromPartial(object: DeepPartial<QuerySourceRequest>): QuerySourceRequest {
-    const message = { ...baseQuerySourceRequest } as QuerySourceRequest;
-    if (object.source !== undefined && object.source !== null) {
-      message.source = object.source;
-    } else {
-      message.source = "";
-    }
+  fromPartial<I extends Exact<DeepPartial<QuerySourceRequest>, I>>(object: I): QuerySourceRequest {
+    const message = createBaseQuerySourceRequest();
+    message.source = object.source ?? "";
     return message;
   },
 };
 
-const baseQueryDestinationRequest: object = { destination: "" };
+function createBaseQueryDestinationRequest(): QueryDestinationRequest {
+  return { destination: "" };
+}
 
 export const QueryDestinationRequest = {
   encode(message: QueryDestinationRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
@@ -204,7 +196,7 @@ export const QueryDestinationRequest = {
   decode(input: _m0.Reader | Uint8Array, length?: number): QueryDestinationRequest {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseQueryDestinationRequest } as QueryDestinationRequest;
+    const message = createBaseQueryDestinationRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -220,13 +212,9 @@ export const QueryDestinationRequest = {
   },
 
   fromJSON(object: any): QueryDestinationRequest {
-    const message = { ...baseQueryDestinationRequest } as QueryDestinationRequest;
-    if (object.destination !== undefined && object.destination !== null) {
-      message.destination = String(object.destination);
-    } else {
-      message.destination = "";
-    }
-    return message;
+    return {
+      destination: isSet(object.destination) ? String(object.destination) : "",
+    };
   },
 
   toJSON(message: QueryDestinationRequest): unknown {
@@ -235,18 +223,16 @@ export const QueryDestinationRequest = {
     return obj;
   },
 
-  fromPartial(object: DeepPartial<QueryDestinationRequest>): QueryDestinationRequest {
-    const message = { ...baseQueryDestinationRequest } as QueryDestinationRequest;
-    if (object.destination !== undefined && object.destination !== null) {
-      message.destination = object.destination;
-    } else {
-      message.destination = "";
-    }
+  fromPartial<I extends Exact<DeepPartial<QueryDestinationRequest>, I>>(object: I): QueryDestinationRequest {
+    const message = createBaseQueryDestinationRequest();
+    message.destination = object.destination ?? "";
     return message;
   },
 };
 
-const baseQueryRoutedEnergyResponse: object = {};
+function createBaseQueryRoutedEnergyResponse(): QueryRoutedEnergyResponse {
+  return { value: [] };
+}
 
 export const QueryRoutedEnergyResponse = {
   encode(message: QueryRoutedEnergyResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
@@ -259,8 +245,7 @@ export const QueryRoutedEnergyResponse = {
   decode(input: _m0.Reader | Uint8Array, length?: number): QueryRoutedEnergyResponse {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseQueryRoutedEnergyResponse } as QueryRoutedEnergyResponse;
-    message.value = [];
+    const message = createBaseQueryRoutedEnergyResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -276,14 +261,9 @@ export const QueryRoutedEnergyResponse = {
   },
 
   fromJSON(object: any): QueryRoutedEnergyResponse {
-    const message = { ...baseQueryRoutedEnergyResponse } as QueryRoutedEnergyResponse;
-    message.value = [];
-    if (object.value !== undefined && object.value !== null) {
-      for (const e of object.value) {
-        message.value.push(Coin.fromJSON(e));
-      }
-    }
-    return message;
+    return {
+      value: Array.isArray(object?.value) ? object.value.map((e: any) => Coin.fromJSON(e)) : [],
+    };
   },
 
   toJSON(message: QueryRoutedEnergyResponse): unknown {
@@ -296,19 +276,18 @@ export const QueryRoutedEnergyResponse = {
     return obj;
   },
 
-  fromPartial(object: DeepPartial<QueryRoutedEnergyResponse>): QueryRoutedEnergyResponse {
-    const message = { ...baseQueryRoutedEnergyResponse } as QueryRoutedEnergyResponse;
-    message.value = [];
-    if (object.value !== undefined && object.value !== null) {
-      for (const e of object.value) {
-        message.value.push(Coin.fromPartial(e));
-      }
-    }
+  fromPartial<I extends Exact<DeepPartial<QueryRoutedEnergyResponse>, I>>(
+    object: I,
+  ): QueryRoutedEnergyResponse {
+    const message = createBaseQueryRoutedEnergyResponse();
+    message.value = object.value?.map((e) => Coin.fromPartial(e)) || [];
     return message;
   },
 };
 
-const baseQueryRouteRequest: object = { source: "", destination: "" };
+function createBaseQueryRouteRequest(): QueryRouteRequest {
+  return { source: "", destination: "" };
+}
 
 export const QueryRouteRequest = {
   encode(message: QueryRouteRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
@@ -324,7 +303,7 @@ export const QueryRouteRequest = {
   decode(input: _m0.Reader | Uint8Array, length?: number): QueryRouteRequest {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseQueryRouteRequest } as QueryRouteRequest;
+    const message = createBaseQueryRouteRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -343,18 +322,10 @@ export const QueryRouteRequest = {
   },
 
   fromJSON(object: any): QueryRouteRequest {
-    const message = { ...baseQueryRouteRequest } as QueryRouteRequest;
-    if (object.source !== undefined && object.source !== null) {
-      message.source = String(object.source);
-    } else {
-      message.source = "";
-    }
-    if (object.destination !== undefined && object.destination !== null) {
-      message.destination = String(object.destination);
-    } else {
-      message.destination = "";
-    }
-    return message;
+    return {
+      source: isSet(object.source) ? String(object.source) : "",
+      destination: isSet(object.destination) ? String(object.destination) : "",
+    };
   },
 
   toJSON(message: QueryRouteRequest): unknown {
@@ -364,23 +335,17 @@ export const QueryRouteRequest = {
     return obj;
   },
 
-  fromPartial(object: DeepPartial<QueryRouteRequest>): QueryRouteRequest {
-    const message = { ...baseQueryRouteRequest } as QueryRouteRequest;
-    if (object.source !== undefined && object.source !== null) {
-      message.source = object.source;
-    } else {
-      message.source = "";
-    }
-    if (object.destination !== undefined && object.destination !== null) {
-      message.destination = object.destination;
-    } else {
-      message.destination = "";
-    }
+  fromPartial<I extends Exact<DeepPartial<QueryRouteRequest>, I>>(object: I): QueryRouteRequest {
+    const message = createBaseQueryRouteRequest();
+    message.source = object.source ?? "";
+    message.destination = object.destination ?? "";
     return message;
   },
 };
 
-const baseQueryRouteResponse: object = {};
+function createBaseQueryRouteResponse(): QueryRouteResponse {
+  return { route: undefined };
+}
 
 export const QueryRouteResponse = {
   encode(message: QueryRouteResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
@@ -393,7 +358,7 @@ export const QueryRouteResponse = {
   decode(input: _m0.Reader | Uint8Array, length?: number): QueryRouteResponse {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseQueryRouteResponse } as QueryRouteResponse;
+    const message = createBaseQueryRouteResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -409,13 +374,9 @@ export const QueryRouteResponse = {
   },
 
   fromJSON(object: any): QueryRouteResponse {
-    const message = { ...baseQueryRouteResponse } as QueryRouteResponse;
-    if (object.route !== undefined && object.route !== null) {
-      message.route = Route.fromJSON(object.route);
-    } else {
-      message.route = undefined;
-    }
-    return message;
+    return {
+      route: isSet(object.route) ? Route.fromJSON(object.route) : undefined,
+    };
   },
 
   toJSON(message: QueryRouteResponse): unknown {
@@ -424,18 +385,17 @@ export const QueryRouteResponse = {
     return obj;
   },
 
-  fromPartial(object: DeepPartial<QueryRouteResponse>): QueryRouteResponse {
-    const message = { ...baseQueryRouteResponse } as QueryRouteResponse;
-    if (object.route !== undefined && object.route !== null) {
-      message.route = Route.fromPartial(object.route);
-    } else {
-      message.route = undefined;
-    }
+  fromPartial<I extends Exact<DeepPartial<QueryRouteResponse>, I>>(object: I): QueryRouteResponse {
+    const message = createBaseQueryRouteResponse();
+    message.route =
+      object.route !== undefined && object.route !== null ? Route.fromPartial(object.route) : undefined;
     return message;
   },
 };
 
-const baseQueryRoutesRequest: object = {};
+function createBaseQueryRoutesRequest(): QueryRoutesRequest {
+  return { pagination: undefined };
+}
 
 export const QueryRoutesRequest = {
   encode(message: QueryRoutesRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
@@ -448,7 +408,7 @@ export const QueryRoutesRequest = {
   decode(input: _m0.Reader | Uint8Array, length?: number): QueryRoutesRequest {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseQueryRoutesRequest } as QueryRoutesRequest;
+    const message = createBaseQueryRoutesRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -464,13 +424,9 @@ export const QueryRoutesRequest = {
   },
 
   fromJSON(object: any): QueryRoutesRequest {
-    const message = { ...baseQueryRoutesRequest } as QueryRoutesRequest;
-    if (object.pagination !== undefined && object.pagination !== null) {
-      message.pagination = PageRequest.fromJSON(object.pagination);
-    } else {
-      message.pagination = undefined;
-    }
-    return message;
+    return {
+      pagination: isSet(object.pagination) ? PageRequest.fromJSON(object.pagination) : undefined,
+    };
   },
 
   toJSON(message: QueryRoutesRequest): unknown {
@@ -480,18 +436,19 @@ export const QueryRoutesRequest = {
     return obj;
   },
 
-  fromPartial(object: DeepPartial<QueryRoutesRequest>): QueryRoutesRequest {
-    const message = { ...baseQueryRoutesRequest } as QueryRoutesRequest;
-    if (object.pagination !== undefined && object.pagination !== null) {
-      message.pagination = PageRequest.fromPartial(object.pagination);
-    } else {
-      message.pagination = undefined;
-    }
+  fromPartial<I extends Exact<DeepPartial<QueryRoutesRequest>, I>>(object: I): QueryRoutesRequest {
+    const message = createBaseQueryRoutesRequest();
+    message.pagination =
+      object.pagination !== undefined && object.pagination !== null
+        ? PageRequest.fromPartial(object.pagination)
+        : undefined;
     return message;
   },
 };
 
-const baseQueryRoutesResponse: object = {};
+function createBaseQueryRoutesResponse(): QueryRoutesResponse {
+  return { routes: [], pagination: undefined };
+}
 
 export const QueryRoutesResponse = {
   encode(message: QueryRoutesResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
@@ -507,8 +464,7 @@ export const QueryRoutesResponse = {
   decode(input: _m0.Reader | Uint8Array, length?: number): QueryRoutesResponse {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseQueryRoutesResponse } as QueryRoutesResponse;
-    message.routes = [];
+    const message = createBaseQueryRoutesResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -527,19 +483,10 @@ export const QueryRoutesResponse = {
   },
 
   fromJSON(object: any): QueryRoutesResponse {
-    const message = { ...baseQueryRoutesResponse } as QueryRoutesResponse;
-    message.routes = [];
-    if (object.routes !== undefined && object.routes !== null) {
-      for (const e of object.routes) {
-        message.routes.push(Route.fromJSON(e));
-      }
-    }
-    if (object.pagination !== undefined && object.pagination !== null) {
-      message.pagination = PageResponse.fromJSON(object.pagination);
-    } else {
-      message.pagination = undefined;
-    }
-    return message;
+    return {
+      routes: Array.isArray(object?.routes) ? object.routes.map((e: any) => Route.fromJSON(e)) : [],
+      pagination: isSet(object.pagination) ? PageResponse.fromJSON(object.pagination) : undefined,
+    };
   },
 
   toJSON(message: QueryRoutesResponse): unknown {
@@ -554,19 +501,13 @@ export const QueryRoutesResponse = {
     return obj;
   },
 
-  fromPartial(object: DeepPartial<QueryRoutesResponse>): QueryRoutesResponse {
-    const message = { ...baseQueryRoutesResponse } as QueryRoutesResponse;
-    message.routes = [];
-    if (object.routes !== undefined && object.routes !== null) {
-      for (const e of object.routes) {
-        message.routes.push(Route.fromPartial(e));
-      }
-    }
-    if (object.pagination !== undefined && object.pagination !== null) {
-      message.pagination = PageResponse.fromPartial(object.pagination);
-    } else {
-      message.pagination = undefined;
-    }
+  fromPartial<I extends Exact<DeepPartial<QueryRoutesResponse>, I>>(object: I): QueryRoutesResponse {
+    const message = createBaseQueryRoutesResponse();
+    message.routes = object.routes?.map((e) => Route.fromPartial(e)) || [];
+    message.pagination =
+      object.pagination !== undefined && object.pagination !== null
+        ? PageResponse.fromPartial(object.pagination)
+        : undefined;
     return message;
   },
 };
@@ -640,9 +581,12 @@ interface Rpc {
   request(service: string, method: string, data: Uint8Array): Promise<Uint8Array>;
 }
 
-type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined | Long;
+type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
+
 export type DeepPartial<T> = T extends Builtin
   ? T
+  : T extends Long
+  ? string | number | Long
   : T extends Array<infer U>
   ? Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U>
@@ -651,7 +595,16 @@ export type DeepPartial<T> = T extends Builtin
   ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
+type KeysOfUnion<T> = T extends T ? keyof T : never;
+export type Exact<P, I extends P> = P extends Builtin
+  ? P
+  : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
+
 if (_m0.util.Long !== Long) {
   _m0.util.Long = Long as any;
   _m0.configure();
+}
+
+function isSet(value: any): boolean {
+  return value !== null && value !== undefined;
 }

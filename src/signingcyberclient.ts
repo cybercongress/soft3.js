@@ -49,6 +49,7 @@ import {
   MsgWithdrawDelegatorRewardEncodeObject,
   SignerData,
   StdFee,
+  AminoConverters,
 } from "@cosmjs/stargate";
 import { longify } from "@cosmjs/stargate/build/queryclient";
 import { Tendermint34Client } from "@cosmjs/tendermint-rpc";
@@ -182,6 +183,18 @@ export interface SigningCyberClientOptions {
   readonly broadcastPollIntervalMs?: number;
 }
 
+function createAminoTypes(prefix: string): AminoConverters {
+  return {
+    ...createCyberAminoConverters(),
+    ...createWasmAminoConverters(),
+    ...createBankAminoConverters(),
+    ...createDistributionAminoConverters(),
+    ...createStakingAminoConverters(prefix),
+    ...createGovAminoConverters(),
+    ...createIbcAminoConverters(),
+  };
+}
+
 export class SigningCyberClient extends CyberClient {
   public readonly registry: Registry;
   public readonly broadcastTimeoutMs: number | undefined;
@@ -224,15 +237,7 @@ export class SigningCyberClient extends CyberClient {
     const prefix = options.prefix ?? "bostrom";
     const {
       registry = createDefaultRegistry(),
-      aminoTypes = new AminoTypes({
-        ...createCyberAminoConverters(),
-        ...createWasmAminoConverters(),
-        ...createBankAminoConverters(),
-        ...createDistributionAminoConverters(),
-        ...createStakingAminoConverters(prefix),
-        ...createGovAminoConverters(),
-        ...createIbcAminoConverters(),
-      }),
+      aminoTypes = new AminoTypes(createAminoTypes(prefix)),
     } = options;
     this.registry = registry;
     this.aminoTypes = aminoTypes;
@@ -732,7 +737,7 @@ export class SigningCyberClient extends CyberClient {
       typeUrl: "/tendermint.liquidity.v1beta1.MsgSwapWithinBatch",
       value: MsgSwapWithinBatch.fromPartial({
         swapRequesterAddress: swapRequesterAddress,
-        poolId: Long.fromString(new Uint53(poolId).toString()),
+        poolId: poolId,
         swapTypeId: swapTypeId,
         offerCoin: offerCoin,
         demandCoinDenom: demandCoinDenom,
@@ -755,7 +760,7 @@ export class SigningCyberClient extends CyberClient {
       typeUrl: "/tendermint.liquidity.v1beta1.MsgDepositWithinBatch",
       value: MsgDepositWithinBatch.fromPartial({
         depositorAddress: depositorAddress,
-        poolId: Long.fromString(new Uint53(poolId).toString()),
+        poolId: poolId,
         depositCoins: depositCoins,
       }),
     };
@@ -774,7 +779,7 @@ export class SigningCyberClient extends CyberClient {
       typeUrl: "/tendermint.liquidity.v1beta1.MsgWithdrawWithinBatch",
       value: MsgWithdrawWithinBatch.fromPartial({
         withdrawerAddress: withdrawerAddress,
-        poolId: Long.fromString(new Uint53(poolId).toString()),
+        poolId: poolId,
         poolCoin: poolCoin,
       }),
     };
@@ -862,11 +867,11 @@ export class SigningCyberClient extends CyberClient {
     const pubkey = encodePubkey(encodeSecp256k1Pubkey(accountFromSigner.pubkey));
     const signMode = SignMode.SIGN_MODE_LEGACY_AMINO_JSON;
 
-    let msgs, signedTxBody;
-    msgs = messages.map((msg) => this.aminoTypes.toAmino(msg));
+    const msgs = messages.map((msg) => this.aminoTypes.toAmino(msg));
     const signDoc = makeSignDocAmino(msgs, fee, chainId, memo, accountNumber, sequence);
-    const { signature, signed } = await this.signer.signAmino(signerAddress, signDoc);
-    signedTxBody = {
+    var { signature, signed } = await this.signer.signAmino(signerAddress, signDoc);
+    
+    const signedTxBody = {
       messages: signed.msgs.map((msg) => this.aminoTypes.fromAmino(msg)),
       memo: signed.memo,
     };

@@ -13,7 +13,9 @@ export interface PageResponse {
   total: number;
 }
 
-const basePageRequest: object = { page: 0, perPage: 0 };
+function createBasePageRequest(): PageRequest {
+  return { page: 0, perPage: 0 };
+}
 
 export const PageRequest = {
   encode(message: PageRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
@@ -29,7 +31,7 @@ export const PageRequest = {
   decode(input: _m0.Reader | Uint8Array, length?: number): PageRequest {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...basePageRequest } as PageRequest;
+    const message = createBasePageRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -48,44 +50,30 @@ export const PageRequest = {
   },
 
   fromJSON(object: any): PageRequest {
-    const message = { ...basePageRequest } as PageRequest;
-    if (object.page !== undefined && object.page !== null) {
-      message.page = Number(object.page);
-    } else {
-      message.page = 0;
-    }
-    if (object.perPage !== undefined && object.perPage !== null) {
-      message.perPage = Number(object.perPage);
-    } else {
-      message.perPage = 0;
-    }
-    return message;
+    return {
+      page: isSet(object.page) ? Number(object.page) : 0,
+      perPage: isSet(object.perPage) ? Number(object.perPage) : 0,
+    };
   },
 
   toJSON(message: PageRequest): unknown {
     const obj: any = {};
-    message.page !== undefined && (obj.page = message.page);
-    message.perPage !== undefined && (obj.perPage = message.perPage);
+    message.page !== undefined && (obj.page = Math.round(message.page));
+    message.perPage !== undefined && (obj.perPage = Math.round(message.perPage));
     return obj;
   },
 
-  fromPartial(object: DeepPartial<PageRequest>): PageRequest {
-    const message = { ...basePageRequest } as PageRequest;
-    if (object.page !== undefined && object.page !== null) {
-      message.page = object.page;
-    } else {
-      message.page = 0;
-    }
-    if (object.perPage !== undefined && object.perPage !== null) {
-      message.perPage = object.perPage;
-    } else {
-      message.perPage = 0;
-    }
+  fromPartial<I extends Exact<DeepPartial<PageRequest>, I>>(object: I): PageRequest {
+    const message = createBasePageRequest();
+    message.page = object.page ?? 0;
+    message.perPage = object.perPage ?? 0;
     return message;
   },
 };
 
-const basePageResponse: object = { total: 0 };
+function createBasePageResponse(): PageResponse {
+  return { total: 0 };
+}
 
 export const PageResponse = {
   encode(message: PageResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
@@ -98,7 +86,7 @@ export const PageResponse = {
   decode(input: _m0.Reader | Uint8Array, length?: number): PageResponse {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...basePageResponse } as PageResponse;
+    const message = createBasePageResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -114,35 +102,30 @@ export const PageResponse = {
   },
 
   fromJSON(object: any): PageResponse {
-    const message = { ...basePageResponse } as PageResponse;
-    if (object.total !== undefined && object.total !== null) {
-      message.total = Number(object.total);
-    } else {
-      message.total = 0;
-    }
-    return message;
+    return {
+      total: isSet(object.total) ? Number(object.total) : 0,
+    };
   },
 
   toJSON(message: PageResponse): unknown {
     const obj: any = {};
-    message.total !== undefined && (obj.total = message.total);
+    message.total !== undefined && (obj.total = Math.round(message.total));
     return obj;
   },
 
-  fromPartial(object: DeepPartial<PageResponse>): PageResponse {
-    const message = { ...basePageResponse } as PageResponse;
-    if (object.total !== undefined && object.total !== null) {
-      message.total = object.total;
-    } else {
-      message.total = 0;
-    }
+  fromPartial<I extends Exact<DeepPartial<PageResponse>, I>>(object: I): PageResponse {
+    const message = createBasePageResponse();
+    message.total = object.total ?? 0;
     return message;
   },
 };
 
-type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined | Long;
+type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
+
 export type DeepPartial<T> = T extends Builtin
   ? T
+  : T extends Long
+  ? string | number | Long
   : T extends Array<infer U>
   ? Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U>
@@ -151,7 +134,16 @@ export type DeepPartial<T> = T extends Builtin
   ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
+type KeysOfUnion<T> = T extends T ? keyof T : never;
+export type Exact<P, I extends P> = P extends Builtin
+  ? P
+  : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
+
 if (_m0.util.Long !== Long) {
   _m0.util.Long = Long as any;
   _m0.configure();
+}
+
+function isSet(value: any): boolean {
+  return value !== null && value !== undefined;
 }

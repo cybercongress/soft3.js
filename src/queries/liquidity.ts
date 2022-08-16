@@ -32,12 +32,14 @@ export function setupLiquidityExtension(base: QueryClient): LiquidityExtension {
       },
       pool: async (id: number) => {
         const response = await queryService.LiquidityPool({
-          poolId: Long.fromString(new Uint53(id).toString()),
+          poolId: id,
         });
         return response;
       },
       pools: async () => {
-        const response = await queryService.LiquidityPools({});
+        const response = await queryService.LiquidityPools({
+          pagination: undefined,
+        });
         return response;
       },
     },

@@ -1,7 +1,7 @@
 /* eslint-disable */
+import { Coin } from "../../../cosmos/base/v1beta1/coin";
 import Long from "long";
 import _m0 from "protobufjs/minimal";
-import { Coin } from "../../../cosmos/base/v1beta1/coin";
 
 export const protobufPackage = "cyber.resources.v1beta1";
 
@@ -14,7 +14,9 @@ export interface MsgInvestmint {
 
 export interface MsgInvestmintResponse {}
 
-const baseMsgInvestmint: object = { neuron: "", resource: "", length: Long.UZERO };
+function createBaseMsgInvestmint(): MsgInvestmint {
+  return { neuron: "", amount: undefined, resource: "", length: Long.UZERO };
+}
 
 export const MsgInvestmint = {
   encode(message: MsgInvestmint, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
@@ -36,7 +38,7 @@ export const MsgInvestmint = {
   decode(input: _m0.Reader | Uint8Array, length?: number): MsgInvestmint {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseMsgInvestmint } as MsgInvestmint;
+    const message = createBaseMsgInvestmint();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -61,28 +63,12 @@ export const MsgInvestmint = {
   },
 
   fromJSON(object: any): MsgInvestmint {
-    const message = { ...baseMsgInvestmint } as MsgInvestmint;
-    if (object.neuron !== undefined && object.neuron !== null) {
-      message.neuron = String(object.neuron);
-    } else {
-      message.neuron = "";
-    }
-    if (object.amount !== undefined && object.amount !== null) {
-      message.amount = Coin.fromJSON(object.amount);
-    } else {
-      message.amount = undefined;
-    }
-    if (object.resource !== undefined && object.resource !== null) {
-      message.resource = String(object.resource);
-    } else {
-      message.resource = "";
-    }
-    if (object.length !== undefined && object.length !== null) {
-      message.length = Long.fromString(object.length);
-    } else {
-      message.length = Long.UZERO;
-    }
-    return message;
+    return {
+      neuron: isSet(object.neuron) ? String(object.neuron) : "",
+      amount: isSet(object.amount) ? Coin.fromJSON(object.amount) : undefined,
+      resource: isSet(object.resource) ? String(object.resource) : "",
+      length: isSet(object.length) ? Long.fromValue(object.length) : Long.UZERO,
+    };
   },
 
   toJSON(message: MsgInvestmint): unknown {
@@ -94,33 +80,21 @@ export const MsgInvestmint = {
     return obj;
   },
 
-  fromPartial(object: DeepPartial<MsgInvestmint>): MsgInvestmint {
-    const message = { ...baseMsgInvestmint } as MsgInvestmint;
-    if (object.neuron !== undefined && object.neuron !== null) {
-      message.neuron = object.neuron;
-    } else {
-      message.neuron = "";
-    }
-    if (object.amount !== undefined && object.amount !== null) {
-      message.amount = Coin.fromPartial(object.amount);
-    } else {
-      message.amount = undefined;
-    }
-    if (object.resource !== undefined && object.resource !== null) {
-      message.resource = object.resource;
-    } else {
-      message.resource = "";
-    }
-    if (object.length !== undefined && object.length !== null) {
-      message.length = object.length as Long;
-    } else {
-      message.length = Long.UZERO;
-    }
+  fromPartial<I extends Exact<DeepPartial<MsgInvestmint>, I>>(object: I): MsgInvestmint {
+    const message = createBaseMsgInvestmint();
+    message.neuron = object.neuron ?? "";
+    message.amount =
+      object.amount !== undefined && object.amount !== null ? Coin.fromPartial(object.amount) : undefined;
+    message.resource = object.resource ?? "";
+    message.length =
+      object.length !== undefined && object.length !== null ? Long.fromValue(object.length) : Long.UZERO;
     return message;
   },
 };
 
-const baseMsgInvestmintResponse: object = {};
+function createBaseMsgInvestmintResponse(): MsgInvestmintResponse {
+  return {};
+}
 
 export const MsgInvestmintResponse = {
   encode(_: MsgInvestmintResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
@@ -130,7 +104,7 @@ export const MsgInvestmintResponse = {
   decode(input: _m0.Reader | Uint8Array, length?: number): MsgInvestmintResponse {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseMsgInvestmintResponse } as MsgInvestmintResponse;
+    const message = createBaseMsgInvestmintResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -143,8 +117,7 @@ export const MsgInvestmintResponse = {
   },
 
   fromJSON(_: any): MsgInvestmintResponse {
-    const message = { ...baseMsgInvestmintResponse } as MsgInvestmintResponse;
-    return message;
+    return {};
   },
 
   toJSON(_: MsgInvestmintResponse): unknown {
@@ -152,8 +125,8 @@ export const MsgInvestmintResponse = {
     return obj;
   },
 
-  fromPartial(_: DeepPartial<MsgInvestmintResponse>): MsgInvestmintResponse {
-    const message = { ...baseMsgInvestmintResponse } as MsgInvestmintResponse;
+  fromPartial<I extends Exact<DeepPartial<MsgInvestmintResponse>, I>>(_: I): MsgInvestmintResponse {
+    const message = createBaseMsgInvestmintResponse();
     return message;
   },
 };
@@ -179,9 +152,12 @@ interface Rpc {
   request(service: string, method: string, data: Uint8Array): Promise<Uint8Array>;
 }
 
-type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined | Long;
+type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
+
 export type DeepPartial<T> = T extends Builtin
   ? T
+  : T extends Long
+  ? string | number | Long
   : T extends Array<infer U>
   ? Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U>
@@ -190,7 +166,16 @@ export type DeepPartial<T> = T extends Builtin
   ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
+type KeysOfUnion<T> = T extends T ? keyof T : never;
+export type Exact<P, I extends P> = P extends Builtin
+  ? P
+  : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
+
 if (_m0.util.Long !== Long) {
   _m0.util.Long = Long as any;
   _m0.configure();
+}
+
+function isSet(value: any): boolean {
+  return value !== null && value !== undefined;
 }

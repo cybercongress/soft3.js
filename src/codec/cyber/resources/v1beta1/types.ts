@@ -1,7 +1,7 @@
 /* eslint-disable */
+import { Coin } from "../../../cosmos/base/v1beta1/coin";
 import Long from "long";
 import _m0 from "protobufjs/minimal";
-import { Coin } from "../../../cosmos/base/v1beta1/coin";
 
 export const protobufPackage = "cyber.resources.v1beta1";
 
@@ -16,14 +16,18 @@ export interface Params {
   baseInvestmintAmountAmpere?: Coin;
 }
 
-const baseParams: object = {
-  maxSlots: 0,
-  halvingPeriodVoltBlocks: 0,
-  halvingPeriodAmpereBlocks: 0,
-  baseInvestmintPeriodVolt: 0,
-  baseInvestmintPeriodAmpere: 0,
-  minInvestmintPeriod: 0,
-};
+function createBaseParams(): Params {
+  return {
+    maxSlots: 0,
+    halvingPeriodVoltBlocks: 0,
+    halvingPeriodAmpereBlocks: 0,
+    baseInvestmintPeriodVolt: 0,
+    baseInvestmintPeriodAmpere: 0,
+    minInvestmintPeriod: 0,
+    baseInvestmintAmountVolt: undefined,
+    baseInvestmintAmountAmpere: undefined,
+  };
+}
 
 export const Params = {
   encode(message: Params, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
@@ -57,7 +61,7 @@ export const Params = {
   decode(input: _m0.Reader | Uint8Array, length?: number): Params {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseParams } as Params;
+    const message = createBaseParams();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -94,62 +98,43 @@ export const Params = {
   },
 
   fromJSON(object: any): Params {
-    const message = { ...baseParams } as Params;
-    if (object.maxSlots !== undefined && object.maxSlots !== null) {
-      message.maxSlots = Number(object.maxSlots);
-    } else {
-      message.maxSlots = 0;
-    }
-    if (object.halvingPeriodVoltBlocks !== undefined && object.halvingPeriodVoltBlocks !== null) {
-      message.halvingPeriodVoltBlocks = Number(object.halvingPeriodVoltBlocks);
-    } else {
-      message.halvingPeriodVoltBlocks = 0;
-    }
-    if (object.halvingPeriodAmpereBlocks !== undefined && object.halvingPeriodAmpereBlocks !== null) {
-      message.halvingPeriodAmpereBlocks = Number(object.halvingPeriodAmpereBlocks);
-    } else {
-      message.halvingPeriodAmpereBlocks = 0;
-    }
-    if (object.baseInvestmintPeriodVolt !== undefined && object.baseInvestmintPeriodVolt !== null) {
-      message.baseInvestmintPeriodVolt = Number(object.baseInvestmintPeriodVolt);
-    } else {
-      message.baseInvestmintPeriodVolt = 0;
-    }
-    if (object.baseInvestmintPeriodAmpere !== undefined && object.baseInvestmintPeriodAmpere !== null) {
-      message.baseInvestmintPeriodAmpere = Number(object.baseInvestmintPeriodAmpere);
-    } else {
-      message.baseInvestmintPeriodAmpere = 0;
-    }
-    if (object.minInvestmintPeriod !== undefined && object.minInvestmintPeriod !== null) {
-      message.minInvestmintPeriod = Number(object.minInvestmintPeriod);
-    } else {
-      message.minInvestmintPeriod = 0;
-    }
-    if (object.baseInvestmintAmountVolt !== undefined && object.baseInvestmintAmountVolt !== null) {
-      message.baseInvestmintAmountVolt = Coin.fromJSON(object.baseInvestmintAmountVolt);
-    } else {
-      message.baseInvestmintAmountVolt = undefined;
-    }
-    if (object.baseInvestmintAmountAmpere !== undefined && object.baseInvestmintAmountAmpere !== null) {
-      message.baseInvestmintAmountAmpere = Coin.fromJSON(object.baseInvestmintAmountAmpere);
-    } else {
-      message.baseInvestmintAmountAmpere = undefined;
-    }
-    return message;
+    return {
+      maxSlots: isSet(object.maxSlots) ? Number(object.maxSlots) : 0,
+      halvingPeriodVoltBlocks: isSet(object.halvingPeriodVoltBlocks)
+        ? Number(object.halvingPeriodVoltBlocks)
+        : 0,
+      halvingPeriodAmpereBlocks: isSet(object.halvingPeriodAmpereBlocks)
+        ? Number(object.halvingPeriodAmpereBlocks)
+        : 0,
+      baseInvestmintPeriodVolt: isSet(object.baseInvestmintPeriodVolt)
+        ? Number(object.baseInvestmintPeriodVolt)
+        : 0,
+      baseInvestmintPeriodAmpere: isSet(object.baseInvestmintPeriodAmpere)
+        ? Number(object.baseInvestmintPeriodAmpere)
+        : 0,
+      minInvestmintPeriod: isSet(object.minInvestmintPeriod) ? Number(object.minInvestmintPeriod) : 0,
+      baseInvestmintAmountVolt: isSet(object.baseInvestmintAmountVolt)
+        ? Coin.fromJSON(object.baseInvestmintAmountVolt)
+        : undefined,
+      baseInvestmintAmountAmpere: isSet(object.baseInvestmintAmountAmpere)
+        ? Coin.fromJSON(object.baseInvestmintAmountAmpere)
+        : undefined,
+    };
   },
 
   toJSON(message: Params): unknown {
     const obj: any = {};
-    message.maxSlots !== undefined && (obj.maxSlots = message.maxSlots);
+    message.maxSlots !== undefined && (obj.maxSlots = Math.round(message.maxSlots));
     message.halvingPeriodVoltBlocks !== undefined &&
-      (obj.halvingPeriodVoltBlocks = message.halvingPeriodVoltBlocks);
+      (obj.halvingPeriodVoltBlocks = Math.round(message.halvingPeriodVoltBlocks));
     message.halvingPeriodAmpereBlocks !== undefined &&
-      (obj.halvingPeriodAmpereBlocks = message.halvingPeriodAmpereBlocks);
+      (obj.halvingPeriodAmpereBlocks = Math.round(message.halvingPeriodAmpereBlocks));
     message.baseInvestmintPeriodVolt !== undefined &&
-      (obj.baseInvestmintPeriodVolt = message.baseInvestmintPeriodVolt);
+      (obj.baseInvestmintPeriodVolt = Math.round(message.baseInvestmintPeriodVolt));
     message.baseInvestmintPeriodAmpere !== undefined &&
-      (obj.baseInvestmintPeriodAmpere = message.baseInvestmintPeriodAmpere);
-    message.minInvestmintPeriod !== undefined && (obj.minInvestmintPeriod = message.minInvestmintPeriod);
+      (obj.baseInvestmintPeriodAmpere = Math.round(message.baseInvestmintPeriodAmpere));
+    message.minInvestmintPeriod !== undefined &&
+      (obj.minInvestmintPeriod = Math.round(message.minInvestmintPeriod));
     message.baseInvestmintAmountVolt !== undefined &&
       (obj.baseInvestmintAmountVolt = message.baseInvestmintAmountVolt
         ? Coin.toJSON(message.baseInvestmintAmountVolt)
@@ -161,55 +146,32 @@ export const Params = {
     return obj;
   },
 
-  fromPartial(object: DeepPartial<Params>): Params {
-    const message = { ...baseParams } as Params;
-    if (object.maxSlots !== undefined && object.maxSlots !== null) {
-      message.maxSlots = object.maxSlots;
-    } else {
-      message.maxSlots = 0;
-    }
-    if (object.halvingPeriodVoltBlocks !== undefined && object.halvingPeriodVoltBlocks !== null) {
-      message.halvingPeriodVoltBlocks = object.halvingPeriodVoltBlocks;
-    } else {
-      message.halvingPeriodVoltBlocks = 0;
-    }
-    if (object.halvingPeriodAmpereBlocks !== undefined && object.halvingPeriodAmpereBlocks !== null) {
-      message.halvingPeriodAmpereBlocks = object.halvingPeriodAmpereBlocks;
-    } else {
-      message.halvingPeriodAmpereBlocks = 0;
-    }
-    if (object.baseInvestmintPeriodVolt !== undefined && object.baseInvestmintPeriodVolt !== null) {
-      message.baseInvestmintPeriodVolt = object.baseInvestmintPeriodVolt;
-    } else {
-      message.baseInvestmintPeriodVolt = 0;
-    }
-    if (object.baseInvestmintPeriodAmpere !== undefined && object.baseInvestmintPeriodAmpere !== null) {
-      message.baseInvestmintPeriodAmpere = object.baseInvestmintPeriodAmpere;
-    } else {
-      message.baseInvestmintPeriodAmpere = 0;
-    }
-    if (object.minInvestmintPeriod !== undefined && object.minInvestmintPeriod !== null) {
-      message.minInvestmintPeriod = object.minInvestmintPeriod;
-    } else {
-      message.minInvestmintPeriod = 0;
-    }
-    if (object.baseInvestmintAmountVolt !== undefined && object.baseInvestmintAmountVolt !== null) {
-      message.baseInvestmintAmountVolt = Coin.fromPartial(object.baseInvestmintAmountVolt);
-    } else {
-      message.baseInvestmintAmountVolt = undefined;
-    }
-    if (object.baseInvestmintAmountAmpere !== undefined && object.baseInvestmintAmountAmpere !== null) {
-      message.baseInvestmintAmountAmpere = Coin.fromPartial(object.baseInvestmintAmountAmpere);
-    } else {
-      message.baseInvestmintAmountAmpere = undefined;
-    }
+  fromPartial<I extends Exact<DeepPartial<Params>, I>>(object: I): Params {
+    const message = createBaseParams();
+    message.maxSlots = object.maxSlots ?? 0;
+    message.halvingPeriodVoltBlocks = object.halvingPeriodVoltBlocks ?? 0;
+    message.halvingPeriodAmpereBlocks = object.halvingPeriodAmpereBlocks ?? 0;
+    message.baseInvestmintPeriodVolt = object.baseInvestmintPeriodVolt ?? 0;
+    message.baseInvestmintPeriodAmpere = object.baseInvestmintPeriodAmpere ?? 0;
+    message.minInvestmintPeriod = object.minInvestmintPeriod ?? 0;
+    message.baseInvestmintAmountVolt =
+      object.baseInvestmintAmountVolt !== undefined && object.baseInvestmintAmountVolt !== null
+        ? Coin.fromPartial(object.baseInvestmintAmountVolt)
+        : undefined;
+    message.baseInvestmintAmountAmpere =
+      object.baseInvestmintAmountAmpere !== undefined && object.baseInvestmintAmountAmpere !== null
+        ? Coin.fromPartial(object.baseInvestmintAmountAmpere)
+        : undefined;
     return message;
   },
 };
 
-type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined | Long;
+type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
+
 export type DeepPartial<T> = T extends Builtin
   ? T
+  : T extends Long
+  ? string | number | Long
   : T extends Array<infer U>
   ? Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U>
@@ -218,7 +180,16 @@ export type DeepPartial<T> = T extends Builtin
   ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
+type KeysOfUnion<T> = T extends T ? keyof T : never;
+export type Exact<P, I extends P> = P extends Builtin
+  ? P
+  : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
+
 if (_m0.util.Long !== Long) {
   _m0.util.Long = Long as any;
   _m0.configure();
+}
+
+function isSet(value: any): boolean {
+  return value !== null && value !== undefined;
 }

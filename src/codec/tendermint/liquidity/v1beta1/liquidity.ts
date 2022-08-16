@@ -1,7 +1,7 @@
 /* eslint-disable */
-import Long from "long";
-import _m0 from "protobufjs/minimal";
-import { Coin } from "../../../cosmos_proto/coin";
+import * as Long from "long";
+import { util, configure, Writer, Reader } from "protobufjs/minimal";
+import { Coin } from "../../../cosmos/base/v1beta1/coin";
 import {
   MsgDepositWithinBatch,
   MsgWithdrawWithinBatch,
@@ -55,7 +55,7 @@ export interface Params {
 /** Pool defines the liquidity pool that contains pool information. */
 export interface Pool {
   /** id of the pool */
-  id: Long;
+  id: number;
   /** id of the pool_type */
   typeId: number;
   /** denoms of reserve coin pair of the pool */
@@ -69,9 +69,9 @@ export interface Pool {
 /** Metadata for the state of each pool for invariant checking after genesis export or import. */
 export interface PoolMetadata {
   /** id of the pool */
-  poolId: Long;
+  poolId: number;
   /** pool coin issued at the pool */
-  poolCoinTotalSupply?: Coin;
+  poolCoinTotalSupply: Coin | undefined;
   /** reserve coins deposited in the pool */
   reserveCoins: Coin[];
 }
@@ -82,17 +82,17 @@ export interface PoolMetadata {
  */
 export interface PoolBatch {
   /** id of the pool */
-  poolId: Long;
+  poolId: number;
   /** index of this batch */
-  index: Long;
+  index: number;
   /** height where this batch is started */
-  beginHeight: Long;
+  beginHeight: number;
   /** last index of DepositMsgStates */
-  depositMsgIndex: Long;
+  depositMsgIndex: number;
   /** last index of WithdrawMsgStates */
-  withdrawMsgIndex: Long;
+  withdrawMsgIndex: number;
   /** last index of SwapMsgStates */
-  swapMsgIndex: Long;
+  swapMsgIndex: number;
   /** true if executed, false if not executed */
   executed: boolean;
 }
@@ -100,9 +100,9 @@ export interface PoolBatch {
 /** DepositMsgState defines the state of deposit message that contains state information as it is processed in the next batch or batches. */
 export interface DepositMsgState {
   /** height where this message is appended to the batch */
-  msgHeight: Long;
+  msgHeight: number;
   /** index of this deposit message in this liquidity pool */
-  msgIndex: Long;
+  msgIndex: number;
   /** true if executed on this batch, false if not executed */
   executed: boolean;
   /** true if executed successfully on this batch, false if failed */
@@ -110,15 +110,15 @@ export interface DepositMsgState {
   /** true if ready to be deleted on kvstore, false if not ready to be deleted */
   toBeDeleted: boolean;
   /** MsgDepositWithinBatch */
-  msg?: MsgDepositWithinBatch;
+  msg: MsgDepositWithinBatch | undefined;
 }
 
 /** WithdrawMsgState defines the state of the withdraw message that contains state information as the message is processed in the next batch or batches. */
 export interface WithdrawMsgState {
   /** height where this message is appended to the batch */
-  msgHeight: Long;
+  msgHeight: number;
   /** index of this withdraw message in this liquidity pool */
-  msgIndex: Long;
+  msgIndex: number;
   /** true if executed on this batch, false if not executed */
   executed: boolean;
   /** true if executed successfully on this batch, false if failed */
@@ -126,15 +126,15 @@ export interface WithdrawMsgState {
   /** true if ready to be deleted on kvstore, false if not ready to be deleted */
   toBeDeleted: boolean;
   /** MsgWithdrawWithinBatch */
-  msg?: MsgWithdrawWithinBatch;
+  msg: MsgWithdrawWithinBatch | undefined;
 }
 
 /** SwapMsgState defines the state of the swap message that contains state information as the message is processed in the next batch or batches. */
 export interface SwapMsgState {
   /** height where this message is appended to the batch */
-  msgHeight: Long;
+  msgHeight: number;
   /** index of this swap message in this liquidity pool */
-  msgIndex: Long;
+  msgIndex: number;
   /** true if executed on this batch, false if not executed */
   executed: boolean;
   /** true if executed successfully on this batch, false if failed */
@@ -142,21 +142,27 @@ export interface SwapMsgState {
   /** true if ready to be deleted on kvstore, false if not ready to be deleted */
   toBeDeleted: boolean;
   /** swap orders are cancelled when current height is equal to or higher than ExpiryHeight */
-  orderExpiryHeight: Long;
+  orderExpiryHeight: number;
   /** offer coin exchanged until now */
-  exchangedOfferCoin?: Coin;
+  exchangedOfferCoin: Coin | undefined;
   /** offer coin currently remaining to be exchanged */
-  remainingOfferCoin?: Coin;
+  remainingOfferCoin: Coin | undefined;
   /** reserve fee for pays fee in half offer coin */
-  reservedOfferCoinFee?: Coin;
+  reservedOfferCoinFee: Coin | undefined;
   /** MsgSwapWithinBatch */
-  msg?: MsgSwapWithinBatch;
+  msg: MsgSwapWithinBatch | undefined;
 }
 
-const basePoolType: object = { id: 0, name: "", minReserveCoinNum: 0, maxReserveCoinNum: 0, description: "" };
+const basePoolType: object = {
+  id: 0,
+  name: "",
+  minReserveCoinNum: 0,
+  maxReserveCoinNum: 0,
+  description: "",
+};
 
 export const PoolType = {
-  encode(message: PoolType, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+  encode(message: PoolType, writer: Writer = Writer.create()): Writer {
     if (message.id !== 0) {
       writer.uint32(8).uint32(message.id);
     }
@@ -175,8 +181,8 @@ export const PoolType = {
     return writer;
   },
 
-  decode(input: _m0.Reader | Uint8Array, length?: number): PoolType {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+  decode(input: Reader | Uint8Array, length?: number): PoolType {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...basePoolType } as PoolType;
     while (reader.pos < end) {
@@ -217,12 +223,18 @@ export const PoolType = {
     } else {
       message.name = "";
     }
-    if (object.minReserveCoinNum !== undefined && object.minReserveCoinNum !== null) {
+    if (
+      object.minReserveCoinNum !== undefined &&
+      object.minReserveCoinNum !== null
+    ) {
       message.minReserveCoinNum = Number(object.minReserveCoinNum);
     } else {
       message.minReserveCoinNum = 0;
     }
-    if (object.maxReserveCoinNum !== undefined && object.maxReserveCoinNum !== null) {
+    if (
+      object.maxReserveCoinNum !== undefined &&
+      object.maxReserveCoinNum !== null
+    ) {
       message.maxReserveCoinNum = Number(object.maxReserveCoinNum);
     } else {
       message.maxReserveCoinNum = 0;
@@ -239,9 +251,12 @@ export const PoolType = {
     const obj: any = {};
     message.id !== undefined && (obj.id = message.id);
     message.name !== undefined && (obj.name = message.name);
-    message.minReserveCoinNum !== undefined && (obj.minReserveCoinNum = message.minReserveCoinNum);
-    message.maxReserveCoinNum !== undefined && (obj.maxReserveCoinNum = message.maxReserveCoinNum);
-    message.description !== undefined && (obj.description = message.description);
+    message.minReserveCoinNum !== undefined &&
+      (obj.minReserveCoinNum = message.minReserveCoinNum);
+    message.maxReserveCoinNum !== undefined &&
+      (obj.maxReserveCoinNum = message.maxReserveCoinNum);
+    message.description !== undefined &&
+      (obj.description = message.description);
     return obj;
   },
 
@@ -257,12 +272,18 @@ export const PoolType = {
     } else {
       message.name = "";
     }
-    if (object.minReserveCoinNum !== undefined && object.minReserveCoinNum !== null) {
+    if (
+      object.minReserveCoinNum !== undefined &&
+      object.minReserveCoinNum !== null
+    ) {
       message.minReserveCoinNum = object.minReserveCoinNum;
     } else {
       message.minReserveCoinNum = 0;
     }
-    if (object.maxReserveCoinNum !== undefined && object.maxReserveCoinNum !== null) {
+    if (
+      object.maxReserveCoinNum !== undefined &&
+      object.maxReserveCoinNum !== null
+    ) {
       message.maxReserveCoinNum = object.maxReserveCoinNum;
     } else {
       message.maxReserveCoinNum = 0;
@@ -288,7 +309,7 @@ const baseParams: object = {
 };
 
 export const Params = {
-  encode(message: Params, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+  encode(message: Params, writer: Writer = Writer.create()): Writer {
     for (const v of message.poolTypes) {
       PoolType.encode(v!, writer.uint32(10).fork()).ldelim();
     }
@@ -322,8 +343,8 @@ export const Params = {
     return writer;
   },
 
-  decode(input: _m0.Reader | Uint8Array, length?: number): Params {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+  decode(input: Reader | Uint8Array, length?: number): Params {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseParams } as Params;
     message.poolTypes = [];
@@ -378,22 +399,34 @@ export const Params = {
         message.poolTypes.push(PoolType.fromJSON(e));
       }
     }
-    if (object.minInitDepositAmount !== undefined && object.minInitDepositAmount !== null) {
+    if (
+      object.minInitDepositAmount !== undefined &&
+      object.minInitDepositAmount !== null
+    ) {
       message.minInitDepositAmount = String(object.minInitDepositAmount);
     } else {
       message.minInitDepositAmount = "";
     }
-    if (object.initPoolCoinMintAmount !== undefined && object.initPoolCoinMintAmount !== null) {
+    if (
+      object.initPoolCoinMintAmount !== undefined &&
+      object.initPoolCoinMintAmount !== null
+    ) {
       message.initPoolCoinMintAmount = String(object.initPoolCoinMintAmount);
     } else {
       message.initPoolCoinMintAmount = "";
     }
-    if (object.maxReserveCoinAmount !== undefined && object.maxReserveCoinAmount !== null) {
+    if (
+      object.maxReserveCoinAmount !== undefined &&
+      object.maxReserveCoinAmount !== null
+    ) {
       message.maxReserveCoinAmount = String(object.maxReserveCoinAmount);
     } else {
       message.maxReserveCoinAmount = "";
     }
-    if (object.poolCreationFee !== undefined && object.poolCreationFee !== null) {
+    if (
+      object.poolCreationFee !== undefined &&
+      object.poolCreationFee !== null
+    ) {
       for (const e of object.poolCreationFee) {
         message.poolCreationFee.push(Coin.fromJSON(e));
       }
@@ -403,22 +436,34 @@ export const Params = {
     } else {
       message.swapFeeRate = "";
     }
-    if (object.withdrawFeeRate !== undefined && object.withdrawFeeRate !== null) {
+    if (
+      object.withdrawFeeRate !== undefined &&
+      object.withdrawFeeRate !== null
+    ) {
       message.withdrawFeeRate = String(object.withdrawFeeRate);
     } else {
       message.withdrawFeeRate = "";
     }
-    if (object.maxOrderAmountRatio !== undefined && object.maxOrderAmountRatio !== null) {
+    if (
+      object.maxOrderAmountRatio !== undefined &&
+      object.maxOrderAmountRatio !== null
+    ) {
       message.maxOrderAmountRatio = String(object.maxOrderAmountRatio);
     } else {
       message.maxOrderAmountRatio = "";
     }
-    if (object.unitBatchHeight !== undefined && object.unitBatchHeight !== null) {
+    if (
+      object.unitBatchHeight !== undefined &&
+      object.unitBatchHeight !== null
+    ) {
       message.unitBatchHeight = Number(object.unitBatchHeight);
     } else {
       message.unitBatchHeight = 0;
     }
-    if (object.circuitBreakerEnabled !== undefined && object.circuitBreakerEnabled !== null) {
+    if (
+      object.circuitBreakerEnabled !== undefined &&
+      object.circuitBreakerEnabled !== null
+    ) {
       message.circuitBreakerEnabled = Boolean(object.circuitBreakerEnabled);
     } else {
       message.circuitBreakerEnabled = false;
@@ -429,23 +474,33 @@ export const Params = {
   toJSON(message: Params): unknown {
     const obj: any = {};
     if (message.poolTypes) {
-      obj.poolTypes = message.poolTypes.map((e) => (e ? PoolType.toJSON(e) : undefined));
+      obj.poolTypes = message.poolTypes.map((e) =>
+        e ? PoolType.toJSON(e) : undefined
+      );
     } else {
       obj.poolTypes = [];
     }
-    message.minInitDepositAmount !== undefined && (obj.minInitDepositAmount = message.minInitDepositAmount);
+    message.minInitDepositAmount !== undefined &&
+      (obj.minInitDepositAmount = message.minInitDepositAmount);
     message.initPoolCoinMintAmount !== undefined &&
       (obj.initPoolCoinMintAmount = message.initPoolCoinMintAmount);
-    message.maxReserveCoinAmount !== undefined && (obj.maxReserveCoinAmount = message.maxReserveCoinAmount);
+    message.maxReserveCoinAmount !== undefined &&
+      (obj.maxReserveCoinAmount = message.maxReserveCoinAmount);
     if (message.poolCreationFee) {
-      obj.poolCreationFee = message.poolCreationFee.map((e) => (e ? Coin.toJSON(e) : undefined));
+      obj.poolCreationFee = message.poolCreationFee.map((e) =>
+        e ? Coin.toJSON(e) : undefined
+      );
     } else {
       obj.poolCreationFee = [];
     }
-    message.swapFeeRate !== undefined && (obj.swapFeeRate = message.swapFeeRate);
-    message.withdrawFeeRate !== undefined && (obj.withdrawFeeRate = message.withdrawFeeRate);
-    message.maxOrderAmountRatio !== undefined && (obj.maxOrderAmountRatio = message.maxOrderAmountRatio);
-    message.unitBatchHeight !== undefined && (obj.unitBatchHeight = message.unitBatchHeight);
+    message.swapFeeRate !== undefined &&
+      (obj.swapFeeRate = message.swapFeeRate);
+    message.withdrawFeeRate !== undefined &&
+      (obj.withdrawFeeRate = message.withdrawFeeRate);
+    message.maxOrderAmountRatio !== undefined &&
+      (obj.maxOrderAmountRatio = message.maxOrderAmountRatio);
+    message.unitBatchHeight !== undefined &&
+      (obj.unitBatchHeight = message.unitBatchHeight);
     message.circuitBreakerEnabled !== undefined &&
       (obj.circuitBreakerEnabled = message.circuitBreakerEnabled);
     return obj;
@@ -460,22 +515,34 @@ export const Params = {
         message.poolTypes.push(PoolType.fromPartial(e));
       }
     }
-    if (object.minInitDepositAmount !== undefined && object.minInitDepositAmount !== null) {
+    if (
+      object.minInitDepositAmount !== undefined &&
+      object.minInitDepositAmount !== null
+    ) {
       message.minInitDepositAmount = object.minInitDepositAmount;
     } else {
       message.minInitDepositAmount = "";
     }
-    if (object.initPoolCoinMintAmount !== undefined && object.initPoolCoinMintAmount !== null) {
+    if (
+      object.initPoolCoinMintAmount !== undefined &&
+      object.initPoolCoinMintAmount !== null
+    ) {
       message.initPoolCoinMintAmount = object.initPoolCoinMintAmount;
     } else {
       message.initPoolCoinMintAmount = "";
     }
-    if (object.maxReserveCoinAmount !== undefined && object.maxReserveCoinAmount !== null) {
+    if (
+      object.maxReserveCoinAmount !== undefined &&
+      object.maxReserveCoinAmount !== null
+    ) {
       message.maxReserveCoinAmount = object.maxReserveCoinAmount;
     } else {
       message.maxReserveCoinAmount = "";
     }
-    if (object.poolCreationFee !== undefined && object.poolCreationFee !== null) {
+    if (
+      object.poolCreationFee !== undefined &&
+      object.poolCreationFee !== null
+    ) {
       for (const e of object.poolCreationFee) {
         message.poolCreationFee.push(Coin.fromPartial(e));
       }
@@ -485,22 +552,34 @@ export const Params = {
     } else {
       message.swapFeeRate = "";
     }
-    if (object.withdrawFeeRate !== undefined && object.withdrawFeeRate !== null) {
+    if (
+      object.withdrawFeeRate !== undefined &&
+      object.withdrawFeeRate !== null
+    ) {
       message.withdrawFeeRate = object.withdrawFeeRate;
     } else {
       message.withdrawFeeRate = "";
     }
-    if (object.maxOrderAmountRatio !== undefined && object.maxOrderAmountRatio !== null) {
+    if (
+      object.maxOrderAmountRatio !== undefined &&
+      object.maxOrderAmountRatio !== null
+    ) {
       message.maxOrderAmountRatio = object.maxOrderAmountRatio;
     } else {
       message.maxOrderAmountRatio = "";
     }
-    if (object.unitBatchHeight !== undefined && object.unitBatchHeight !== null) {
+    if (
+      object.unitBatchHeight !== undefined &&
+      object.unitBatchHeight !== null
+    ) {
       message.unitBatchHeight = object.unitBatchHeight;
     } else {
       message.unitBatchHeight = 0;
     }
-    if (object.circuitBreakerEnabled !== undefined && object.circuitBreakerEnabled !== null) {
+    if (
+      object.circuitBreakerEnabled !== undefined &&
+      object.circuitBreakerEnabled !== null
+    ) {
       message.circuitBreakerEnabled = object.circuitBreakerEnabled;
     } else {
       message.circuitBreakerEnabled = false;
@@ -510,7 +589,7 @@ export const Params = {
 };
 
 const basePool: object = {
-  id: Long.UZERO,
+  id: 0,
   typeId: 0,
   reserveCoinDenoms: "",
   reserveAccountAddress: "",
@@ -518,8 +597,8 @@ const basePool: object = {
 };
 
 export const Pool = {
-  encode(message: Pool, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (!message.id.isZero()) {
+  encode(message: Pool, writer: Writer = Writer.create()): Writer {
+    if (message.id !== 0) {
       writer.uint32(8).uint64(message.id);
     }
     if (message.typeId !== 0) {
@@ -537,8 +616,8 @@ export const Pool = {
     return writer;
   },
 
-  decode(input: _m0.Reader | Uint8Array, length?: number): Pool {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+  decode(input: Reader | Uint8Array, length?: number): Pool {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...basePool } as Pool;
     message.reserveCoinDenoms = [];
@@ -546,7 +625,7 @@ export const Pool = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.id = reader.uint64() as Long;
+          message.id = longToNumber(reader.uint64() as Long);
           break;
         case 2:
           message.typeId = reader.uint32();
@@ -572,21 +651,27 @@ export const Pool = {
     const message = { ...basePool } as Pool;
     message.reserveCoinDenoms = [];
     if (object.id !== undefined && object.id !== null) {
-      message.id = Long.fromString(object.id);
+      message.id = Number(object.id);
     } else {
-      message.id = Long.UZERO;
+      message.id = 0;
     }
     if (object.typeId !== undefined && object.typeId !== null) {
       message.typeId = Number(object.typeId);
     } else {
       message.typeId = 0;
     }
-    if (object.reserveCoinDenoms !== undefined && object.reserveCoinDenoms !== null) {
+    if (
+      object.reserveCoinDenoms !== undefined &&
+      object.reserveCoinDenoms !== null
+    ) {
       for (const e of object.reserveCoinDenoms) {
         message.reserveCoinDenoms.push(String(e));
       }
     }
-    if (object.reserveAccountAddress !== undefined && object.reserveAccountAddress !== null) {
+    if (
+      object.reserveAccountAddress !== undefined &&
+      object.reserveAccountAddress !== null
+    ) {
       message.reserveAccountAddress = String(object.reserveAccountAddress);
     } else {
       message.reserveAccountAddress = "";
@@ -601,7 +686,7 @@ export const Pool = {
 
   toJSON(message: Pool): unknown {
     const obj: any = {};
-    message.id !== undefined && (obj.id = (message.id || Long.UZERO).toString());
+    message.id !== undefined && (obj.id = message.id);
     message.typeId !== undefined && (obj.typeId = message.typeId);
     if (message.reserveCoinDenoms) {
       obj.reserveCoinDenoms = message.reserveCoinDenoms.map((e) => e);
@@ -610,7 +695,8 @@ export const Pool = {
     }
     message.reserveAccountAddress !== undefined &&
       (obj.reserveAccountAddress = message.reserveAccountAddress);
-    message.poolCoinDenom !== undefined && (obj.poolCoinDenom = message.poolCoinDenom);
+    message.poolCoinDenom !== undefined &&
+      (obj.poolCoinDenom = message.poolCoinDenom);
     return obj;
   },
 
@@ -618,21 +704,27 @@ export const Pool = {
     const message = { ...basePool } as Pool;
     message.reserveCoinDenoms = [];
     if (object.id !== undefined && object.id !== null) {
-      message.id = object.id as Long;
+      message.id = object.id;
     } else {
-      message.id = Long.UZERO;
+      message.id = 0;
     }
     if (object.typeId !== undefined && object.typeId !== null) {
       message.typeId = object.typeId;
     } else {
       message.typeId = 0;
     }
-    if (object.reserveCoinDenoms !== undefined && object.reserveCoinDenoms !== null) {
+    if (
+      object.reserveCoinDenoms !== undefined &&
+      object.reserveCoinDenoms !== null
+    ) {
       for (const e of object.reserveCoinDenoms) {
         message.reserveCoinDenoms.push(e);
       }
     }
-    if (object.reserveAccountAddress !== undefined && object.reserveAccountAddress !== null) {
+    if (
+      object.reserveAccountAddress !== undefined &&
+      object.reserveAccountAddress !== null
+    ) {
       message.reserveAccountAddress = object.reserveAccountAddress;
     } else {
       message.reserveAccountAddress = "";
@@ -646,15 +738,18 @@ export const Pool = {
   },
 };
 
-const basePoolMetadata: object = { poolId: Long.UZERO };
+const basePoolMetadata: object = { poolId: 0 };
 
 export const PoolMetadata = {
-  encode(message: PoolMetadata, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (!message.poolId.isZero()) {
+  encode(message: PoolMetadata, writer: Writer = Writer.create()): Writer {
+    if (message.poolId !== 0) {
       writer.uint32(8).uint64(message.poolId);
     }
     if (message.poolCoinTotalSupply !== undefined) {
-      Coin.encode(message.poolCoinTotalSupply, writer.uint32(18).fork()).ldelim();
+      Coin.encode(
+        message.poolCoinTotalSupply,
+        writer.uint32(18).fork()
+      ).ldelim();
     }
     for (const v of message.reserveCoins) {
       Coin.encode(v!, writer.uint32(26).fork()).ldelim();
@@ -662,8 +757,8 @@ export const PoolMetadata = {
     return writer;
   },
 
-  decode(input: _m0.Reader | Uint8Array, length?: number): PoolMetadata {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+  decode(input: Reader | Uint8Array, length?: number): PoolMetadata {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...basePoolMetadata } as PoolMetadata;
     message.reserveCoins = [];
@@ -671,7 +766,7 @@ export const PoolMetadata = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.poolId = reader.uint64() as Long;
+          message.poolId = longToNumber(reader.uint64() as Long);
           break;
         case 2:
           message.poolCoinTotalSupply = Coin.decode(reader, reader.uint32());
@@ -691,11 +786,14 @@ export const PoolMetadata = {
     const message = { ...basePoolMetadata } as PoolMetadata;
     message.reserveCoins = [];
     if (object.poolId !== undefined && object.poolId !== null) {
-      message.poolId = Long.fromString(object.poolId);
+      message.poolId = Number(object.poolId);
     } else {
-      message.poolId = Long.UZERO;
+      message.poolId = 0;
     }
-    if (object.poolCoinTotalSupply !== undefined && object.poolCoinTotalSupply !== null) {
+    if (
+      object.poolCoinTotalSupply !== undefined &&
+      object.poolCoinTotalSupply !== null
+    ) {
       message.poolCoinTotalSupply = Coin.fromJSON(object.poolCoinTotalSupply);
     } else {
       message.poolCoinTotalSupply = undefined;
@@ -710,13 +808,15 @@ export const PoolMetadata = {
 
   toJSON(message: PoolMetadata): unknown {
     const obj: any = {};
-    message.poolId !== undefined && (obj.poolId = (message.poolId || Long.UZERO).toString());
+    message.poolId !== undefined && (obj.poolId = message.poolId);
     message.poolCoinTotalSupply !== undefined &&
       (obj.poolCoinTotalSupply = message.poolCoinTotalSupply
         ? Coin.toJSON(message.poolCoinTotalSupply)
         : undefined);
     if (message.reserveCoins) {
-      obj.reserveCoins = message.reserveCoins.map((e) => (e ? Coin.toJSON(e) : undefined));
+      obj.reserveCoins = message.reserveCoins.map((e) =>
+        e ? Coin.toJSON(e) : undefined
+      );
     } else {
       obj.reserveCoins = [];
     }
@@ -727,12 +827,17 @@ export const PoolMetadata = {
     const message = { ...basePoolMetadata } as PoolMetadata;
     message.reserveCoins = [];
     if (object.poolId !== undefined && object.poolId !== null) {
-      message.poolId = object.poolId as Long;
+      message.poolId = object.poolId;
     } else {
-      message.poolId = Long.UZERO;
+      message.poolId = 0;
     }
-    if (object.poolCoinTotalSupply !== undefined && object.poolCoinTotalSupply !== null) {
-      message.poolCoinTotalSupply = Coin.fromPartial(object.poolCoinTotalSupply);
+    if (
+      object.poolCoinTotalSupply !== undefined &&
+      object.poolCoinTotalSupply !== null
+    ) {
+      message.poolCoinTotalSupply = Coin.fromPartial(
+        object.poolCoinTotalSupply
+      );
     } else {
       message.poolCoinTotalSupply = undefined;
     }
@@ -746,33 +851,33 @@ export const PoolMetadata = {
 };
 
 const basePoolBatch: object = {
-  poolId: Long.UZERO,
-  index: Long.UZERO,
-  beginHeight: Long.ZERO,
-  depositMsgIndex: Long.UZERO,
-  withdrawMsgIndex: Long.UZERO,
-  swapMsgIndex: Long.UZERO,
+  poolId: 0,
+  index: 0,
+  beginHeight: 0,
+  depositMsgIndex: 0,
+  withdrawMsgIndex: 0,
+  swapMsgIndex: 0,
   executed: false,
 };
 
 export const PoolBatch = {
-  encode(message: PoolBatch, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (!message.poolId.isZero()) {
+  encode(message: PoolBatch, writer: Writer = Writer.create()): Writer {
+    if (message.poolId !== 0) {
       writer.uint32(8).uint64(message.poolId);
     }
-    if (!message.index.isZero()) {
+    if (message.index !== 0) {
       writer.uint32(16).uint64(message.index);
     }
-    if (!message.beginHeight.isZero()) {
+    if (message.beginHeight !== 0) {
       writer.uint32(24).int64(message.beginHeight);
     }
-    if (!message.depositMsgIndex.isZero()) {
+    if (message.depositMsgIndex !== 0) {
       writer.uint32(32).uint64(message.depositMsgIndex);
     }
-    if (!message.withdrawMsgIndex.isZero()) {
+    if (message.withdrawMsgIndex !== 0) {
       writer.uint32(40).uint64(message.withdrawMsgIndex);
     }
-    if (!message.swapMsgIndex.isZero()) {
+    if (message.swapMsgIndex !== 0) {
       writer.uint32(48).uint64(message.swapMsgIndex);
     }
     if (message.executed === true) {
@@ -781,30 +886,30 @@ export const PoolBatch = {
     return writer;
   },
 
-  decode(input: _m0.Reader | Uint8Array, length?: number): PoolBatch {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+  decode(input: Reader | Uint8Array, length?: number): PoolBatch {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...basePoolBatch } as PoolBatch;
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.poolId = reader.uint64() as Long;
+          message.poolId = longToNumber(reader.uint64() as Long);
           break;
         case 2:
-          message.index = reader.uint64() as Long;
+          message.index = longToNumber(reader.uint64() as Long);
           break;
         case 3:
-          message.beginHeight = reader.int64() as Long;
+          message.beginHeight = longToNumber(reader.int64() as Long);
           break;
         case 4:
-          message.depositMsgIndex = reader.uint64() as Long;
+          message.depositMsgIndex = longToNumber(reader.uint64() as Long);
           break;
         case 5:
-          message.withdrawMsgIndex = reader.uint64() as Long;
+          message.withdrawMsgIndex = longToNumber(reader.uint64() as Long);
           break;
         case 6:
-          message.swapMsgIndex = reader.uint64() as Long;
+          message.swapMsgIndex = longToNumber(reader.uint64() as Long);
           break;
         case 7:
           message.executed = reader.bool();
@@ -820,34 +925,40 @@ export const PoolBatch = {
   fromJSON(object: any): PoolBatch {
     const message = { ...basePoolBatch } as PoolBatch;
     if (object.poolId !== undefined && object.poolId !== null) {
-      message.poolId = Long.fromString(object.poolId);
+      message.poolId = Number(object.poolId);
     } else {
-      message.poolId = Long.UZERO;
+      message.poolId = 0;
     }
     if (object.index !== undefined && object.index !== null) {
-      message.index = Long.fromString(object.index);
+      message.index = Number(object.index);
     } else {
-      message.index = Long.UZERO;
+      message.index = 0;
     }
     if (object.beginHeight !== undefined && object.beginHeight !== null) {
-      message.beginHeight = Long.fromString(object.beginHeight);
+      message.beginHeight = Number(object.beginHeight);
     } else {
-      message.beginHeight = Long.ZERO;
+      message.beginHeight = 0;
     }
-    if (object.depositMsgIndex !== undefined && object.depositMsgIndex !== null) {
-      message.depositMsgIndex = Long.fromString(object.depositMsgIndex);
+    if (
+      object.depositMsgIndex !== undefined &&
+      object.depositMsgIndex !== null
+    ) {
+      message.depositMsgIndex = Number(object.depositMsgIndex);
     } else {
-      message.depositMsgIndex = Long.UZERO;
+      message.depositMsgIndex = 0;
     }
-    if (object.withdrawMsgIndex !== undefined && object.withdrawMsgIndex !== null) {
-      message.withdrawMsgIndex = Long.fromString(object.withdrawMsgIndex);
+    if (
+      object.withdrawMsgIndex !== undefined &&
+      object.withdrawMsgIndex !== null
+    ) {
+      message.withdrawMsgIndex = Number(object.withdrawMsgIndex);
     } else {
-      message.withdrawMsgIndex = Long.UZERO;
+      message.withdrawMsgIndex = 0;
     }
     if (object.swapMsgIndex !== undefined && object.swapMsgIndex !== null) {
-      message.swapMsgIndex = Long.fromString(object.swapMsgIndex);
+      message.swapMsgIndex = Number(object.swapMsgIndex);
     } else {
-      message.swapMsgIndex = Long.UZERO;
+      message.swapMsgIndex = 0;
     }
     if (object.executed !== undefined && object.executed !== null) {
       message.executed = Boolean(object.executed);
@@ -859,15 +970,16 @@ export const PoolBatch = {
 
   toJSON(message: PoolBatch): unknown {
     const obj: any = {};
-    message.poolId !== undefined && (obj.poolId = (message.poolId || Long.UZERO).toString());
-    message.index !== undefined && (obj.index = (message.index || Long.UZERO).toString());
-    message.beginHeight !== undefined && (obj.beginHeight = (message.beginHeight || Long.ZERO).toString());
+    message.poolId !== undefined && (obj.poolId = message.poolId);
+    message.index !== undefined && (obj.index = message.index);
+    message.beginHeight !== undefined &&
+      (obj.beginHeight = message.beginHeight);
     message.depositMsgIndex !== undefined &&
-      (obj.depositMsgIndex = (message.depositMsgIndex || Long.UZERO).toString());
+      (obj.depositMsgIndex = message.depositMsgIndex);
     message.withdrawMsgIndex !== undefined &&
-      (obj.withdrawMsgIndex = (message.withdrawMsgIndex || Long.UZERO).toString());
+      (obj.withdrawMsgIndex = message.withdrawMsgIndex);
     message.swapMsgIndex !== undefined &&
-      (obj.swapMsgIndex = (message.swapMsgIndex || Long.UZERO).toString());
+      (obj.swapMsgIndex = message.swapMsgIndex);
     message.executed !== undefined && (obj.executed = message.executed);
     return obj;
   },
@@ -875,34 +987,40 @@ export const PoolBatch = {
   fromPartial(object: DeepPartial<PoolBatch>): PoolBatch {
     const message = { ...basePoolBatch } as PoolBatch;
     if (object.poolId !== undefined && object.poolId !== null) {
-      message.poolId = object.poolId as Long;
+      message.poolId = object.poolId;
     } else {
-      message.poolId = Long.UZERO;
+      message.poolId = 0;
     }
     if (object.index !== undefined && object.index !== null) {
-      message.index = object.index as Long;
+      message.index = object.index;
     } else {
-      message.index = Long.UZERO;
+      message.index = 0;
     }
     if (object.beginHeight !== undefined && object.beginHeight !== null) {
-      message.beginHeight = object.beginHeight as Long;
+      message.beginHeight = object.beginHeight;
     } else {
-      message.beginHeight = Long.ZERO;
+      message.beginHeight = 0;
     }
-    if (object.depositMsgIndex !== undefined && object.depositMsgIndex !== null) {
-      message.depositMsgIndex = object.depositMsgIndex as Long;
+    if (
+      object.depositMsgIndex !== undefined &&
+      object.depositMsgIndex !== null
+    ) {
+      message.depositMsgIndex = object.depositMsgIndex;
     } else {
-      message.depositMsgIndex = Long.UZERO;
+      message.depositMsgIndex = 0;
     }
-    if (object.withdrawMsgIndex !== undefined && object.withdrawMsgIndex !== null) {
-      message.withdrawMsgIndex = object.withdrawMsgIndex as Long;
+    if (
+      object.withdrawMsgIndex !== undefined &&
+      object.withdrawMsgIndex !== null
+    ) {
+      message.withdrawMsgIndex = object.withdrawMsgIndex;
     } else {
-      message.withdrawMsgIndex = Long.UZERO;
+      message.withdrawMsgIndex = 0;
     }
     if (object.swapMsgIndex !== undefined && object.swapMsgIndex !== null) {
-      message.swapMsgIndex = object.swapMsgIndex as Long;
+      message.swapMsgIndex = object.swapMsgIndex;
     } else {
-      message.swapMsgIndex = Long.UZERO;
+      message.swapMsgIndex = 0;
     }
     if (object.executed !== undefined && object.executed !== null) {
       message.executed = object.executed;
@@ -914,19 +1032,19 @@ export const PoolBatch = {
 };
 
 const baseDepositMsgState: object = {
-  msgHeight: Long.ZERO,
-  msgIndex: Long.UZERO,
+  msgHeight: 0,
+  msgIndex: 0,
   executed: false,
   succeeded: false,
   toBeDeleted: false,
 };
 
 export const DepositMsgState = {
-  encode(message: DepositMsgState, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (!message.msgHeight.isZero()) {
+  encode(message: DepositMsgState, writer: Writer = Writer.create()): Writer {
+    if (message.msgHeight !== 0) {
       writer.uint32(8).int64(message.msgHeight);
     }
-    if (!message.msgIndex.isZero()) {
+    if (message.msgIndex !== 0) {
       writer.uint32(16).uint64(message.msgIndex);
     }
     if (message.executed === true) {
@@ -939,23 +1057,26 @@ export const DepositMsgState = {
       writer.uint32(40).bool(message.toBeDeleted);
     }
     if (message.msg !== undefined) {
-      MsgDepositWithinBatch.encode(message.msg, writer.uint32(50).fork()).ldelim();
+      MsgDepositWithinBatch.encode(
+        message.msg,
+        writer.uint32(50).fork()
+      ).ldelim();
     }
     return writer;
   },
 
-  decode(input: _m0.Reader | Uint8Array, length?: number): DepositMsgState {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+  decode(input: Reader | Uint8Array, length?: number): DepositMsgState {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseDepositMsgState } as DepositMsgState;
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.msgHeight = reader.int64() as Long;
+          message.msgHeight = longToNumber(reader.int64() as Long);
           break;
         case 2:
-          message.msgIndex = reader.uint64() as Long;
+          message.msgIndex = longToNumber(reader.uint64() as Long);
           break;
         case 3:
           message.executed = reader.bool();
@@ -980,14 +1101,14 @@ export const DepositMsgState = {
   fromJSON(object: any): DepositMsgState {
     const message = { ...baseDepositMsgState } as DepositMsgState;
     if (object.msgHeight !== undefined && object.msgHeight !== null) {
-      message.msgHeight = Long.fromString(object.msgHeight);
+      message.msgHeight = Number(object.msgHeight);
     } else {
-      message.msgHeight = Long.ZERO;
+      message.msgHeight = 0;
     }
     if (object.msgIndex !== undefined && object.msgIndex !== null) {
-      message.msgIndex = Long.fromString(object.msgIndex);
+      message.msgIndex = Number(object.msgIndex);
     } else {
-      message.msgIndex = Long.UZERO;
+      message.msgIndex = 0;
     }
     if (object.executed !== undefined && object.executed !== null) {
       message.executed = Boolean(object.executed);
@@ -1014,27 +1135,30 @@ export const DepositMsgState = {
 
   toJSON(message: DepositMsgState): unknown {
     const obj: any = {};
-    message.msgHeight !== undefined && (obj.msgHeight = (message.msgHeight || Long.ZERO).toString());
-    message.msgIndex !== undefined && (obj.msgIndex = (message.msgIndex || Long.UZERO).toString());
+    message.msgHeight !== undefined && (obj.msgHeight = message.msgHeight);
+    message.msgIndex !== undefined && (obj.msgIndex = message.msgIndex);
     message.executed !== undefined && (obj.executed = message.executed);
     message.succeeded !== undefined && (obj.succeeded = message.succeeded);
-    message.toBeDeleted !== undefined && (obj.toBeDeleted = message.toBeDeleted);
+    message.toBeDeleted !== undefined &&
+      (obj.toBeDeleted = message.toBeDeleted);
     message.msg !== undefined &&
-      (obj.msg = message.msg ? MsgDepositWithinBatch.toJSON(message.msg) : undefined);
+      (obj.msg = message.msg
+        ? MsgDepositWithinBatch.toJSON(message.msg)
+        : undefined);
     return obj;
   },
 
   fromPartial(object: DeepPartial<DepositMsgState>): DepositMsgState {
     const message = { ...baseDepositMsgState } as DepositMsgState;
     if (object.msgHeight !== undefined && object.msgHeight !== null) {
-      message.msgHeight = object.msgHeight as Long;
+      message.msgHeight = object.msgHeight;
     } else {
-      message.msgHeight = Long.ZERO;
+      message.msgHeight = 0;
     }
     if (object.msgIndex !== undefined && object.msgIndex !== null) {
-      message.msgIndex = object.msgIndex as Long;
+      message.msgIndex = object.msgIndex;
     } else {
-      message.msgIndex = Long.UZERO;
+      message.msgIndex = 0;
     }
     if (object.executed !== undefined && object.executed !== null) {
       message.executed = object.executed;
@@ -1061,19 +1185,19 @@ export const DepositMsgState = {
 };
 
 const baseWithdrawMsgState: object = {
-  msgHeight: Long.ZERO,
-  msgIndex: Long.UZERO,
+  msgHeight: 0,
+  msgIndex: 0,
   executed: false,
   succeeded: false,
   toBeDeleted: false,
 };
 
 export const WithdrawMsgState = {
-  encode(message: WithdrawMsgState, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (!message.msgHeight.isZero()) {
+  encode(message: WithdrawMsgState, writer: Writer = Writer.create()): Writer {
+    if (message.msgHeight !== 0) {
       writer.uint32(8).int64(message.msgHeight);
     }
-    if (!message.msgIndex.isZero()) {
+    if (message.msgIndex !== 0) {
       writer.uint32(16).uint64(message.msgIndex);
     }
     if (message.executed === true) {
@@ -1086,23 +1210,26 @@ export const WithdrawMsgState = {
       writer.uint32(40).bool(message.toBeDeleted);
     }
     if (message.msg !== undefined) {
-      MsgWithdrawWithinBatch.encode(message.msg, writer.uint32(50).fork()).ldelim();
+      MsgWithdrawWithinBatch.encode(
+        message.msg,
+        writer.uint32(50).fork()
+      ).ldelim();
     }
     return writer;
   },
 
-  decode(input: _m0.Reader | Uint8Array, length?: number): WithdrawMsgState {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+  decode(input: Reader | Uint8Array, length?: number): WithdrawMsgState {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseWithdrawMsgState } as WithdrawMsgState;
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.msgHeight = reader.int64() as Long;
+          message.msgHeight = longToNumber(reader.int64() as Long);
           break;
         case 2:
-          message.msgIndex = reader.uint64() as Long;
+          message.msgIndex = longToNumber(reader.uint64() as Long);
           break;
         case 3:
           message.executed = reader.bool();
@@ -1127,14 +1254,14 @@ export const WithdrawMsgState = {
   fromJSON(object: any): WithdrawMsgState {
     const message = { ...baseWithdrawMsgState } as WithdrawMsgState;
     if (object.msgHeight !== undefined && object.msgHeight !== null) {
-      message.msgHeight = Long.fromString(object.msgHeight);
+      message.msgHeight = Number(object.msgHeight);
     } else {
-      message.msgHeight = Long.ZERO;
+      message.msgHeight = 0;
     }
     if (object.msgIndex !== undefined && object.msgIndex !== null) {
-      message.msgIndex = Long.fromString(object.msgIndex);
+      message.msgIndex = Number(object.msgIndex);
     } else {
-      message.msgIndex = Long.UZERO;
+      message.msgIndex = 0;
     }
     if (object.executed !== undefined && object.executed !== null) {
       message.executed = Boolean(object.executed);
@@ -1161,27 +1288,30 @@ export const WithdrawMsgState = {
 
   toJSON(message: WithdrawMsgState): unknown {
     const obj: any = {};
-    message.msgHeight !== undefined && (obj.msgHeight = (message.msgHeight || Long.ZERO).toString());
-    message.msgIndex !== undefined && (obj.msgIndex = (message.msgIndex || Long.UZERO).toString());
+    message.msgHeight !== undefined && (obj.msgHeight = message.msgHeight);
+    message.msgIndex !== undefined && (obj.msgIndex = message.msgIndex);
     message.executed !== undefined && (obj.executed = message.executed);
     message.succeeded !== undefined && (obj.succeeded = message.succeeded);
-    message.toBeDeleted !== undefined && (obj.toBeDeleted = message.toBeDeleted);
+    message.toBeDeleted !== undefined &&
+      (obj.toBeDeleted = message.toBeDeleted);
     message.msg !== undefined &&
-      (obj.msg = message.msg ? MsgWithdrawWithinBatch.toJSON(message.msg) : undefined);
+      (obj.msg = message.msg
+        ? MsgWithdrawWithinBatch.toJSON(message.msg)
+        : undefined);
     return obj;
   },
 
   fromPartial(object: DeepPartial<WithdrawMsgState>): WithdrawMsgState {
     const message = { ...baseWithdrawMsgState } as WithdrawMsgState;
     if (object.msgHeight !== undefined && object.msgHeight !== null) {
-      message.msgHeight = object.msgHeight as Long;
+      message.msgHeight = object.msgHeight;
     } else {
-      message.msgHeight = Long.ZERO;
+      message.msgHeight = 0;
     }
     if (object.msgIndex !== undefined && object.msgIndex !== null) {
-      message.msgIndex = object.msgIndex as Long;
+      message.msgIndex = object.msgIndex;
     } else {
-      message.msgIndex = Long.UZERO;
+      message.msgIndex = 0;
     }
     if (object.executed !== undefined && object.executed !== null) {
       message.executed = object.executed;
@@ -1208,20 +1338,20 @@ export const WithdrawMsgState = {
 };
 
 const baseSwapMsgState: object = {
-  msgHeight: Long.ZERO,
-  msgIndex: Long.UZERO,
+  msgHeight: 0,
+  msgIndex: 0,
   executed: false,
   succeeded: false,
   toBeDeleted: false,
-  orderExpiryHeight: Long.ZERO,
+  orderExpiryHeight: 0,
 };
 
 export const SwapMsgState = {
-  encode(message: SwapMsgState, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (!message.msgHeight.isZero()) {
+  encode(message: SwapMsgState, writer: Writer = Writer.create()): Writer {
+    if (message.msgHeight !== 0) {
       writer.uint32(8).int64(message.msgHeight);
     }
-    if (!message.msgIndex.isZero()) {
+    if (message.msgIndex !== 0) {
       writer.uint32(16).uint64(message.msgIndex);
     }
     if (message.executed === true) {
@@ -1233,17 +1363,26 @@ export const SwapMsgState = {
     if (message.toBeDeleted === true) {
       writer.uint32(40).bool(message.toBeDeleted);
     }
-    if (!message.orderExpiryHeight.isZero()) {
+    if (message.orderExpiryHeight !== 0) {
       writer.uint32(48).int64(message.orderExpiryHeight);
     }
     if (message.exchangedOfferCoin !== undefined) {
-      Coin.encode(message.exchangedOfferCoin, writer.uint32(58).fork()).ldelim();
+      Coin.encode(
+        message.exchangedOfferCoin,
+        writer.uint32(58).fork()
+      ).ldelim();
     }
     if (message.remainingOfferCoin !== undefined) {
-      Coin.encode(message.remainingOfferCoin, writer.uint32(66).fork()).ldelim();
+      Coin.encode(
+        message.remainingOfferCoin,
+        writer.uint32(66).fork()
+      ).ldelim();
     }
     if (message.reservedOfferCoinFee !== undefined) {
-      Coin.encode(message.reservedOfferCoinFee, writer.uint32(74).fork()).ldelim();
+      Coin.encode(
+        message.reservedOfferCoinFee,
+        writer.uint32(74).fork()
+      ).ldelim();
     }
     if (message.msg !== undefined) {
       MsgSwapWithinBatch.encode(message.msg, writer.uint32(82).fork()).ldelim();
@@ -1251,18 +1390,18 @@ export const SwapMsgState = {
     return writer;
   },
 
-  decode(input: _m0.Reader | Uint8Array, length?: number): SwapMsgState {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+  decode(input: Reader | Uint8Array, length?: number): SwapMsgState {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseSwapMsgState } as SwapMsgState;
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.msgHeight = reader.int64() as Long;
+          message.msgHeight = longToNumber(reader.int64() as Long);
           break;
         case 2:
-          message.msgIndex = reader.uint64() as Long;
+          message.msgIndex = longToNumber(reader.uint64() as Long);
           break;
         case 3:
           message.executed = reader.bool();
@@ -1274,7 +1413,7 @@ export const SwapMsgState = {
           message.toBeDeleted = reader.bool();
           break;
         case 6:
-          message.orderExpiryHeight = reader.int64() as Long;
+          message.orderExpiryHeight = longToNumber(reader.int64() as Long);
           break;
         case 7:
           message.exchangedOfferCoin = Coin.decode(reader, reader.uint32());
@@ -1299,14 +1438,14 @@ export const SwapMsgState = {
   fromJSON(object: any): SwapMsgState {
     const message = { ...baseSwapMsgState } as SwapMsgState;
     if (object.msgHeight !== undefined && object.msgHeight !== null) {
-      message.msgHeight = Long.fromString(object.msgHeight);
+      message.msgHeight = Number(object.msgHeight);
     } else {
-      message.msgHeight = Long.ZERO;
+      message.msgHeight = 0;
     }
     if (object.msgIndex !== undefined && object.msgIndex !== null) {
-      message.msgIndex = Long.fromString(object.msgIndex);
+      message.msgIndex = Number(object.msgIndex);
     } else {
-      message.msgIndex = Long.UZERO;
+      message.msgIndex = 0;
     }
     if (object.executed !== undefined && object.executed !== null) {
       message.executed = Boolean(object.executed);
@@ -1323,22 +1462,34 @@ export const SwapMsgState = {
     } else {
       message.toBeDeleted = false;
     }
-    if (object.orderExpiryHeight !== undefined && object.orderExpiryHeight !== null) {
-      message.orderExpiryHeight = Long.fromString(object.orderExpiryHeight);
+    if (
+      object.orderExpiryHeight !== undefined &&
+      object.orderExpiryHeight !== null
+    ) {
+      message.orderExpiryHeight = Number(object.orderExpiryHeight);
     } else {
-      message.orderExpiryHeight = Long.ZERO;
+      message.orderExpiryHeight = 0;
     }
-    if (object.exchangedOfferCoin !== undefined && object.exchangedOfferCoin !== null) {
+    if (
+      object.exchangedOfferCoin !== undefined &&
+      object.exchangedOfferCoin !== null
+    ) {
       message.exchangedOfferCoin = Coin.fromJSON(object.exchangedOfferCoin);
     } else {
       message.exchangedOfferCoin = undefined;
     }
-    if (object.remainingOfferCoin !== undefined && object.remainingOfferCoin !== null) {
+    if (
+      object.remainingOfferCoin !== undefined &&
+      object.remainingOfferCoin !== null
+    ) {
       message.remainingOfferCoin = Coin.fromJSON(object.remainingOfferCoin);
     } else {
       message.remainingOfferCoin = undefined;
     }
-    if (object.reservedOfferCoinFee !== undefined && object.reservedOfferCoinFee !== null) {
+    if (
+      object.reservedOfferCoinFee !== undefined &&
+      object.reservedOfferCoinFee !== null
+    ) {
       message.reservedOfferCoinFee = Coin.fromJSON(object.reservedOfferCoinFee);
     } else {
       message.reservedOfferCoinFee = undefined;
@@ -1353,13 +1504,14 @@ export const SwapMsgState = {
 
   toJSON(message: SwapMsgState): unknown {
     const obj: any = {};
-    message.msgHeight !== undefined && (obj.msgHeight = (message.msgHeight || Long.ZERO).toString());
-    message.msgIndex !== undefined && (obj.msgIndex = (message.msgIndex || Long.UZERO).toString());
+    message.msgHeight !== undefined && (obj.msgHeight = message.msgHeight);
+    message.msgIndex !== undefined && (obj.msgIndex = message.msgIndex);
     message.executed !== undefined && (obj.executed = message.executed);
     message.succeeded !== undefined && (obj.succeeded = message.succeeded);
-    message.toBeDeleted !== undefined && (obj.toBeDeleted = message.toBeDeleted);
+    message.toBeDeleted !== undefined &&
+      (obj.toBeDeleted = message.toBeDeleted);
     message.orderExpiryHeight !== undefined &&
-      (obj.orderExpiryHeight = (message.orderExpiryHeight || Long.ZERO).toString());
+      (obj.orderExpiryHeight = message.orderExpiryHeight);
     message.exchangedOfferCoin !== undefined &&
       (obj.exchangedOfferCoin = message.exchangedOfferCoin
         ? Coin.toJSON(message.exchangedOfferCoin)
@@ -1372,21 +1524,24 @@ export const SwapMsgState = {
       (obj.reservedOfferCoinFee = message.reservedOfferCoinFee
         ? Coin.toJSON(message.reservedOfferCoinFee)
         : undefined);
-    message.msg !== undefined && (obj.msg = message.msg ? MsgSwapWithinBatch.toJSON(message.msg) : undefined);
+    message.msg !== undefined &&
+      (obj.msg = message.msg
+        ? MsgSwapWithinBatch.toJSON(message.msg)
+        : undefined);
     return obj;
   },
 
   fromPartial(object: DeepPartial<SwapMsgState>): SwapMsgState {
     const message = { ...baseSwapMsgState } as SwapMsgState;
     if (object.msgHeight !== undefined && object.msgHeight !== null) {
-      message.msgHeight = object.msgHeight as Long;
+      message.msgHeight = object.msgHeight;
     } else {
-      message.msgHeight = Long.ZERO;
+      message.msgHeight = 0;
     }
     if (object.msgIndex !== undefined && object.msgIndex !== null) {
-      message.msgIndex = object.msgIndex as Long;
+      message.msgIndex = object.msgIndex;
     } else {
-      message.msgIndex = Long.UZERO;
+      message.msgIndex = 0;
     }
     if (object.executed !== undefined && object.executed !== null) {
       message.executed = object.executed;
@@ -1403,23 +1558,37 @@ export const SwapMsgState = {
     } else {
       message.toBeDeleted = false;
     }
-    if (object.orderExpiryHeight !== undefined && object.orderExpiryHeight !== null) {
-      message.orderExpiryHeight = object.orderExpiryHeight as Long;
+    if (
+      object.orderExpiryHeight !== undefined &&
+      object.orderExpiryHeight !== null
+    ) {
+      message.orderExpiryHeight = object.orderExpiryHeight;
     } else {
-      message.orderExpiryHeight = Long.ZERO;
+      message.orderExpiryHeight = 0;
     }
-    if (object.exchangedOfferCoin !== undefined && object.exchangedOfferCoin !== null) {
+    if (
+      object.exchangedOfferCoin !== undefined &&
+      object.exchangedOfferCoin !== null
+    ) {
       message.exchangedOfferCoin = Coin.fromPartial(object.exchangedOfferCoin);
     } else {
       message.exchangedOfferCoin = undefined;
     }
-    if (object.remainingOfferCoin !== undefined && object.remainingOfferCoin !== null) {
+    if (
+      object.remainingOfferCoin !== undefined &&
+      object.remainingOfferCoin !== null
+    ) {
       message.remainingOfferCoin = Coin.fromPartial(object.remainingOfferCoin);
     } else {
       message.remainingOfferCoin = undefined;
     }
-    if (object.reservedOfferCoinFee !== undefined && object.reservedOfferCoinFee !== null) {
-      message.reservedOfferCoinFee = Coin.fromPartial(object.reservedOfferCoinFee);
+    if (
+      object.reservedOfferCoinFee !== undefined &&
+      object.reservedOfferCoinFee !== null
+    ) {
+      message.reservedOfferCoinFee = Coin.fromPartial(
+        object.reservedOfferCoinFee
+      );
     } else {
       message.reservedOfferCoinFee = undefined;
     }
@@ -1432,7 +1601,17 @@ export const SwapMsgState = {
   },
 };
 
-type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined | Long;
+declare var self: any | undefined;
+declare var window: any | undefined;
+var globalThis: any = (() => {
+  if (typeof globalThis !== "undefined") return globalThis;
+  if (typeof self !== "undefined") return self;
+  if (typeof window !== "undefined") return window;
+  if (typeof global !== "undefined") return global;
+  throw "Unable to locate global object";
+})();
+
+type Builtin = Date | Function | Uint8Array | string | number | undefined;
 export type DeepPartial<T> = T extends Builtin
   ? T
   : T extends Array<infer U>
@@ -1443,7 +1622,9 @@ export type DeepPartial<T> = T extends Builtin
   ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
-if (_m0.util.Long !== Long) {
-  _m0.util.Long = Long as any;
-  _m0.configure();
+function longToNumber(long: Long): number {
+  if (long.gt(Number.MAX_SAFE_INTEGER)) {
+    throw new globalThis.Error("Value is larger than Number.MAX_SAFE_INTEGER");
+  }
+  return long.toNumber();
 }

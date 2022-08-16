@@ -5,7 +5,7 @@ command -v shellcheck >/dev/null && shellcheck "$0"
 PROTO_DIR="./proto"
 CYBER_DIR="$PROTO_DIR/cyber"
 ZIP_FILE="$CYBER_DIR/tmp.zip"
-CYBER_REF='bostrom-dev'
+CYBER_REF='master'
 
 mkdir -p "$CYBER_DIR"
 

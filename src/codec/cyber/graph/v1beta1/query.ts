@@ -11,7 +11,9 @@ export interface QueryGraphStatsResponse {
   particles: Long;
 }
 
-const baseQueryGraphStatsRequest: object = {};
+function createBaseQueryGraphStatsRequest(): QueryGraphStatsRequest {
+  return {};
+}
 
 export const QueryGraphStatsRequest = {
   encode(_: QueryGraphStatsRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
@@ -21,7 +23,7 @@ export const QueryGraphStatsRequest = {
   decode(input: _m0.Reader | Uint8Array, length?: number): QueryGraphStatsRequest {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseQueryGraphStatsRequest } as QueryGraphStatsRequest;
+    const message = createBaseQueryGraphStatsRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -34,8 +36,7 @@ export const QueryGraphStatsRequest = {
   },
 
   fromJSON(_: any): QueryGraphStatsRequest {
-    const message = { ...baseQueryGraphStatsRequest } as QueryGraphStatsRequest;
-    return message;
+    return {};
   },
 
   toJSON(_: QueryGraphStatsRequest): unknown {
@@ -43,13 +44,15 @@ export const QueryGraphStatsRequest = {
     return obj;
   },
 
-  fromPartial(_: DeepPartial<QueryGraphStatsRequest>): QueryGraphStatsRequest {
-    const message = { ...baseQueryGraphStatsRequest } as QueryGraphStatsRequest;
+  fromPartial<I extends Exact<DeepPartial<QueryGraphStatsRequest>, I>>(_: I): QueryGraphStatsRequest {
+    const message = createBaseQueryGraphStatsRequest();
     return message;
   },
 };
 
-const baseQueryGraphStatsResponse: object = { cyberlinks: Long.UZERO, particles: Long.UZERO };
+function createBaseQueryGraphStatsResponse(): QueryGraphStatsResponse {
+  return { cyberlinks: Long.UZERO, particles: Long.UZERO };
+}
 
 export const QueryGraphStatsResponse = {
   encode(message: QueryGraphStatsResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
@@ -65,7 +68,7 @@ export const QueryGraphStatsResponse = {
   decode(input: _m0.Reader | Uint8Array, length?: number): QueryGraphStatsResponse {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseQueryGraphStatsResponse } as QueryGraphStatsResponse;
+    const message = createBaseQueryGraphStatsResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -84,18 +87,10 @@ export const QueryGraphStatsResponse = {
   },
 
   fromJSON(object: any): QueryGraphStatsResponse {
-    const message = { ...baseQueryGraphStatsResponse } as QueryGraphStatsResponse;
-    if (object.cyberlinks !== undefined && object.cyberlinks !== null) {
-      message.cyberlinks = Long.fromString(object.cyberlinks);
-    } else {
-      message.cyberlinks = Long.UZERO;
-    }
-    if (object.particles !== undefined && object.particles !== null) {
-      message.particles = Long.fromString(object.particles);
-    } else {
-      message.particles = Long.UZERO;
-    }
-    return message;
+    return {
+      cyberlinks: isSet(object.cyberlinks) ? Long.fromValue(object.cyberlinks) : Long.UZERO,
+      particles: isSet(object.particles) ? Long.fromValue(object.particles) : Long.UZERO,
+    };
   },
 
   toJSON(message: QueryGraphStatsResponse): unknown {
@@ -105,18 +100,16 @@ export const QueryGraphStatsResponse = {
     return obj;
   },
 
-  fromPartial(object: DeepPartial<QueryGraphStatsResponse>): QueryGraphStatsResponse {
-    const message = { ...baseQueryGraphStatsResponse } as QueryGraphStatsResponse;
-    if (object.cyberlinks !== undefined && object.cyberlinks !== null) {
-      message.cyberlinks = object.cyberlinks as Long;
-    } else {
-      message.cyberlinks = Long.UZERO;
-    }
-    if (object.particles !== undefined && object.particles !== null) {
-      message.particles = object.particles as Long;
-    } else {
-      message.particles = Long.UZERO;
-    }
+  fromPartial<I extends Exact<DeepPartial<QueryGraphStatsResponse>, I>>(object: I): QueryGraphStatsResponse {
+    const message = createBaseQueryGraphStatsResponse();
+    message.cyberlinks =
+      object.cyberlinks !== undefined && object.cyberlinks !== null
+        ? Long.fromValue(object.cyberlinks)
+        : Long.UZERO;
+    message.particles =
+      object.particles !== undefined && object.particles !== null
+        ? Long.fromValue(object.particles)
+        : Long.UZERO;
     return message;
   },
 };
@@ -142,9 +135,12 @@ interface Rpc {
   request(service: string, method: string, data: Uint8Array): Promise<Uint8Array>;
 }
 
-type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined | Long;
+type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
+
 export type DeepPartial<T> = T extends Builtin
   ? T
+  : T extends Long
+  ? string | number | Long
   : T extends Array<infer U>
   ? Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U>
@@ -153,7 +149,16 @@ export type DeepPartial<T> = T extends Builtin
   ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
+type KeysOfUnion<T> = T extends T ? keyof T : never;
+export type Exact<P, I extends P> = P extends Builtin
+  ? P
+  : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
+
 if (_m0.util.Long !== Long) {
   _m0.util.Long = Long as any;
   _m0.configure();
+}
+
+function isSet(value: any): boolean {
+  return value !== null && value !== undefined;
 }

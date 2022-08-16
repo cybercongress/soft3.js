@@ -1,7 +1,8 @@
-import { AminoMsg, Coin } from "@cosmjs/amino";
+import { AminoMsg } from "@cosmjs/amino";
+import { Coin } from 'cosmjs-types/cosmos/base/v1beta1/coin';
 import { AminoConverters } from "@cosmjs/stargate";
 import { assertDefinedAndNotNull, isNonNullObject } from "@cosmjs/utils";
-import Long from "long";
+import Long from 'long';
 
 import { MsgCyberlink } from "./codec/cyber/graph/v1beta1/tx";
 // import { Link } from "./codec/cyber/graph/v1beta1/types";
@@ -13,6 +14,7 @@ import {
 } from "./codec/cyber/grid/v1beta1/tx";
 import { MsgInvestmint } from "./codec/cyber/resources/v1beta1/tx";
 import {
+  MsgCreatePool,
   MsgDepositWithinBatch,
   MsgSwapWithinBatch,
   MsgWithdrawWithinBatch,
@@ -104,9 +106,24 @@ export function isAminoMsgEditRouteName(msg: AminoMsg): msg is AminoMsgEditRoute
 
 // Liquidity module
 
+export interface AminoMsgCreatePool extends AminoMsg {
+  readonly type: "liquidity/MsgCreatePool";
+  readonly value: {
+    /** Bech32 account address */
+    readonly pool_creator_address: string;
+    readonly pool_type_id: number;
+    readonly deposit_coins: readonly Coin[];
+  };
+}
+
+export function isAminoMsgCreatePool(msg: AminoMsg): msg is AminoMsgCreatePool {
+  return msg.type === "liquidity/MsgCreatePool";
+}
+
 export interface AminoMsgSwapWithinBatch extends AminoMsg {
   readonly type: "liquidity/MsgSwapWithinBatch";
   readonly value: {
+    /** Bech32 account address */
     readonly swap_requester_address: string;
     readonly pool_id: string;
     readonly swap_type_id: number;
@@ -124,9 +141,10 @@ export function isAminoMsgSwapWithinBatch(msg: AminoMsg): msg is AminoMsgSwapWit
 export interface AminoMsgDepositWithinBatch extends AminoMsg {
   readonly type: "liquidity/MsgDepositWithinBatch";
   readonly value: {
+    /** Bech32 account address */
     readonly depositor_address: string;
     readonly pool_id: string;
-    readonly deposit_coins: Coin[];
+    readonly deposit_coins: readonly Coin[];
   };
 }
 
@@ -137,6 +155,7 @@ export function isAminoMsgDepositWithinBatch(msg: AminoMsg): msg is AminoMsgDepo
 export interface AminoMsgWithdrawWithinBatch extends AminoMsg {
   readonly type: "liquidity/MsgWithdrawWithinBatch";
   readonly value: {
+    /** Bech32 account address */
     readonly withdrawer_address: string;
     readonly pool_id: string;
     readonly pool_coin: Coin;
@@ -164,6 +183,22 @@ export function isMsgSignData(msg: AminoMsg): msg is MsgSignData {
   if (typeof castedMsg.value.signer !== "string") return false;
   if (typeof castedMsg.value.data !== "string") return false;
   return true;
+}
+
+function omitDefault<T extends string | number | Long>(input: T): T | undefined {
+  if (typeof input === 'string') {
+    return input === '' ? undefined : input;
+  }
+
+  if (typeof input === 'number') {
+    return input === 0 ? undefined : input;
+  }
+
+  if (Long.isLong(input)) {
+    return input.isZero() ? undefined : input;
+  }
+
+  throw new Error(`Got unsupported type '${typeof input}'`);
 }
 
 export function createCyberAminoConverters(): AminoConverters {
@@ -254,7 +289,19 @@ export function createCyberAminoConverters(): AminoConverters {
         name: name,
       }),
     },
-    // not working (signature verification failed; lease verify account number (#), sequence (#) and chain-id (#): unauthorized)
+    '/tendermint.liquidity.v1beta1.MsgCreatePool': {
+      aminoType: 'liquidity/MsgCreatePool',
+      toAmino: ({ poolCreatorAddress, poolTypeId, depositCoins }: MsgCreatePool): AminoMsgCreatePool['value'] => ({
+        pool_creator_address: poolCreatorAddress,
+        pool_type_id: poolTypeId,
+        deposit_coins: [...depositCoins],
+      }),
+      fromAmino: ({ pool_creator_address, pool_type_id, deposit_coins }: AminoMsgCreatePool['value']): MsgCreatePool => ({
+        poolCreatorAddress: pool_creator_address,
+        poolTypeId: pool_type_id,
+        depositCoins: [...deposit_coins],
+      }),
+    },
     "/tendermint.liquidity.v1beta1.MsgSwapWithinBatch": {
       aminoType: "liquidity/MsgSwapWithinBatch",
       toAmino: ({
@@ -266,16 +313,19 @@ export function createCyberAminoConverters(): AminoConverters {
         offerCoinFee,
         orderPrice,
       }: MsgSwapWithinBatch): AminoMsgSwapWithinBatch["value"] => {
-        assertDefinedAndNotNull(offerCoin, "missing offer coin");
-        assertDefinedAndNotNull(offerCoinFee, "missing offer coin fee");
+        const order_price = orderPrice.split('');
+        while (order_price.length < 19) {
+          order_price.unshift('0');
+        }
+        order_price.splice(order_price.length - 18, 0, '.');
         return {
           swap_requester_address: swapRequesterAddress,
-          pool_id: poolId.toString(),
+          pool_id: '' + omitDefault(poolId)?.toString(),
           swap_type_id: swapTypeId,
-          offer_coin: offerCoin,
+          offer_coin: offerCoin!,
           demand_coin_denom: demandCoinDenom,
-          offer_coin_fee: offerCoinFee,
-          order_price: orderPrice,
+          offer_coin_fee: offerCoinFee!,
+          order_price: order_price.join(''),
         };
       },
       fromAmino: ({
@@ -289,12 +339,12 @@ export function createCyberAminoConverters(): AminoConverters {
       }: AminoMsgSwapWithinBatch["value"]): MsgSwapWithinBatch => {
         return {
           swapRequesterAddress: swap_requester_address,
-          poolId: Long.fromString(pool_id),
+          poolId: parseInt(pool_id) || 0,
           swapTypeId: swap_type_id,
           offerCoin: offer_coin,
           demandCoinDenom: demand_coin_denom,
           offerCoinFee: offer_coin_fee,
-          orderPrice: order_price,
+          orderPrice: order_price.replace('.','').replace(/^0+/, ''),
         };
       },
     },
@@ -304,45 +354,39 @@ export function createCyberAminoConverters(): AminoConverters {
         depositorAddress,
         poolId,
         depositCoins,
-      }: MsgDepositWithinBatch): AminoMsgDepositWithinBatch["value"] => {
-        assertDefinedAndNotNull(depositCoins, "missing deposit coins");
-        return {
+      }: MsgDepositWithinBatch): AminoMsgDepositWithinBatch["value"] => ({
           depositor_address: depositorAddress,
-          pool_id: poolId.toString(),
-          deposit_coins: depositCoins,
-        };
-      },
+          pool_id: '' + omitDefault(poolId)?.toString(),
+          deposit_coins: [...depositCoins],
+      }),
       fromAmino: ({
         depositor_address,
         pool_id,
         deposit_coins,
       }: AminoMsgDepositWithinBatch["value"]): MsgDepositWithinBatch => ({
         depositorAddress: depositor_address,
-        poolId: Long.fromString(pool_id),
-        depositCoins: deposit_coins,
+        poolId: parseInt(pool_id) || 0,
+        depositCoins: [...deposit_coins],
       }),
     },
-    "/tendermint.liquidity.v1beta1.MsgWithdrawWithinBatch": {
+    '/tendermint.liquidity.v1beta1.MsgWithdrawWithinBatch': {
       aminoType: "liquidity/MsgWithdrawWithinBatch",
       toAmino: ({
         withdrawerAddress,
         poolId,
         poolCoin,
-      }: MsgWithdrawWithinBatch): AminoMsgWithdrawWithinBatch["value"] => {
-        assertDefinedAndNotNull(poolCoin, "missing deposit coins");
-        return {
-          withdrawer_address: withdrawerAddress,
-          pool_id: poolId.toString(),
-          pool_coin: poolCoin,
-        };
-      },
+      }: MsgWithdrawWithinBatch): AminoMsgWithdrawWithinBatch["value"] => ({
+        withdrawer_address: withdrawerAddress,
+        pool_id: '' + omitDefault(poolId)?.toString(),
+        pool_coin: poolCoin!,
+      }),
       fromAmino: ({
         withdrawer_address,
         pool_id,
         pool_coin,
       }: AminoMsgWithdrawWithinBatch["value"]): MsgWithdrawWithinBatch => ({
         withdrawerAddress: withdrawer_address,
-        poolId: Long.fromString(pool_id),
+        poolId: parseInt(pool_id) || 0,
         poolCoin: pool_coin,
       }),
     },

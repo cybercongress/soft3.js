@@ -1,8 +1,8 @@
 /* eslint-disable */
+import { Params } from "./types";
+import { Coin } from "../../../cosmos/base/v1beta1/coin";
 import Long from "long";
 import _m0 from "protobufjs/minimal";
-import { Params } from "../../../cyber/resources/v1beta1/types";
-import { Coin } from "../../../cosmos/base/v1beta1/coin";
 
 export const protobufPackage = "cyber.resources.v1beta1";
 
@@ -22,7 +22,9 @@ export interface QueryInvestmintResponse {
   amount?: Coin;
 }
 
-const baseQueryParamsRequest: object = {};
+function createBaseQueryParamsRequest(): QueryParamsRequest {
+  return {};
+}
 
 export const QueryParamsRequest = {
   encode(_: QueryParamsRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
@@ -32,7 +34,7 @@ export const QueryParamsRequest = {
   decode(input: _m0.Reader | Uint8Array, length?: number): QueryParamsRequest {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseQueryParamsRequest } as QueryParamsRequest;
+    const message = createBaseQueryParamsRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -45,8 +47,7 @@ export const QueryParamsRequest = {
   },
 
   fromJSON(_: any): QueryParamsRequest {
-    const message = { ...baseQueryParamsRequest } as QueryParamsRequest;
-    return message;
+    return {};
   },
 
   toJSON(_: QueryParamsRequest): unknown {
@@ -54,13 +55,15 @@ export const QueryParamsRequest = {
     return obj;
   },
 
-  fromPartial(_: DeepPartial<QueryParamsRequest>): QueryParamsRequest {
-    const message = { ...baseQueryParamsRequest } as QueryParamsRequest;
+  fromPartial<I extends Exact<DeepPartial<QueryParamsRequest>, I>>(_: I): QueryParamsRequest {
+    const message = createBaseQueryParamsRequest();
     return message;
   },
 };
 
-const baseQueryParamsResponse: object = {};
+function createBaseQueryParamsResponse(): QueryParamsResponse {
+  return { params: undefined };
+}
 
 export const QueryParamsResponse = {
   encode(message: QueryParamsResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
@@ -73,7 +76,7 @@ export const QueryParamsResponse = {
   decode(input: _m0.Reader | Uint8Array, length?: number): QueryParamsResponse {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseQueryParamsResponse } as QueryParamsResponse;
+    const message = createBaseQueryParamsResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -89,13 +92,9 @@ export const QueryParamsResponse = {
   },
 
   fromJSON(object: any): QueryParamsResponse {
-    const message = { ...baseQueryParamsResponse } as QueryParamsResponse;
-    if (object.params !== undefined && object.params !== null) {
-      message.params = Params.fromJSON(object.params);
-    } else {
-      message.params = undefined;
-    }
-    return message;
+    return {
+      params: isSet(object.params) ? Params.fromJSON(object.params) : undefined,
+    };
   },
 
   toJSON(message: QueryParamsResponse): unknown {
@@ -104,18 +103,17 @@ export const QueryParamsResponse = {
     return obj;
   },
 
-  fromPartial(object: DeepPartial<QueryParamsResponse>): QueryParamsResponse {
-    const message = { ...baseQueryParamsResponse } as QueryParamsResponse;
-    if (object.params !== undefined && object.params !== null) {
-      message.params = Params.fromPartial(object.params);
-    } else {
-      message.params = undefined;
-    }
+  fromPartial<I extends Exact<DeepPartial<QueryParamsResponse>, I>>(object: I): QueryParamsResponse {
+    const message = createBaseQueryParamsResponse();
+    message.params =
+      object.params !== undefined && object.params !== null ? Params.fromPartial(object.params) : undefined;
     return message;
   },
 };
 
-const baseQueryInvestmintRequest: object = { resource: "", length: Long.UZERO };
+function createBaseQueryInvestmintRequest(): QueryInvestmintRequest {
+  return { amount: undefined, resource: "", length: Long.UZERO };
+}
 
 export const QueryInvestmintRequest = {
   encode(message: QueryInvestmintRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
@@ -134,7 +132,7 @@ export const QueryInvestmintRequest = {
   decode(input: _m0.Reader | Uint8Array, length?: number): QueryInvestmintRequest {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseQueryInvestmintRequest } as QueryInvestmintRequest;
+    const message = createBaseQueryInvestmintRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -156,23 +154,11 @@ export const QueryInvestmintRequest = {
   },
 
   fromJSON(object: any): QueryInvestmintRequest {
-    const message = { ...baseQueryInvestmintRequest } as QueryInvestmintRequest;
-    if (object.amount !== undefined && object.amount !== null) {
-      message.amount = Coin.fromJSON(object.amount);
-    } else {
-      message.amount = undefined;
-    }
-    if (object.resource !== undefined && object.resource !== null) {
-      message.resource = String(object.resource);
-    } else {
-      message.resource = "";
-    }
-    if (object.length !== undefined && object.length !== null) {
-      message.length = Long.fromString(object.length);
-    } else {
-      message.length = Long.UZERO;
-    }
-    return message;
+    return {
+      amount: isSet(object.amount) ? Coin.fromJSON(object.amount) : undefined,
+      resource: isSet(object.resource) ? String(object.resource) : "",
+      length: isSet(object.length) ? Long.fromValue(object.length) : Long.UZERO,
+    };
   },
 
   toJSON(message: QueryInvestmintRequest): unknown {
@@ -183,28 +169,20 @@ export const QueryInvestmintRequest = {
     return obj;
   },
 
-  fromPartial(object: DeepPartial<QueryInvestmintRequest>): QueryInvestmintRequest {
-    const message = { ...baseQueryInvestmintRequest } as QueryInvestmintRequest;
-    if (object.amount !== undefined && object.amount !== null) {
-      message.amount = Coin.fromPartial(object.amount);
-    } else {
-      message.amount = undefined;
-    }
-    if (object.resource !== undefined && object.resource !== null) {
-      message.resource = object.resource;
-    } else {
-      message.resource = "";
-    }
-    if (object.length !== undefined && object.length !== null) {
-      message.length = object.length as Long;
-    } else {
-      message.length = Long.UZERO;
-    }
+  fromPartial<I extends Exact<DeepPartial<QueryInvestmintRequest>, I>>(object: I): QueryInvestmintRequest {
+    const message = createBaseQueryInvestmintRequest();
+    message.amount =
+      object.amount !== undefined && object.amount !== null ? Coin.fromPartial(object.amount) : undefined;
+    message.resource = object.resource ?? "";
+    message.length =
+      object.length !== undefined && object.length !== null ? Long.fromValue(object.length) : Long.UZERO;
     return message;
   },
 };
 
-const baseQueryInvestmintResponse: object = {};
+function createBaseQueryInvestmintResponse(): QueryInvestmintResponse {
+  return { amount: undefined };
+}
 
 export const QueryInvestmintResponse = {
   encode(message: QueryInvestmintResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
@@ -217,7 +195,7 @@ export const QueryInvestmintResponse = {
   decode(input: _m0.Reader | Uint8Array, length?: number): QueryInvestmintResponse {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseQueryInvestmintResponse } as QueryInvestmintResponse;
+    const message = createBaseQueryInvestmintResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -233,13 +211,9 @@ export const QueryInvestmintResponse = {
   },
 
   fromJSON(object: any): QueryInvestmintResponse {
-    const message = { ...baseQueryInvestmintResponse } as QueryInvestmintResponse;
-    if (object.amount !== undefined && object.amount !== null) {
-      message.amount = Coin.fromJSON(object.amount);
-    } else {
-      message.amount = undefined;
-    }
-    return message;
+    return {
+      amount: isSet(object.amount) ? Coin.fromJSON(object.amount) : undefined,
+    };
   },
 
   toJSON(message: QueryInvestmintResponse): unknown {
@@ -248,13 +222,10 @@ export const QueryInvestmintResponse = {
     return obj;
   },
 
-  fromPartial(object: DeepPartial<QueryInvestmintResponse>): QueryInvestmintResponse {
-    const message = { ...baseQueryInvestmintResponse } as QueryInvestmintResponse;
-    if (object.amount !== undefined && object.amount !== null) {
-      message.amount = Coin.fromPartial(object.amount);
-    } else {
-      message.amount = undefined;
-    }
+  fromPartial<I extends Exact<DeepPartial<QueryInvestmintResponse>, I>>(object: I): QueryInvestmintResponse {
+    const message = createBaseQueryInvestmintResponse();
+    message.amount =
+      object.amount !== undefined && object.amount !== null ? Coin.fromPartial(object.amount) : undefined;
     return message;
   },
 };
@@ -288,9 +259,12 @@ interface Rpc {
   request(service: string, method: string, data: Uint8Array): Promise<Uint8Array>;
 }
 
-type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined | Long;
+type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
+
 export type DeepPartial<T> = T extends Builtin
   ? T
+  : T extends Long
+  ? string | number | Long
   : T extends Array<infer U>
   ? Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U>
@@ -299,7 +273,16 @@ export type DeepPartial<T> = T extends Builtin
   ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
+type KeysOfUnion<T> = T extends T ? keyof T : never;
+export type Exact<P, I extends P> = P extends Builtin
+  ? P
+  : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
+
 if (_m0.util.Long !== Long) {
   _m0.util.Long = Long as any;
   _m0.configure();
+}
+
+function isSet(value: any): boolean {
+  return value !== null && value !== undefined;
 }

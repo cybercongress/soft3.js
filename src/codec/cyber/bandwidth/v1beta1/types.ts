@@ -23,13 +23,15 @@ export interface Price {
   price: string;
 }
 
-const baseParams: object = {
-  recoveryPeriod: Long.UZERO,
-  adjustPricePeriod: Long.UZERO,
-  basePrice: "",
-  baseLoad: "",
-  maxBlockBandwidth: Long.UZERO,
-};
+function createBaseParams(): Params {
+  return {
+    recoveryPeriod: Long.UZERO,
+    adjustPricePeriod: Long.UZERO,
+    basePrice: "",
+    baseLoad: "",
+    maxBlockBandwidth: Long.UZERO,
+  };
+}
 
 export const Params = {
   encode(message: Params, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
@@ -54,7 +56,7 @@ export const Params = {
   decode(input: _m0.Reader | Uint8Array, length?: number): Params {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseParams } as Params;
+    const message = createBaseParams();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -82,33 +84,17 @@ export const Params = {
   },
 
   fromJSON(object: any): Params {
-    const message = { ...baseParams } as Params;
-    if (object.recoveryPeriod !== undefined && object.recoveryPeriod !== null) {
-      message.recoveryPeriod = Long.fromString(object.recoveryPeriod);
-    } else {
-      message.recoveryPeriod = Long.UZERO;
-    }
-    if (object.adjustPricePeriod !== undefined && object.adjustPricePeriod !== null) {
-      message.adjustPricePeriod = Long.fromString(object.adjustPricePeriod);
-    } else {
-      message.adjustPricePeriod = Long.UZERO;
-    }
-    if (object.basePrice !== undefined && object.basePrice !== null) {
-      message.basePrice = String(object.basePrice);
-    } else {
-      message.basePrice = "";
-    }
-    if (object.baseLoad !== undefined && object.baseLoad !== null) {
-      message.baseLoad = String(object.baseLoad);
-    } else {
-      message.baseLoad = "";
-    }
-    if (object.maxBlockBandwidth !== undefined && object.maxBlockBandwidth !== null) {
-      message.maxBlockBandwidth = Long.fromString(object.maxBlockBandwidth);
-    } else {
-      message.maxBlockBandwidth = Long.UZERO;
-    }
-    return message;
+    return {
+      recoveryPeriod: isSet(object.recoveryPeriod) ? Long.fromValue(object.recoveryPeriod) : Long.UZERO,
+      adjustPricePeriod: isSet(object.adjustPricePeriod)
+        ? Long.fromValue(object.adjustPricePeriod)
+        : Long.UZERO,
+      basePrice: isSet(object.basePrice) ? String(object.basePrice) : "",
+      baseLoad: isSet(object.baseLoad) ? String(object.baseLoad) : "",
+      maxBlockBandwidth: isSet(object.maxBlockBandwidth)
+        ? Long.fromValue(object.maxBlockBandwidth)
+        : Long.UZERO,
+    };
   },
 
   toJSON(message: Params): unknown {
@@ -124,43 +110,29 @@ export const Params = {
     return obj;
   },
 
-  fromPartial(object: DeepPartial<Params>): Params {
-    const message = { ...baseParams } as Params;
-    if (object.recoveryPeriod !== undefined && object.recoveryPeriod !== null) {
-      message.recoveryPeriod = object.recoveryPeriod as Long;
-    } else {
-      message.recoveryPeriod = Long.UZERO;
-    }
-    if (object.adjustPricePeriod !== undefined && object.adjustPricePeriod !== null) {
-      message.adjustPricePeriod = object.adjustPricePeriod as Long;
-    } else {
-      message.adjustPricePeriod = Long.UZERO;
-    }
-    if (object.basePrice !== undefined && object.basePrice !== null) {
-      message.basePrice = object.basePrice;
-    } else {
-      message.basePrice = "";
-    }
-    if (object.baseLoad !== undefined && object.baseLoad !== null) {
-      message.baseLoad = object.baseLoad;
-    } else {
-      message.baseLoad = "";
-    }
-    if (object.maxBlockBandwidth !== undefined && object.maxBlockBandwidth !== null) {
-      message.maxBlockBandwidth = object.maxBlockBandwidth as Long;
-    } else {
-      message.maxBlockBandwidth = Long.UZERO;
-    }
+  fromPartial<I extends Exact<DeepPartial<Params>, I>>(object: I): Params {
+    const message = createBaseParams();
+    message.recoveryPeriod =
+      object.recoveryPeriod !== undefined && object.recoveryPeriod !== null
+        ? Long.fromValue(object.recoveryPeriod)
+        : Long.UZERO;
+    message.adjustPricePeriod =
+      object.adjustPricePeriod !== undefined && object.adjustPricePeriod !== null
+        ? Long.fromValue(object.adjustPricePeriod)
+        : Long.UZERO;
+    message.basePrice = object.basePrice ?? "";
+    message.baseLoad = object.baseLoad ?? "";
+    message.maxBlockBandwidth =
+      object.maxBlockBandwidth !== undefined && object.maxBlockBandwidth !== null
+        ? Long.fromValue(object.maxBlockBandwidth)
+        : Long.UZERO;
     return message;
   },
 };
 
-const baseNeuronBandwidth: object = {
-  neuron: "",
-  remainedValue: Long.UZERO,
-  lastUpdatedBlock: Long.UZERO,
-  maxValue: Long.UZERO,
-};
+function createBaseNeuronBandwidth(): NeuronBandwidth {
+  return { neuron: "", remainedValue: Long.UZERO, lastUpdatedBlock: Long.UZERO, maxValue: Long.UZERO };
+}
 
 export const NeuronBandwidth = {
   encode(message: NeuronBandwidth, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
@@ -182,7 +154,7 @@ export const NeuronBandwidth = {
   decode(input: _m0.Reader | Uint8Array, length?: number): NeuronBandwidth {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseNeuronBandwidth } as NeuronBandwidth;
+    const message = createBaseNeuronBandwidth();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -207,28 +179,12 @@ export const NeuronBandwidth = {
   },
 
   fromJSON(object: any): NeuronBandwidth {
-    const message = { ...baseNeuronBandwidth } as NeuronBandwidth;
-    if (object.neuron !== undefined && object.neuron !== null) {
-      message.neuron = String(object.neuron);
-    } else {
-      message.neuron = "";
-    }
-    if (object.remainedValue !== undefined && object.remainedValue !== null) {
-      message.remainedValue = Long.fromString(object.remainedValue);
-    } else {
-      message.remainedValue = Long.UZERO;
-    }
-    if (object.lastUpdatedBlock !== undefined && object.lastUpdatedBlock !== null) {
-      message.lastUpdatedBlock = Long.fromString(object.lastUpdatedBlock);
-    } else {
-      message.lastUpdatedBlock = Long.UZERO;
-    }
-    if (object.maxValue !== undefined && object.maxValue !== null) {
-      message.maxValue = Long.fromString(object.maxValue);
-    } else {
-      message.maxValue = Long.UZERO;
-    }
-    return message;
+    return {
+      neuron: isSet(object.neuron) ? String(object.neuron) : "",
+      remainedValue: isSet(object.remainedValue) ? Long.fromValue(object.remainedValue) : Long.UZERO,
+      lastUpdatedBlock: isSet(object.lastUpdatedBlock) ? Long.fromValue(object.lastUpdatedBlock) : Long.UZERO,
+      maxValue: isSet(object.maxValue) ? Long.fromValue(object.maxValue) : Long.UZERO,
+    };
   },
 
   toJSON(message: NeuronBandwidth): unknown {
@@ -242,33 +198,28 @@ export const NeuronBandwidth = {
     return obj;
   },
 
-  fromPartial(object: DeepPartial<NeuronBandwidth>): NeuronBandwidth {
-    const message = { ...baseNeuronBandwidth } as NeuronBandwidth;
-    if (object.neuron !== undefined && object.neuron !== null) {
-      message.neuron = object.neuron;
-    } else {
-      message.neuron = "";
-    }
-    if (object.remainedValue !== undefined && object.remainedValue !== null) {
-      message.remainedValue = object.remainedValue as Long;
-    } else {
-      message.remainedValue = Long.UZERO;
-    }
-    if (object.lastUpdatedBlock !== undefined && object.lastUpdatedBlock !== null) {
-      message.lastUpdatedBlock = object.lastUpdatedBlock as Long;
-    } else {
-      message.lastUpdatedBlock = Long.UZERO;
-    }
-    if (object.maxValue !== undefined && object.maxValue !== null) {
-      message.maxValue = object.maxValue as Long;
-    } else {
-      message.maxValue = Long.UZERO;
-    }
+  fromPartial<I extends Exact<DeepPartial<NeuronBandwidth>, I>>(object: I): NeuronBandwidth {
+    const message = createBaseNeuronBandwidth();
+    message.neuron = object.neuron ?? "";
+    message.remainedValue =
+      object.remainedValue !== undefined && object.remainedValue !== null
+        ? Long.fromValue(object.remainedValue)
+        : Long.UZERO;
+    message.lastUpdatedBlock =
+      object.lastUpdatedBlock !== undefined && object.lastUpdatedBlock !== null
+        ? Long.fromValue(object.lastUpdatedBlock)
+        : Long.UZERO;
+    message.maxValue =
+      object.maxValue !== undefined && object.maxValue !== null
+        ? Long.fromValue(object.maxValue)
+        : Long.UZERO;
     return message;
   },
 };
 
-const basePrice: object = { price: "" };
+function createBasePrice(): Price {
+  return { price: "" };
+}
 
 export const Price = {
   encode(message: Price, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
@@ -281,7 +232,7 @@ export const Price = {
   decode(input: _m0.Reader | Uint8Array, length?: number): Price {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...basePrice } as Price;
+    const message = createBasePrice();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -297,13 +248,9 @@ export const Price = {
   },
 
   fromJSON(object: any): Price {
-    const message = { ...basePrice } as Price;
-    if (object.price !== undefined && object.price !== null) {
-      message.price = String(object.price);
-    } else {
-      message.price = "";
-    }
-    return message;
+    return {
+      price: isSet(object.price) ? String(object.price) : "",
+    };
   },
 
   toJSON(message: Price): unknown {
@@ -312,20 +259,19 @@ export const Price = {
     return obj;
   },
 
-  fromPartial(object: DeepPartial<Price>): Price {
-    const message = { ...basePrice } as Price;
-    if (object.price !== undefined && object.price !== null) {
-      message.price = object.price;
-    } else {
-      message.price = "";
-    }
+  fromPartial<I extends Exact<DeepPartial<Price>, I>>(object: I): Price {
+    const message = createBasePrice();
+    message.price = object.price ?? "";
     return message;
   },
 };
 
-type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined | Long;
+type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
+
 export type DeepPartial<T> = T extends Builtin
   ? T
+  : T extends Long
+  ? string | number | Long
   : T extends Array<infer U>
   ? Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U>
@@ -334,7 +280,16 @@ export type DeepPartial<T> = T extends Builtin
   ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
+type KeysOfUnion<T> = T extends T ? keyof T : never;
+export type Exact<P, I extends P> = P extends Builtin
+  ? P
+  : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
+
 if (_m0.util.Long !== Long) {
   _m0.util.Long = Long as any;
   _m0.configure();
+}
+
+function isSet(value: any): boolean {
+  return value !== null && value !== undefined;
 }
