@@ -1,2 +1,2 @@
 export { CyberClient } from "./cyberclient";
-export { SigningCyberClient, SigningCyberClientOptions } from "./signingcyberclient";
+export { SigningCyberClient, SigningCyberClientOptions, OfflineDappWallet } from "./signingcyberclient";
