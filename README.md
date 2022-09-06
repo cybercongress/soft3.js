@@ -4,53 +4,24 @@
 
 ### Modules support:
 
-Query client extensions support for modules:
-- Auth
-- Bank
-- Distribution
-- Staking
-- Graph
-- Rank
-- Bandwidth
-- Grid
-- Wasm
-- Liquidity
-- Gov
-
-Signing client messages support for modules:
-- Graph
-    - MsgCyberlink
-- Resources
-    - MsgInvestmint
-- Grid
-    - MsgCreateRoute
-    - MsgEditRoute
-    - MsgEditRouteName
-    - MsgDeleteRoute
-- Wasm
-    - MsgClearAdmin
-    - MsgExecuteContract
-    - MsgMigrateContract
-    - MsgStoreCode
-    - MsgInstantiateContract
-    - MsgUpdateAdmin
-- Liquidity
-    - MsgSwapWithinBatch
-    - MsgDepositWithinBatch
-    - MsgWithdrawWithinBatch
-    - MsgCreatePool
-- Gov
-    - MsgDeposit
-    - MsgVote
-    - MsgSubmitProposal
-- Distribution
-    - MsgWithdrawDelegatorReward
-- Staking
-    - MsgDelegate
-    - MsgBeginRedelegate
-    - MsgUndelegate
-- IBC
-    - MsgTransfer
+| Module       	| Messages                                                                                                                          	| Signing                                                                                                	| Queries                                                                                                                                                                                                                                                                                                                    	|
+|--------------	|-----------------------------------------------------------------------------------------------------------------------------------	|--------------------------------------------------------------------------------------------------------	|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------	|
+| Graph        	| - MsgCyberlink                                                                                                                    	| - cyberlink<br>- motif<br>- linkchain                                                                  	| - graphStats                                                                                                                                                                                                                                                                                                               	|
+| Rank         	|                                                                                                                                   	|                                                                                                        	| - search<br>- backlinks<br>- rank<br>- karma<br>- isLinkExist<br>- isAnyLinkExist                                                                                                                                                                                                                                          	|
+| Bandwidth    	|                                                                                                                                   	|                                                                                                        	| - load<br>- price<br>- accountBandwidth                                                                                                                                                                                                                                                                                    	|
+| Resources    	| - MsgInvestmint                                                                                                                   	| - investmint                                                                                           	| - resourcesParams                                                                                                                                                                                                                                                                                                          	|
+| Grid         	| - MsgCreateRoute<br>- MsgEditRoute<br>- MsgEditRouteName<br>- MsgDeleteRoute                                                      	| - createEnergyRoute<br>- editEnergyRoute<br>- deleteEnergyRoute<br>- editEnergyRouteName               	| - energyParams<br>- sourceRoutes<br>- destinationRoutes<br>- destinationRoutedEnergy<br>- sourceRoutedEnergy<br>- route<br>- routes                                                                                                                                                                                        	|
+| Wasm         	| - MsgClearAdmin<br>- MsgExecuteContract<br>- MsgMigrateContract<br>- MsgStoreCode<br>- MsgInstantiateContract<br>- MsgUpdateAdmin 	| - upload<br>- instantiate<br>- updateAdmin<br>- clearAdmin<br>- migrate<br>- execute<br>- executeArray 	| - getCodes<br>- getCodeDetails<br>- getContracts<br>- getContract<br>- getContractCodeHistory<br>- queryContractRaw<br>- queryContractSmart                                                                                                                                                                                	|
+| Bank         	| - MsgSend                                                                                                                         	| - sendTokens                                                                                           	| - getBalance<br>- getAllBalances<br>- totalSupply                                                                                                                                                                                                                                                                          	|
+| Auth         	|                                                                                                                                   	|                                                                                                        	| - getAccount                                                                                                                                                                                                                                                                                                               	|
+| Liquidity    	| - MsgSwapWithinBatch<br>- MsgDepositWithinBatch<br>- MsgWithdrawWithinBatch<br>- MsgCreatePool                                    	| - swapWithinBatch<br>- depositWithinBatch<br>- withdwawWithinBatch<br>- createPool                     	| - liquidityParams<br>- pool<br>- pools                                                                                                                                                                                                                                                                                     	|
+| Governance   	| - MsgDeposit<br>- MsgVote<br>- MsgSubmitProposal                                                                                  	| - voteProposal<br>- submitProposal<br>- depositProposal                                                	| - govParams<br>- proposals<br>- proposal<br>- deposits<br>- deposit<br>- tally<br>- votes<br>- vote                                                                                                                                                                                                                        	|
+| Distribution 	| - MsgWithdrawDelegatorReward                                                                                                      	| - withdrawRewards<br>- withdrawAllRewards                                                              	| - distributionParams<br>- communityPool<br>- delegationRewards<br>- delegationTotalRewards<br>- delegatorValidatorsDistribution<br>- delegatorWithdrawAddress<br>- validatorCommission<br>- validatorOutstandingRewards<br>- validatorSlashes                                                                              	|
+| Staking      	| - MsgDelegate<br>- MsgBeginRedelegate<br>- MsgUndelegate                                                                          	| - delegateTokens<br>- redelegateTokens<br>- undelegateTokens                                           	| - stakingParams<br>- delegation<br>- delegatorDelegations<br>- delegatorUnbondingDelegations<br>- delegatorValidator<br>- delegatorValidators<br>- historicalInfo<br>- stakingPool<br>- redelegations<br>- unbondingDelegation<br>- validator<br>- validatorDelegations<br>- validators<br>- validatorUnbondingDelegations 	|
+| Gov          	| - MsgVote<br>- MsgSubmitProposal<br>- MsgDeposit                                                                                  	| - voteProposal<br>- submitProposal<br>- depositProposal                                                	|                                                                                                                                                                                                                                                                                                                            	|
+| IBC          	| - MsgTransfer                                                                                                                     	| - sendIbcTokens                                                                                        	|                                                                                                                                                                                                                                                                                                                            	|
+| Authz        	|                                                                                                                                   	|                                                                                                        	|                                                                                                                                                                                                                                                                                                                            	|
+| Relayer      	|                                                                                                                                   	|                                                                                                        	|                                                                                                                                                                                                                                                                                                                            	|
 
 
 ### Usage:
