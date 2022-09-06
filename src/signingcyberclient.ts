@@ -153,6 +153,17 @@ export function links(from: string, to: string): Link[] {
   return [link(from, to)];
 }
 
+export function chain(particles: string[]): Link[] {
+  let chain = [];
+  for (let i = 0; i < particles.length-1; i++) {
+    chain.push({
+      from: particles[i],
+      to: particles[i+1],
+    })
+  }
+  return chain;
+}
+
 // Experimental for remote dapps with cyb's signer integration
 export type OfflineSigner = OfflineAminoSigner | OfflineDirectSigner | OfflineDappSigner;
 
@@ -314,6 +325,40 @@ export class SigningCyberClient extends CyberClient {
       value: MsgCyberlink.fromPartial({
         neuron: neuron,
         links: links(from, to),
+      }),
+    };
+
+    return this.signAndBroadcast(neuron, [cyberlinkMsg], fee, memo);
+  }
+
+  public async cybermotif(
+    neuron: string,
+    linkchain: Link[],
+    fee: StdFee,
+    memo = "",
+  ): Promise<DeliverTxResponse | string[]> {
+    const cyberlinkMsg: MsgCyberlinkEncodeObject = {
+      typeUrl: "/cyber.graph.v1beta1.MsgCyberlink",
+      value: MsgCyberlink.fromPartial({
+        neuron: neuron,
+        links: linkchain,
+      }),
+    };
+
+    return this.signAndBroadcast(neuron, [cyberlinkMsg], fee, memo);
+  }
+
+  public async cyberlinkchain(
+    neuron: string,
+    particles: string[],
+    fee: StdFee,
+    memo = "",
+  ): Promise<DeliverTxResponse | string[]> {
+    const cyberlinkMsg: MsgCyberlinkEncodeObject = {
+      typeUrl: "/cyber.graph.v1beta1.MsgCyberlink",
+      value: MsgCyberlink.fromPartial({
+        neuron: neuron,
+        links: chain(particles),
       }),
     };
 

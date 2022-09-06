@@ -20,6 +20,46 @@ async function main() {
 
   const myAddress = "bostrom1frk9k38pvp70vheezhdfd4nvqnlsm9dw3j8hlq";
 
+  console.log("Motifs #1");
+  try {
+    var response = await client.cybermotif(
+      myAddress,
+      [
+        {
+          from: "QmRX8qYgeZoYM3M5zzQaWEpVFdpin6FvVXvp6RPQK3oufV",
+          to: "QmUX9mt8ftaHcn9Nc6SR4j9MsKkYfkcZqkfPTmMmBgeTe4"
+        },
+        {
+          from: "QmRX8qYgeZoYM3M5zzQaWEpVFdpin6FvVXvp6RPQK3oufV",
+          to: "QmUX9mt8ftaHcn9Nc6SR4j9MsKkYfkcZqkfPTmMmBgeTe3"
+        }
+      ]
+    );
+    console.log(JSON.parse(Buffer.from(fromBase64(response[0]))));
+    console.log("https://rebyc.cyber.page/wallet?sign="+response[0]);
+    console.log(JSON.stringify(response, null, 4));
+  } catch (error) {
+    console.log(error);
+  }
+
+  console.log("Linkchain #1");
+  try {
+    var response = await client.cyberlinkchain(
+      myAddress,
+      [
+        "QmRX8qYgeZoYM3M5zzQaWEpVFdpin6FvVXvp6RPQK3oufV",
+        "QmUX9mt8ftaHcn9Nc6SR4j9MsKkYfkcZqkfPTmMmBgeTe4",
+        "QmUX9mt8ftaHcn9Nc6SR4j9MsKkYfkcZqkfPTmMmBgeTe3",
+        "QmUX9mt8ftaHcn9Nc6SR4j9MsKkYfkcZqkfPTmMmBgeTe2"
+      ]
+    );
+    console.log(JSON.parse(Buffer.from(fromBase64(response[0]))));
+    console.log("https://rebyc.cyber.page/wallet?sign="+response[0]);
+    console.log(JSON.stringify(response, null, 4));
+  } catch (error) {
+    console.log(error);
+  }
+
   console.log("Cyberlink #1");
   try {
     var response = await client.cyberlink(
