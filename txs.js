@@ -22,7 +22,7 @@ async function main() {
 
   console.log("Motifs #1");
   try {
-    var response = await client.cybermotif(
+    var response = await client.motif(
       myAddress,
       [
         {
@@ -44,7 +44,7 @@ async function main() {
 
   console.log("Linkchain #1");
   try {
-    var response = await client.cyberlinkchain(
+    var response = await client.linkchain(
       myAddress,
       [
         "QmRX8qYgeZoYM3M5zzQaWEpVFdpin6FvVXvp6RPQK3oufV",

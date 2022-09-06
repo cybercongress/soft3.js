@@ -331,7 +331,7 @@ export class SigningCyberClient extends CyberClient {
     return this.signAndBroadcast(neuron, [cyberlinkMsg], fee, memo);
   }
 
-  public async cybermotif(
+  public async motif(
     neuron: string,
     linkchain: Link[],
     fee: StdFee,
@@ -348,7 +348,7 @@ export class SigningCyberClient extends CyberClient {
     return this.signAndBroadcast(neuron, [cyberlinkMsg], fee, memo);
   }
 
-  public async cyberlinkchain(
+  public async linkchain(
     neuron: string,
     particles: string[],
     fee: StdFee,
