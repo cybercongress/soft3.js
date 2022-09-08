@@ -193,26 +193,41 @@ export class OfflineDappWallet implements OfflineDappSigner {
   }
 }
 
+interface RenderItem {
+  typeUrl: string; value: Partial<any>, data: {};
+}
+
+interface RenderItems extends Array<RenderItem>{}
+
+export const render: RenderItems = [
+  { typeUrl: "/cyber.graph.v1beta1.MsgCyberlink", value: MsgCyberlink, data: { neuron: "bostrom1frk9k38pvp70vheezhdfd4nvqnlsm9dw3j8hlq", links: [{from: "QmUX9mt8ftaHcn9Nc6SR4j9MsKkYfkcZqkfPTmMmBgeTe4", to: "QmUX9mt8ftaHcn9Nc6SR4j9MsKkYfkcZqkfPTmMmBgeTe4"}]} },
+  { typeUrl: "/cyber.resources.v1beta1.MsgInvestmint", value: MsgInvestmint, data: { address: "bostrom1frk9k38pvp70vheezhdfd4nvqnlsm9dw3j8hlq", amount: { denom: "boot", amount: "1000000000" }, resource: "millivolt", length: 86400 } },
+]
+
+export const cyberRegistryTypes: ReadonlyArray<[string, GeneratedType]> = [
+  ["/cosmwasm.wasm.v1beta1.MsgClearAdmin", MsgClearAdmin],
+  ["/cosmwasm.wasm.v1beta1.MsgMigrateContract", MsgMigrateContract],
+  ["/cosmwasm.wasm.v1beta1.MsgUpdateAdmin", MsgUpdateAdmin],
+  ["/cyber.graph.v1beta1.MsgCyberlink", MsgCyberlink],
+  ["/cyber.resources.v1beta1.MsgInvestmint", MsgInvestmint],
+  ["/cyber.grid.v1beta1.MsgCreateRoute", MsgCreateRoute],
+  ["/cyber.grid.v1beta1.MsgEditRoute", MsgEditRoute],
+  ["/cyber.grid.v1beta1.MsgEditRouteName", MsgEditRouteName],
+  ["/cyber.grid.v1beta1.MsgDeleteRoute", MsgDeleteRoute],
+  ["/tendermint.liquidity.v1beta1.MsgSwapWithinBatch", MsgSwapWithinBatch],
+  ["/tendermint.liquidity.v1beta1.MsgDepositWithinBatch", MsgDepositWithinBatch],
+  ["/tendermint.liquidity.v1beta1.MsgWithdrawWithinBatch", MsgWithdrawWithinBatch],
+  ["/tendermint.liquidity.v1beta1.MsgCreatePool", MsgCreatePool],
+  ["/cosmos.gov.v1beta1.MsgDeposit", MsgDeposit],
+  ["/cosmwasm.wasm.v1.MsgExecuteContract", MsgExecuteContract],
+  ["/cosmwasm.wasm.v1.MsgInstantiateContract", MsgInstantiateContract],
+  ["/cosmwasm.wasm.v1.MsgStoreCode", MsgStoreCode],
+];
+
 function createDefaultRegistry(): Registry {
   return new Registry([
     ...defaultRegistryTypes,
-    ["/cosmwasm.wasm.v1beta1.MsgClearAdmin", MsgClearAdmin],
-    ["/cosmwasm.wasm.v1beta1.MsgMigrateContract", MsgMigrateContract],
-    ["/cosmwasm.wasm.v1beta1.MsgUpdateAdmin", MsgUpdateAdmin],
-    ["/cyber.graph.v1beta1.MsgCyberlink", MsgCyberlink],
-    ["/cyber.resources.v1beta1.MsgInvestmint", MsgInvestmint],
-    ["/cyber.grid.v1beta1.MsgCreateRoute", MsgCreateRoute],
-    ["/cyber.grid.v1beta1.MsgEditRoute", MsgEditRoute],
-    ["/cyber.grid.v1beta1.MsgEditRouteName", MsgEditRouteName],
-    ["/cyber.grid.v1beta1.MsgDeleteRoute", MsgDeleteRoute],
-    ["/tendermint.liquidity.v1beta1.MsgSwapWithinBatch", MsgSwapWithinBatch],
-    ["/tendermint.liquidity.v1beta1.MsgDepositWithinBatch", MsgDepositWithinBatch],
-    ["/tendermint.liquidity.v1beta1.MsgWithdrawWithinBatch", MsgWithdrawWithinBatch],
-    ["/tendermint.liquidity.v1beta1.MsgCreatePool", MsgCreatePool],
-    ["/cosmos.gov.v1beta1.MsgDeposit", MsgDeposit],
-    ["/cosmwasm.wasm.v1.MsgExecuteContract", MsgExecuteContract],
-    ["/cosmwasm.wasm.v1.MsgInstantiateContract", MsgInstantiateContract],
-    ["/cosmwasm.wasm.v1.MsgStoreCode", MsgStoreCode],
+    ...cyberRegistryTypes
   ]);
 }
 
@@ -267,6 +282,27 @@ export class SigningCyberClient extends CyberClient {
     options: SigningCyberClientOptions = {},
   ): Promise<SigningCyberClient> {
     return new SigningCyberClient(undefined, signer, options);
+  }
+
+  public render(): string {
+    let arr: {}[] = [];
+
+    render.forEach((i,o) => {
+      arr.push({[i.typeUrl.toString()]:
+        {
+          "proto": {
+            type: i.typeUrl,
+            value: JSON.stringify(i.value.fromPartial(i.data))
+          },
+          "amino": {
+            type: this.aminoTypes.toAmino({typeUrl: i.typeUrl, value: i.value.fromPartial(i.data)}).type,
+            value: JSON.stringify(this.aminoTypes.toAmino({typeUrl: i.typeUrl, value: i.value.fromPartial(i.data)}).value)
+          }
+        }
+    })
+    })
+
+    return JSON.stringify(arr);
   }
 
   public static async remotedapp(

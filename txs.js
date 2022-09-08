@@ -18,6 +18,10 @@ async function main() {
   // const client = await SigningCyberClient.connectWithSigner(rpcUrl, signer, options);
   const client = await SigningCyberClient.remotedapp(new OfflineDappWallet, {});
 
+  console.log("Render all messages and types (not all yet)");
+  console.log(client.render())
+  console.log(JSON.parse(client.render()))
+
   const myAddress = "bostrom1frk9k38pvp70vheezhdfd4nvqnlsm9dw3j8hlq";
 
   console.log("Motifs #1");
