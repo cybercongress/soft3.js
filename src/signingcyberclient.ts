@@ -1,4 +1,5 @@
 import {
+  AminoMsg,
   encodeSecp256k1Pubkey,
   isSecp256k1Pubkey,
   makeSignDoc as makeSignDocAmino,
@@ -29,7 +30,8 @@ import {
   OfflineDirectSigner,
   Registry,
   TxBodyEncodeObject,
-  AccountData
+  AccountData,
+  GeneratedType
 } from "@cosmjs/proto-signing";
 import { OfflineAminoSigner } from "@cosmjs/amino";
 import {
@@ -938,6 +940,25 @@ export class SigningCyberClient extends CyberClient {
     }
     
     const txRaw = await this.sign(signerAddress, messages, fee, memo);
+    const txBytes = TxRaw.encode(txRaw).finish();
+    return this.broadcastTx(txBytes);
+  }
+
+  // Experimental
+  // Allows to pass not EncodeObject[] but AminoMsg[]
+  // Converts amino to proto
+  public async signAndBroadcastWithAmino(
+    signerAddress: string,
+    messages: readonly AminoMsg[],
+    fee: StdFee,
+    memo = "",
+  ): Promise<DeliverTxResponse | string[]> {
+    // Experimental for remote dapps with cyb's signer integration
+    let msg = messages.map((msg) => this.aminoTypes.fromAmino({type: msg.type, value: msg.value}));
+    if (isOfflineDappSigner(this.signer)) {
+      return msg.map((m) => toBase64(Buffer.from(JSON.stringify(m),"utf-8")));
+    }
+    const txRaw = await this.sign(signerAddress, msg, fee, memo);
     const txBytes = TxRaw.encode(txRaw).finish();
     return this.broadcastTx(txBytes);
   }
