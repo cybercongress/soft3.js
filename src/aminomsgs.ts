@@ -208,13 +208,13 @@ export function createCyberAminoConverters(): AminoConverters {
       toAmino: ({ neuron, links }: MsgCyberlink): AminoMsgCyberlink["value"] => {
         return {
           neuron: neuron,
-          links: [...links],
+          links: links,
         };
       },
       fromAmino: ({ neuron, links }: AminoMsgCyberlink["value"]): MsgCyberlink => {
         return {
           neuron: neuron,
-          links: [...links],
+          links: links as Link[], // need to refactor other ...
         };
       },
     },
