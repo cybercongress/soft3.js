@@ -8,6 +8,7 @@ import {
   serializeSignDoc,
   StdTx,
 } from "@cosmjs/amino";
+import { OfflineAminoSigner } from "@cosmjs/amino";
 import {
   createWasmAminoConverters,
   InstantiateOptions,
@@ -23,18 +24,18 @@ import { Secp256k1, Secp256k1Signature, sha256 } from "@cosmjs/crypto";
 import { fromBase64, fromBech32, toBase64, toUtf8 } from "@cosmjs/encoding";
 import { Int53, Uint53 } from "@cosmjs/math";
 import {
+  AccountData,
   EncodeObject,
   encodePubkey,
+  GeneratedType,
   makeAuthInfoBytes,
   makeSignDoc,
   OfflineDirectSigner,
   Registry,
   TxBodyEncodeObject,
-  AccountData,
-  GeneratedType
 } from "@cosmjs/proto-signing";
-import { OfflineAminoSigner } from "@cosmjs/amino";
 import {
+  AminoConverters,
   AminoTypes,
   Coin,
   createBankAminoConverters,
@@ -52,7 +53,6 @@ import {
   MsgWithdrawDelegatorRewardEncodeObject,
   SignerData,
   StdFee,
-  AminoConverters,
 } from "@cosmjs/stargate";
 import { longify } from "@cosmjs/stargate/build/queryclient";
 import { Tendermint34Client } from "@cosmjs/tendermint-rpc";
@@ -111,6 +111,7 @@ import {
   MsgVoteEncodeObject,
   MsgWithdrawWithinBatchEncodeObject,
 } from "./encodeobjects";
+import { renderItems } from "./renderItems";
 
 export interface CyberlinkResult {
   readonly logs: readonly logs.Log[];
@@ -156,12 +157,12 @@ export function links(from: string, to: string): Link[] {
 }
 
 export function chain(particles: string[]): Link[] {
-  let chain = [];
-  for (let i = 0; i < particles.length-1; i++) {
+  const chain = [];
+  for (let i = 0; i < particles.length - 1; i++) {
     chain.push({
       from: particles[i],
-      to: particles[i+1],
-    })
+      to: particles[i + 1],
+    });
   }
   return chain;
 }
@@ -171,19 +172,19 @@ export type OfflineSigner = OfflineAminoSigner | OfflineDirectSigner | OfflineDa
 
 export function isOfflineAminoSigner(signer: OfflineSigner): signer is OfflineAminoSigner {
   return (signer as OfflineAminoSigner).signAmino !== undefined;
-};
+}
 export function isOfflineDirectSigner(signer: OfflineSigner): signer is OfflineDirectSigner {
   return (signer as OfflineDirectSigner).signDirect !== undefined;
-};
-export function isOfflineDappSigner(signer: OfflineSigner): signer is OfflineDappSigner{
+}
+export function isOfflineDappSigner(signer: OfflineSigner): signer is OfflineDappSigner {
   return (signer as OfflineDappSigner).getAccounts !== undefined;
-};
+}
 
 export interface OfflineDappSigner {
   readonly getAccounts: () => Promise<readonly AccountData[]>;
 }
 export class OfflineDappWallet implements OfflineDappSigner {
-// export class  OfflineDappSigner {
+  // export class  OfflineDappSigner {
   public async getAccounts(): Promise<readonly AccountData[]> {
     return [
       {
@@ -194,17 +195,6 @@ export class OfflineDappWallet implements OfflineDappSigner {
     ];
   }
 }
-
-interface RenderItem {
-  typeUrl: string; value: Partial<any>, data: {};
-}
-
-interface RenderItems extends Array<RenderItem>{}
-
-export const render: RenderItems = [
-  { typeUrl: "/cyber.graph.v1beta1.MsgCyberlink", value: MsgCyberlink, data: { neuron: "bostrom1frk9k38pvp70vheezhdfd4nvqnlsm9dw3j8hlq", links: [{from: "QmUX9mt8ftaHcn9Nc6SR4j9MsKkYfkcZqkfPTmMmBgeTe4", to: "QmUX9mt8ftaHcn9Nc6SR4j9MsKkYfkcZqkfPTmMmBgeTe4"}]} },
-  { typeUrl: "/cyber.resources.v1beta1.MsgInvestmint", value: MsgInvestmint, data: { address: "bostrom1frk9k38pvp70vheezhdfd4nvqnlsm9dw3j8hlq", amount: { denom: "boot", amount: "1000000000" }, resource: "millivolt", length: 86400 } },
-]
 
 export const cyberRegistryTypes: ReadonlyArray<[string, GeneratedType]> = [
   ["/cosmwasm.wasm.v1beta1.MsgClearAdmin", MsgClearAdmin],
@@ -227,10 +217,7 @@ export const cyberRegistryTypes: ReadonlyArray<[string, GeneratedType]> = [
 ];
 
 function createDefaultRegistry(): Registry {
-  return new Registry([
-    ...defaultRegistryTypes,
-    ...cyberRegistryTypes
-  ]);
+  return new Registry([...defaultRegistryTypes, ...cyberRegistryTypes]);
 }
 
 export interface SigningCyberClientOptions {
@@ -287,22 +274,22 @@ export class SigningCyberClient extends CyberClient {
   }
 
   public render(): string {
-    let arr: {}[] = [];
+    const arr: Array<{}> = [];
 
-    render.forEach((i,o) => {
-      arr.push({[i.typeUrl.toString()]:
-        {
-          "proto": {
+    renderItems.forEach((i, o) => {
+      arr.push({
+        [i.typeUrl.toString()]: {
+          proto: {
             type: i.typeUrl,
-            value: JSON.stringify(i.value.fromPartial(i.data))
+            value: i.value.fromPartial(i.data),
           },
-          "amino": {
-            type: this.aminoTypes.toAmino({typeUrl: i.typeUrl, value: i.value.fromPartial(i.data)}).type,
-            value: JSON.stringify(this.aminoTypes.toAmino({typeUrl: i.typeUrl, value: i.value.fromPartial(i.data)}).value)
-          }
-        }
-    })
-    })
+          amino: {
+            type: this.aminoTypes.toAmino({ typeUrl: i.typeUrl, value: i.value.fromPartial(i.data) }).type,
+            value: this.aminoTypes.toAmino({ typeUrl: i.typeUrl, value: i.value.fromPartial(i.data) }).value,
+          },
+        },
+      });
+    });
 
     return JSON.stringify(arr);
   }
@@ -321,10 +308,8 @@ export class SigningCyberClient extends CyberClient {
   ) {
     super(tmClient);
     const prefix = options.prefix ?? "bostrom";
-    const {
-      registry = createDefaultRegistry(),
-      aminoTypes = new AminoTypes(createAminoTypes(prefix)),
-    } = options;
+    const { registry = createDefaultRegistry(), aminoTypes = new AminoTypes(createAminoTypes(prefix)) } =
+      options;
     this.registry = registry;
     this.aminoTypes = aminoTypes;
     this.signer = signer;
@@ -936,9 +921,9 @@ export class SigningCyberClient extends CyberClient {
   ): Promise<DeliverTxResponse | string[]> {
     // Experimental for remote dapps with cyb's signer integration
     if (isOfflineDappSigner(this.signer)) {
-      return messages.map((m) => toBase64(Buffer.from(JSON.stringify(m),"utf-8")));
+      return messages.map((m) => toBase64(Buffer.from(JSON.stringify(m), "utf-8")));
     }
-    
+
     const txRaw = await this.sign(signerAddress, messages, fee, memo);
     const txBytes = TxRaw.encode(txRaw).finish();
     return this.broadcastTx(txBytes);
@@ -954,9 +939,9 @@ export class SigningCyberClient extends CyberClient {
     memo = "",
   ): Promise<DeliverTxResponse | string[]> {
     // Experimental for remote dapps with cyb's signer integration
-    let msg = messages.map((msg) => this.aminoTypes.fromAmino({type: msg.type, value: msg.value}));
+    const msg = messages.map((msg) => this.aminoTypes.fromAmino({ type: msg.type, value: msg.value }));
     if (isOfflineDappSigner(this.signer)) {
-      return msg.map((m) => toBase64(Buffer.from(JSON.stringify(m),"utf-8")));
+      return msg.map((m) => toBase64(Buffer.from(JSON.stringify(m), "utf-8")));
     }
     const txRaw = await this.sign(signerAddress, msg, fee, memo);
     const txBytes = TxRaw.encode(txRaw).finish();
@@ -1007,8 +992,8 @@ export class SigningCyberClient extends CyberClient {
 
     const msgs = messages.map((msg) => this.aminoTypes.toAmino(msg));
     const signDoc = makeSignDocAmino(msgs, fee, chainId, memo, accountNumber, sequence);
-    var { signature, signed } = await this.signer.signAmino(signerAddress, signDoc);
-    
+    const { signature, signed } = await this.signer.signAmino(signerAddress, signDoc);
+
     const signedTxBody = {
       messages: signed.msgs.map((msg) => this.aminoTypes.fromAmino(msg)),
       memo: signed.memo,
