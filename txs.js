@@ -22,17 +22,6 @@ async function main() {
 
   const myAddress = "bostrom1frk9k38pvp70vheezhdfd4nvqnlsm9dw3j8hlq";
 
-  console.log("--------Render all messages and types (not all yet)--------\n");
-  // console.log(client.render())
-  // console.log(JSON.parse(client.render()))
-
-  const items = client.render();
-
-  fs.writeFileSync("./msg.json", items, (err) => {
-    if (err) return console.error(err);
-    console.log("success!");
-  });
-
   console.log("--------Cyberlink #1--------");
   try {
     var response = await client.cyberlink(

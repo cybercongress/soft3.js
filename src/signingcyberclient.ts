@@ -38,6 +38,7 @@ import {
   AminoConverters,
   AminoTypes,
   Coin,
+  createAuthzAminoConverters,
   createBankAminoConverters,
   createDistributionAminoConverters,
   createGovAminoConverters,
@@ -57,6 +58,8 @@ import {
 import { longify } from "@cosmjs/stargate/build/queryclient";
 import { Tendermint34Client } from "@cosmjs/tendermint-rpc";
 import { arrayContentEquals, assert, assertDefined } from "@cosmjs/utils";
+import { Grant } from "cosmjs-types/cosmos/authz/v1beta1/authz";
+import { MsgExec, MsgGrant, MsgRevoke } from "cosmjs-types/cosmos/authz/v1beta1/tx";
 import { MsgWithdrawDelegatorReward } from "cosmjs-types/cosmos/distribution/v1beta1/tx";
 import { TextProposal, VoteOption } from "cosmjs-types/cosmos/gov/v1beta1/gov";
 import { MsgDeposit, MsgSubmitProposal, MsgVote } from "cosmjs-types/cosmos/gov/v1beta1/tx";
@@ -110,6 +113,9 @@ import {
   MsgSwapWithinBatchEncodeObject,
   MsgVoteEncodeObject,
   MsgWithdrawWithinBatchEncodeObject,
+  MsgGrantEncodeObject,
+  MsgExecEncodeObject,
+  MsgRevokeEncodeObject,
 } from "./encodeobjects";
 import { renderItems } from "./renderItems";
 
@@ -214,6 +220,9 @@ export const cyberRegistryTypes: ReadonlyArray<[string, GeneratedType]> = [
   ["/cosmwasm.wasm.v1.MsgExecuteContract", MsgExecuteContract],
   ["/cosmwasm.wasm.v1.MsgInstantiateContract", MsgInstantiateContract],
   ["/cosmwasm.wasm.v1.MsgStoreCode", MsgStoreCode],
+  ["/cosmos.authz.v1beta1.MsgExec", MsgExec],
+  ["/cosmos.authz.v1beta1.MsgGrant", MsgGrant],
+  ["/cosmos.authz.v1beta1.MsgRevoke", MsgRevoke],
 ];
 
 function createDefaultRegistry(): Registry {
@@ -237,6 +246,7 @@ function createAminoTypes(prefix: string): AminoConverters {
     ...createStakingAminoConverters(prefix),
     ...createGovAminoConverters(),
     ...createIbcAminoConverters(),
+    ...createAuthzAminoConverters(),
   };
 }
 
@@ -903,6 +913,58 @@ export class SigningCyberClient extends CyberClient {
       }),
     };
     return this.signAndBroadcast(poolCreatorAddress, [createPoolMsg], fee, memo);
+  }
+
+  public async exec(
+    granteeAddress: string,
+    msgs: Any[],
+    fee: StdFee,
+    memo = "",
+  ): Promise<DeliverTxResponse | string[]> {
+    const execMsg: MsgExecEncodeObject = {
+      typeUrl: "/cosmos.authz.v1beta1.MsgExec",
+      value: MsgExec.fromPartial({
+        grantee: granteeAddress,
+        msgs: msgs,
+      }),
+    };
+    return this.signAndBroadcast(granteeAddress, [execMsg], fee, memo);
+  }
+
+  public async grant(
+    granterAddress: string,
+    granteeAddress: string,
+    grant: Grant,
+    fee: StdFee,
+    memo = "",
+  ): Promise<DeliverTxResponse | string[]> {
+    const grantMsg: MsgGrantEncodeObject = {
+      typeUrl: "/cosmos.authz.v1beta1.MsgGrant",
+      value: MsgGrant.fromPartial({
+        granter: granterAddress,
+        grantee: granteeAddress,
+        grant: grant,
+      }),
+    };
+    return this.signAndBroadcast(granterAddress, [grantMsg], fee, memo);
+  }
+
+  public async revoke(
+    granterAddress: string,
+    granteeAddress: string,
+    urlMsgType: string,
+    fee: StdFee,
+    memo = "",
+  ): Promise<DeliverTxResponse | string[]> {
+    const revokeMsg: MsgRevokeEncodeObject = {
+      typeUrl: "/cosmos.authz.v1beta1.MsgRevoke",
+      value: MsgRevoke.fromPartial({
+        granter: granterAddress,
+        grantee: granteeAddress,
+        msgTypeUrl: urlMsgType,
+      }),
+    };
+    return this.signAndBroadcast(granterAddress, [revokeMsg], fee, memo);
   }
 
   /**
