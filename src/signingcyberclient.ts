@@ -108,14 +108,14 @@ import {
   MsgDepositWithinBatchEncodeObject,
   MsgEditRouteEncodeObject,
   MsgEditRouteNameEncodeObject,
+  MsgExecEncodeObject,
+  MsgGrantEncodeObject,
   MsgInvestmintEncodeObject,
+  MsgRevokeEncodeObject,
   MsgSubmitProposalEncodeObject,
   MsgSwapWithinBatchEncodeObject,
   MsgVoteEncodeObject,
   MsgWithdrawWithinBatchEncodeObject,
-  MsgGrantEncodeObject,
-  MsgExecEncodeObject,
-  MsgRevokeEncodeObject,
 } from "./encodeobjects";
 import { renderItems } from "./renderItems";
 
@@ -981,10 +981,10 @@ export class SigningCyberClient extends CyberClient {
     fee: StdFee,
     memo = "",
   ): Promise<DeliverTxResponse | string[]> {
-    // Experimental for remote dapps with cyb's signer integration
-    if (isOfflineDappSigner(this.signer)) {
-      return messages.map((m) => toBase64(Buffer.from(JSON.stringify(m), "utf-8")));
-    }
+    // // Experimental for remote dapps with cyb's signer integration
+    // if (isOfflineDappSigner(this.signer)) {
+    //   return messages.map((m) => toBase64(Buffer.from(JSON.stringify(m), "utf-8")));
+    // }
 
     const txRaw = await this.sign(signerAddress, messages, fee, memo);
     const txBytes = TxRaw.encode(txRaw).finish();
