@@ -108,14 +108,14 @@ import {
   MsgDepositWithinBatchEncodeObject,
   MsgEditRouteEncodeObject,
   MsgEditRouteNameEncodeObject,
+  MsgExecEncodeObject,
+  MsgGrantEncodeObject,
   MsgInvestmintEncodeObject,
+  MsgRevokeEncodeObject,
   MsgSubmitProposalEncodeObject,
   MsgSwapWithinBatchEncodeObject,
   MsgVoteEncodeObject,
   MsgWithdrawWithinBatchEncodeObject,
-  MsgGrantEncodeObject,
-  MsgExecEncodeObject,
-  MsgRevokeEncodeObject,
 } from "./encodeobjects";
 import { renderItems } from "./renderItems";
 
