@@ -350,7 +350,7 @@ export class SigningCyberClient extends CyberClient {
     neuron: string,
     from: string,
     to: string,
-    fee: StdFee,
+    fee: StdFee | "auto" | number,
     memo = "",
   ): Promise<DeliverTxResponse | string[]> {
     const cyberlinkMsg: MsgCyberlinkEncodeObject = {
@@ -367,7 +367,7 @@ export class SigningCyberClient extends CyberClient {
   public async motif(
     neuron: string,
     linkchain: Link[],
-    fee: StdFee,
+    fee: StdFee | "auto" | number,
     memo = "",
   ): Promise<DeliverTxResponse | string[]> {
     const cyberlinkMsg: MsgCyberlinkEncodeObject = {
@@ -384,7 +384,7 @@ export class SigningCyberClient extends CyberClient {
   public async linkchain(
     neuron: string,
     particles: string[],
-    fee: StdFee,
+    fee: StdFee | "auto" | number,
     memo = "",
   ): Promise<DeliverTxResponse | string[]> {
     const cyberlinkMsg: MsgCyberlinkEncodeObject = {
@@ -405,7 +405,7 @@ export class SigningCyberClient extends CyberClient {
     amount: Coin,
     resource: string,
     length: number,
-    fee: StdFee,
+    fee: StdFee | "auto" | number,
     memo = "",
   ): Promise<DeliverTxResponse | string[]> {
     const investmintMsg: MsgInvestmintEncodeObject = {
@@ -426,7 +426,7 @@ export class SigningCyberClient extends CyberClient {
     senderAddress: string,
     destination: string,
     name: string,
-    fee: StdFee,
+    fee: StdFee | "auto" | number,
     memo = "",
   ): Promise<DeliverTxResponse | string[]> {
     const createEnergyRouteMsg: MsgCreateRouteEncodeObject = {
@@ -444,7 +444,7 @@ export class SigningCyberClient extends CyberClient {
     senderAddress: string,
     destination: string,
     value: Coin,
-    fee: StdFee,
+    fee: StdFee | "auto" | number,
     memo = "",
   ): Promise<DeliverTxResponse | string[]> {
     const editEnergyRouteMsg: MsgEditRouteEncodeObject = {
@@ -461,7 +461,7 @@ export class SigningCyberClient extends CyberClient {
   public async deleteEnergyRoute(
     senderAddress: string,
     destination: string,
-    fee: StdFee,
+    fee: StdFee | "auto" | number,
     memo = "",
   ): Promise<DeliverTxResponse | string[]> {
     const deleteEnergyRouteMsg: MsgDeleteRouteEncodeObject = {
@@ -478,7 +478,7 @@ export class SigningCyberClient extends CyberClient {
     senderAddress: string,
     destination: string,
     name: string,
-    fee: StdFee,
+    fee: StdFee | "auto" | number,
     memo = "",
   ): Promise<DeliverTxResponse | string[]> {
     const editEnergyRouteNameMsg: MsgEditRouteNameEncodeObject = {
@@ -499,7 +499,7 @@ export class SigningCyberClient extends CyberClient {
   public async upload(
     senderAddress: string,
     wasmCode: Uint8Array,
-    fee: StdFee,
+    fee: StdFee | "auto" | number,
     memo = "",
   ): Promise<DeliverTxResponse | string[]> {
     const compressed = pako.gzip(wasmCode, { level: 9 });
@@ -519,7 +519,7 @@ export class SigningCyberClient extends CyberClient {
     codeId: number,
     msg: Record<string, unknown>,
     label: string,
-    fee: StdFee,
+    fee: StdFee | "auto" | number,
     options: InstantiateOptions = {},
   ): Promise<DeliverTxResponse | string[]> {
     const instantiateContractMsg: MsgInstantiateContractEncodeObject = {
@@ -540,7 +540,7 @@ export class SigningCyberClient extends CyberClient {
     senderAddress: string,
     contractAddress: string,
     newAdmin: string,
-    fee: StdFee,
+    fee: StdFee | "auto" | number,
     memo = "",
   ): Promise<DeliverTxResponse | string[]> {
     const updateAdminMsg: MsgUpdateAdminEncodeObject = {
@@ -557,7 +557,7 @@ export class SigningCyberClient extends CyberClient {
   public async clearAdmin(
     senderAddress: string,
     contractAddress: string,
-    fee: StdFee,
+    fee: StdFee | "auto" | number,
     memo = "",
   ): Promise<DeliverTxResponse | string[]> {
     const clearAdminMsg: MsgClearAdminEncodeObject = {
@@ -575,7 +575,7 @@ export class SigningCyberClient extends CyberClient {
     contractAddress: string,
     codeId: number,
     migrateMsg: Record<string, unknown>,
-    fee: StdFee,
+    fee: StdFee | "auto" | number,
     memo = "",
   ): Promise<DeliverTxResponse | string[]> {
     const migrateContractMsg: MsgMigrateContractEncodeObject = {
@@ -594,7 +594,7 @@ export class SigningCyberClient extends CyberClient {
     senderAddress: string,
     contractAddress: string,
     msg: Record<string, unknown>,
-    fee: StdFee,
+    fee: StdFee | "auto" | number,
     memo = "",
     funds?: readonly Coin[],
   ): Promise<DeliverTxResponse | string[]> {
@@ -615,7 +615,7 @@ export class SigningCyberClient extends CyberClient {
     senderAddress: string,
     contractAddress: string,
     msg: string[],
-    fee: StdFee,
+    fee: StdFee | "auto" | number,
     memo = "",
     funds?: readonly Coin[],
   ): Promise<DeliverTxResponse | string[]> {
@@ -638,7 +638,7 @@ export class SigningCyberClient extends CyberClient {
     senderAddress: string,
     recipientAddress: string,
     amount: readonly Coin[],
-    fee: StdFee,
+    fee: StdFee | "auto" | number,
     memo = "",
   ): Promise<DeliverTxResponse | string[]> {
     const sendMsg: MsgSendEncodeObject = {
@@ -658,7 +658,7 @@ export class SigningCyberClient extends CyberClient {
     delegatorAddress: string,
     validatorAddress: string,
     amount: Coin,
-    fee: StdFee,
+    fee: StdFee | "auto" | number,
     memo = "",
   ): Promise<DeliverTxResponse | string[]> {
     const delegateMsg: MsgDelegateEncodeObject = {
@@ -677,7 +677,7 @@ export class SigningCyberClient extends CyberClient {
     validatorSrcAddress: string,
     validatorDstAddress: string,
     amount: Coin,
-    fee: StdFee,
+    fee: StdFee | "auto" | number,
     memo = "",
   ): Promise<DeliverTxResponse | string[]> {
     const redelegateMsg: MsgBeginRedelegateEncodeObject = {
@@ -696,7 +696,7 @@ export class SigningCyberClient extends CyberClient {
     delegatorAddress: string,
     validatorAddress: string,
     amount: Coin,
-    fee: StdFee,
+    fee: StdFee | "auto" | number,
     memo = "",
   ): Promise<DeliverTxResponse | string[]> {
     const undelegateMsg: MsgUndelegateEncodeObject = {
@@ -713,7 +713,7 @@ export class SigningCyberClient extends CyberClient {
   public async withdrawRewards(
     delegatorAddress: string,
     validatorAddress: string,
-    fee: StdFee,
+    fee: StdFee | "auto" | number,
     memo = "",
   ): Promise<DeliverTxResponse | string[]> {
     const withdrawDelegatorRewardMsg: MsgWithdrawDelegatorRewardEncodeObject = {
@@ -726,7 +726,7 @@ export class SigningCyberClient extends CyberClient {
   public async withdrawAllRewards(
     delegatorAddress: string,
     validatorAddresses: string[],
-    fee: StdFee,
+    fee: StdFee | "auto" | number,
     memo = "",
   ): Promise<DeliverTxResponse | string[]> {
     const msgs = validatorAddresses.map((validatorAddress) => {
@@ -748,7 +748,7 @@ export class SigningCyberClient extends CyberClient {
     voter: string,
     proposalId: number,
     option: number,
-    fee: StdFee,
+    fee: StdFee | "auto" | number,
     memo = "",
   ): Promise<DeliverTxResponse | string[]> {
     const voteMsg: MsgVoteEncodeObject = {
@@ -766,7 +766,7 @@ export class SigningCyberClient extends CyberClient {
     proposer: string,
     content: JsonObject,
     initialDeposit: Coin[],
-    fee: StdFee,
+    fee: StdFee | "auto" | number,
     memo = "",
   ): Promise<DeliverTxResponse | string[]> {
     const sumbitProposalMsg: MsgSubmitProposalEncodeObject = {
@@ -787,7 +787,7 @@ export class SigningCyberClient extends CyberClient {
     depositor: string,
     proposalId: number,
     amount: Coin[],
-    fee: StdFee,
+    fee: StdFee | "auto" | number,
     memo = "",
   ): Promise<DeliverTxResponse | string[]> {
     const depositMsg: MsgDepositEncodeObject = {
@@ -812,7 +812,7 @@ export class SigningCyberClient extends CyberClient {
     timeoutHeight: Height | undefined,
     /** timeout in seconds */
     timeoutTimestamp: number | undefined,
-    fee: StdFee,
+    fee: StdFee | "auto" | number,
     memo = "",
   ): Promise<DeliverTxResponse | string[]> {
     const timeoutTimestampNanoseconds = timeoutTimestamp
@@ -843,7 +843,7 @@ export class SigningCyberClient extends CyberClient {
     demandCoinDenom: string,
     offerCoinFee: Coin,
     orderPrice: string,
-    fee: StdFee,
+    fee: StdFee | "auto" | number,
     memo = "",
   ): Promise<DeliverTxResponse | string[]> {
     const swapWithinBatchMsg: MsgSwapWithinBatchEncodeObject = {
@@ -865,7 +865,7 @@ export class SigningCyberClient extends CyberClient {
     depositorAddress: string,
     poolId: number,
     depositCoins: Coin[],
-    fee: StdFee,
+    fee: StdFee | "auto" | number,
     memo = "",
   ): Promise<DeliverTxResponse | string[]> {
     const depositWithinBatchMsg: MsgDepositWithinBatchEncodeObject = {
@@ -883,7 +883,7 @@ export class SigningCyberClient extends CyberClient {
     withdrawerAddress: string,
     poolId: number,
     poolCoin: Coin,
-    fee: StdFee,
+    fee: StdFee | "auto" | number,
     memo = "",
   ): Promise<DeliverTxResponse | string[]> {
     const withdrawWithinBatchMsg: MsgWithdrawWithinBatchEncodeObject = {
@@ -901,7 +901,7 @@ export class SigningCyberClient extends CyberClient {
     poolCreatorAddress: string,
     poolTypeId: number,
     depositCoins: Coin[],
-    fee: StdFee,
+    fee: StdFee | "auto" | number,
     memo = "",
   ): Promise<DeliverTxResponse | string[]> {
     const createPoolMsg: MsgCreatePoolEncodeObject = {
@@ -918,7 +918,7 @@ export class SigningCyberClient extends CyberClient {
   public async exec(
     granteeAddress: string,
     msgs: Any[],
-    fee: StdFee,
+    fee: StdFee | "auto" | number,
     memo = "",
   ): Promise<DeliverTxResponse | string[]> {
     const execMsg: MsgExecEncodeObject = {
@@ -935,7 +935,7 @@ export class SigningCyberClient extends CyberClient {
     granterAddress: string,
     granteeAddress: string,
     grant: Grant,
-    fee: StdFee,
+    fee: StdFee | "auto" | number,
     memo = "",
   ): Promise<DeliverTxResponse | string[]> {
     const grantMsg: MsgGrantEncodeObject = {
@@ -953,7 +953,7 @@ export class SigningCyberClient extends CyberClient {
     granterAddress: string,
     granteeAddress: string,
     urlMsgType: string,
-    fee: StdFee,
+    fee: StdFee | "auto" | number,
     memo = "",
   ): Promise<DeliverTxResponse | string[]> {
     const revokeMsg: MsgRevokeEncodeObject = {
@@ -978,15 +978,27 @@ export class SigningCyberClient extends CyberClient {
   public async signAndBroadcast(
     signerAddress: string,
     messages: readonly EncodeObject[],
-    fee: StdFee,
+    fee: StdFee | "auto" | number,
     memo = "",
   ): Promise<DeliverTxResponse | string[]> {
-    // // Experimental for remote dapps with cyb's signer integration
+    // Experimental for remote dapps with cyb's signer integration
     // if (isOfflineDappSigner(this.signer)) {
     //   return messages.map((m) => toBase64(Buffer.from(JSON.stringify(m), "utf-8")));
     // }
 
-    const txRaw = await this.sign(signerAddress, messages, fee, memo);
+    let usedFee: StdFee;
+    if (fee == "auto" || typeof fee === "number") {
+      const gasEstimation = await this.simulate(signerAddress, messages, memo);
+      const multiplier = typeof fee === "number" ? fee : 1.3;
+      usedFee = {
+        amount: [],
+        gas: Math.round(gasEstimation * multiplier).toString(),
+      };
+    } else {
+      usedFee = fee;
+    }
+
+    const txRaw = await this.sign(signerAddress, messages, usedFee, memo);
     const txBytes = TxRaw.encode(txRaw).finish();
     return this.broadcastTx(txBytes);
   }
