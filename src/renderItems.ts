@@ -1,6 +1,7 @@
 import { toUtf8 } from "@cosmjs/encoding";
 import { Uint53 } from "@cosmjs/math";
 import { longify } from "@cosmjs/stargate/build/queryclient";
+import { MsgExec, MsgGrant, MsgRevoke } from "cosmjs-types/cosmos/authz/v1beta1/tx";
 import { MsgSend } from "cosmjs-types/cosmos/bank/v1beta1/tx";
 import { MsgWithdrawDelegatorReward } from "cosmjs-types/cosmos/distribution/v1beta1/tx";
 import { MsgDeposit, MsgSubmitProposal, MsgVote } from "cosmjs-types/cosmos/gov/v1beta1/tx";

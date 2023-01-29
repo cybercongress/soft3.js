@@ -14,6 +14,7 @@ import {
   GovExtension,
   GovParamsType,
   GovProposalId,
+  IbcExtension,
   IndexedTx,
   isSearchByHeightQuery,
   isSearchBySentFromOrToQuery,
@@ -26,6 +27,7 @@ import {
   setupBankExtension,
   setupDistributionExtension,
   setupGovExtension,
+  setupIbcExtension,
   setupStakingExtension,
   setupTxExtension,
   StakingExtension,
@@ -78,6 +80,10 @@ import {
   QueryContractsByCodeResponse,
 } from "cosmjs-types/cosmwasm/wasm/v1/query";
 import { ContractCodeHistoryOperationType } from "cosmjs-types/cosmwasm/wasm/v1/types";
+import {
+  QueryDenomTraceResponse,
+  QueryDenomTracesResponse,
+} from "cosmjs-types/ibc/applications/transfer/v1/query";
 
 import {
   QueryLoadResponse,
@@ -135,7 +141,8 @@ export interface PrivateCyberClient {
         LiquidityExtension &
         GovExtension &
         ResourcesExtension &
-        TxExtension)
+        TxExtension &
+        IbcExtension)
     | undefined;
 }
 
@@ -157,6 +164,7 @@ export class CyberClient {
         LiquidityExtension &
         GovExtension &
         ResourcesExtension &
+        IbcExtension &
         TxExtension)
     | undefined;
   private readonly codesCache = new Map<number, CodeDetails>();
@@ -185,6 +193,7 @@ export class CyberClient {
         setupGovExtension,
         setupResourcesExtension,
         setupTxExtension,
+        setupIbcExtension,
       );
     }
   }
@@ -216,6 +225,7 @@ export class CyberClient {
         LiquidityExtension &
         GovExtension &
         ResourcesExtension &
+        IbcExtension &
         TxExtension)
     | undefined {
     return this.queryClient;
@@ -234,6 +244,7 @@ export class CyberClient {
     LiquidityExtension &
     GovExtension &
     ResourcesExtension &
+    IbcExtension &
     TxExtension {
     if (!this.queryClient) {
       throw new Error("Query client not available. You cannot use online functionality in offline mode.");
@@ -772,6 +783,17 @@ export class CyberClient {
     } while (startAtKey?.length !== 0 && startAtKey !== undefined);
 
     return allContracts;
+  }
+
+  // IBC module
+  public async allDenomTraces(): Promise<QueryDenomTracesResponse> {
+    const response = await this.forceGetQueryClient().ibc.transfer.allDenomTraces();
+    return response;
+  }
+
+  public async denomTrace(hash: string): Promise<QueryDenomTraceResponse> {
+    const response = await this.forceGetQueryClient().ibc.transfer.denomTrace(hash);
+    return response;
   }
 
   /**
