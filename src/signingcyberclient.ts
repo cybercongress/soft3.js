@@ -764,7 +764,10 @@ export class SigningCyberClient extends CyberClient {
 
   public async submitProposal(
     proposer: string,
-    content: JsonObject,
+    content: {
+      typeUrl: string;
+      value: TextProposal;
+    },
     initialDeposit: Coin[],
     fee: StdFee | "auto" | number,
     memo = "",
