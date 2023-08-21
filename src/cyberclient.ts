@@ -33,7 +33,7 @@ import {
   StakingExtension,
   TxExtension,
 } from "@cosmjs/stargate";
-import { Tendermint34Client, toRfc3339WithNanoseconds } from "@cosmjs/tendermint-rpc";
+import { BlockResultsResponse, Tendermint34Client, toRfc3339WithNanoseconds } from "@cosmjs/tendermint-rpc";
 import { assert } from "@cosmjs/utils";
 import {
   QueryCommunityPoolResponse,
@@ -100,6 +100,7 @@ import {
 import {
   QueryKarmaResponse,
   QueryLinkExistResponse,
+  QueryNegentropyResponse,
   QueryRankResponse,
   QuerySearchResponse,
 } from "./codec/cyber/rank/v1beta1/query";
@@ -310,6 +311,10 @@ export class CyberClient {
     };
   }
 
+  public async getBlockResults(height?: number): Promise<BlockResultsResponse> {
+    return this.forceGetTmClient().blockResults(height);
+  }
+
   public async getBalance(address: string, searchDenom: string): Promise<Coin> {
     return this.forceGetQueryClient().bank.balance(address, searchDenom);
   }
@@ -419,6 +424,11 @@ export class CyberClient {
   public async isAnyLinkExist(from: string, to: string): Promise<JsonObject> {
     const response = await this.forceGetQueryClient().rank.isAnyLinkExist(from, to);
     return QueryLinkExistResponse.toJSON(response);
+  }
+
+  public async negentropy(): Promise<JsonObject> {
+    const response = await this.forceGetQueryClient().rank.negentropy();
+    return QueryNegentropyResponse.toJSON(response);
   }
 
   // Bandwidth module
