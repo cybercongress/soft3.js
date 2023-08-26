@@ -6,6 +6,7 @@ import {
   QueryClientImpl,
   QueryKarmaResponse,
   QueryLinkExistResponse,
+  QueryNegentropyResponse,
   QueryRankResponse,
   QuerySearchResponse,
 } from "../codec/cyber/rank/v1beta1/query";
@@ -30,6 +31,7 @@ export interface RankExtension {
     readonly karma: (neuron: string) => Promise<QueryKarmaResponse>;
     readonly isLinkExist: (from: string, to: string, agent: string) => Promise<QueryLinkExistResponse>;
     readonly isAnyLinkExist: (from: string, to: string) => Promise<QueryLinkExistResponse>;
+    readonly negentropy: () => Promise<QueryNegentropyResponse>;
   };
 }
 
@@ -80,6 +82,10 @@ export function setupRankExtension(base: QueryClient): RankExtension {
           from: from,
           to: to,
         });
+        return response;
+      },
+      negentropy: async () => {
+        const response = await queryService.Negentropy({});
         return response;
       },
     },
