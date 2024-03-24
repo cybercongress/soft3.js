@@ -118,6 +118,12 @@ import {
   MsgWithdrawWithinBatchEncodeObject,
 } from "./encodeobjects";
 import { renderItems } from "./renderItems";
+import {
+  CosmosRegistryTypes,
+  CosmwasmRegistryTypes,
+  CyberRegistryTypes,
+  TendermintRegistryTypes,
+} from "./registryTypes";
 
 export interface CyberlinkResult {
   readonly logs: readonly logs.Log[];
@@ -203,26 +209,29 @@ export class OfflineDappWallet implements OfflineDappSigner {
 }
 
 export const cyberRegistryTypes: ReadonlyArray<[string, GeneratedType]> = [
-  ["/cosmwasm.wasm.v1beta1.MsgClearAdmin", MsgClearAdmin],
-  ["/cosmwasm.wasm.v1beta1.MsgMigrateContract", MsgMigrateContract],
-  ["/cosmwasm.wasm.v1beta1.MsgUpdateAdmin", MsgUpdateAdmin],
-  ["/cyber.graph.v1beta1.MsgCyberlink", MsgCyberlink],
-  ["/cyber.resources.v1beta1.MsgInvestmint", MsgInvestmint],
-  ["/cyber.grid.v1beta1.MsgCreateRoute", MsgCreateRoute],
-  ["/cyber.grid.v1beta1.MsgEditRoute", MsgEditRoute],
-  ["/cyber.grid.v1beta1.MsgEditRouteName", MsgEditRouteName],
-  ["/cyber.grid.v1beta1.MsgDeleteRoute", MsgDeleteRoute],
-  ["/tendermint.liquidity.v1beta1.MsgSwapWithinBatch", MsgSwapWithinBatch],
-  ["/tendermint.liquidity.v1beta1.MsgDepositWithinBatch", MsgDepositWithinBatch],
-  ["/tendermint.liquidity.v1beta1.MsgWithdrawWithinBatch", MsgWithdrawWithinBatch],
-  ["/tendermint.liquidity.v1beta1.MsgCreatePool", MsgCreatePool],
-  ["/cosmos.gov.v1beta1.MsgDeposit", MsgDeposit],
-  ["/cosmwasm.wasm.v1.MsgExecuteContract", MsgExecuteContract],
-  ["/cosmwasm.wasm.v1.MsgInstantiateContract", MsgInstantiateContract],
-  ["/cosmwasm.wasm.v1.MsgStoreCode", MsgStoreCode],
-  ["/cosmos.authz.v1beta1.MsgExec", MsgExec],
-  ["/cosmos.authz.v1beta1.MsgGrant", MsgGrant],
-  ["/cosmos.authz.v1beta1.MsgRevoke", MsgRevoke],
+  [CyberRegistryTypes.MsgCyberlink, MsgCyberlink],
+  [CyberRegistryTypes.MsgInvestmint, MsgInvestmint],
+  [CyberRegistryTypes.MsgCreateRoute, MsgCreateRoute],
+  [CyberRegistryTypes.MsgEditRoute, MsgEditRoute],
+  [CyberRegistryTypes.MsgEditRouteName, MsgEditRouteName],
+  [CyberRegistryTypes.MsgDeleteRoute, MsgDeleteRoute],
+
+  [CosmosRegistryTypes.MsgDeposit, MsgDeposit],
+  [CosmosRegistryTypes.MsgExec, MsgExec],
+  [CosmosRegistryTypes.MsgGrant, MsgGrant],
+  [CosmosRegistryTypes.MsgRevoke, MsgRevoke],
+
+  [CosmwasmRegistryTypes.MsgClearAdmin, MsgClearAdmin],
+  [CosmwasmRegistryTypes.MsgMigrateContract, MsgMigrateContract],
+  [CosmwasmRegistryTypes.MsgUpdateAdmin, MsgUpdateAdmin],
+  [CosmwasmRegistryTypes.MsgExecuteContract, MsgExecuteContract],
+  [CosmwasmRegistryTypes.MsgInstantiateContract, MsgInstantiateContract],
+  [CosmwasmRegistryTypes.MsgStoreCode, MsgStoreCode],
+
+  [TendermintRegistryTypes.MsgSwapWithinBatch, MsgSwapWithinBatch],
+  [TendermintRegistryTypes.MsgDepositWithinBatch, MsgDepositWithinBatch],
+  [TendermintRegistryTypes.MsgWithdrawWithinBatch, MsgWithdrawWithinBatch],
+  [TendermintRegistryTypes.MsgCreatePool, MsgCreatePool],
 ];
 
 function createDefaultRegistry(): Registry {
