@@ -1,5 +1,12 @@
-import { Code, CodeDetails, Contract, ContractCodeHistoryEntry, JsonObject } from "@cosmjs/cosmwasm-stargate";
-import { setupWasmExtension, WasmExtension } from "@cosmjs/cosmwasm-stargate";
+import {
+  Code,
+  CodeDetails,
+  Contract,
+  ContractCodeHistoryEntry,
+  JsonObject,
+  setupWasmExtension,
+  WasmExtension,
+} from "@cosmjs/cosmwasm-stargate";
 import { fromAscii, toHex } from "@cosmjs/encoding";
 import { Uint53 } from "@cosmjs/math";
 import {
@@ -33,8 +40,14 @@ import {
   StakingExtension,
   TxExtension,
 } from "@cosmjs/stargate";
-import { BlockResultsResponse, Tendermint34Client, toRfc3339WithNanoseconds } from "@cosmjs/tendermint-rpc";
+import {
+  BlockResultsResponse,
+  Tendermint34Client,
+  TendermintClient,
+  toRfc3339WithNanoseconds,
+} from "@cosmjs/tendermint-rpc";
 import { assert } from "@cosmjs/utils";
+import { QueryTotalSupplyResponse } from "cosmjs-types/cosmos/bank/v1beta1/query";
 import {
   QueryCommunityPoolResponse,
   QueryDelegationRewardsResponse,
@@ -124,50 +137,38 @@ import {
   setupRankExtension,
   setupResourcesExtension,
 } from "./queries/index";
-export { Code, CodeDetails, Contract, ContractCodeHistoryEntry, JsonObject };
+
+export { Code, CodeDetails, Contract, ContractCodeHistoryEntry };
+
+type QueryClientType = QueryClient &
+  AuthExtension &
+  BankExtension &
+  DistributionExtension &
+  StakingExtension &
+  GraphExtension &
+  RankExtension &
+  BandwidthExtension &
+  GridExtension &
+  WasmExtension &
+  LiquidityExtension &
+  GovExtension &
+  ResourcesExtension &
+  TxExtension &
+  IbcExtension;
 
 export interface PrivateCyberClient {
-  readonly tmClient: Tendermint34Client | undefined;
-  readonly queryClient:
-    | (QueryClient &
-        AuthExtension &
-        BankExtension &
-        DistributionExtension &
-        StakingExtension &
-        GraphExtension &
-        RankExtension &
-        BandwidthExtension &
-        GridExtension &
-        WasmExtension &
-        LiquidityExtension &
-        GovExtension &
-        ResourcesExtension &
-        TxExtension &
-        IbcExtension)
-    | undefined;
+  readonly tmClient: TendermintClient | undefined;
+  readonly queryClient: QueryClientType | undefined;
 }
 
-export declare type BondStatusString = Exclude<keyof typeof BondStatus, "BOND_STATUS_UNSPECIFIED">;
+export declare type BondStatusString = Exclude<
+  keyof typeof BondStatus,
+  "BOND_STATUS_UNSPECIFIED" | "UNRECOGNIZED"
+>;
 
 export class CyberClient {
-  private readonly tmClient: Tendermint34Client | undefined;
-  private readonly queryClient:
-    | (QueryClient &
-        AuthExtension &
-        BankExtension &
-        DistributionExtension &
-        StakingExtension &
-        GraphExtension &
-        RankExtension &
-        BandwidthExtension &
-        GridExtension &
-        WasmExtension &
-        LiquidityExtension &
-        GovExtension &
-        ResourcesExtension &
-        IbcExtension &
-        TxExtension)
-    | undefined;
+  private readonly tmClient: TendermintClient | undefined;
+  private readonly queryClient: QueryClientType | undefined;
   private readonly codesCache = new Map<number, CodeDetails>();
   private chainId: string | undefined;
 
@@ -199,11 +200,11 @@ export class CyberClient {
     }
   }
 
-  protected getTmClient(): Tendermint34Client | undefined {
+  protected getTmClient(): TendermintClient | undefined {
     return this.tmClient;
   }
 
-  protected forceGetTmClient(): Tendermint34Client {
+  protected forceGetTmClient(): TendermintClient {
     if (!this.tmClient) {
       throw new Error(
         "Tendermint client not available. You cannot use online functionality in offline mode.",
@@ -212,23 +213,7 @@ export class CyberClient {
     return this.tmClient;
   }
 
-  protected getQueryClient():
-    | (QueryClient &
-        AuthExtension &
-        BankExtension &
-        DistributionExtension &
-        StakingExtension &
-        GraphExtension &
-        RankExtension &
-        BandwidthExtension &
-        GridExtension &
-        WasmExtension &
-        LiquidityExtension &
-        GovExtension &
-        ResourcesExtension &
-        IbcExtension &
-        TxExtension)
-    | undefined {
+  protected getQueryClient(): QueryClientType | undefined {
     return this.queryClient;
   }
 
@@ -323,7 +308,7 @@ export class CyberClient {
     return this.forceGetQueryClient().bank.allBalances(address);
   }
 
-  public async totalSupply(): Promise<readonly Coin[]> {
+  public async totalSupply(): Promise<QueryTotalSupplyResponse> {
     return this.forceGetQueryClient().bank.totalSupply();
   }
 
@@ -384,131 +369,141 @@ export class CyberClient {
       transactionHash: transactionId,
       gasUsed: broadcasted.gasUsed,
       gasWanted: broadcasted.gasWanted,
+      txIndex: 0,
+      events: [], // TODO:  broadcasted.events,
     };
   }
 
   // Graph module
 
-  public async graphStats(): Promise<JsonObject> {
+  public async graphStats(): Promise<QueryGraphStatsResponse> {
     const response = await this.forceGetQueryClient().graph.graphStats();
-    return QueryGraphStatsResponse.toJSON(response);
+    return QueryGraphStatsResponse.toJSON(response) as QueryGraphStatsResponse;
   }
 
   // Rank module
 
-  public async search(particle: string, page?: number, perPage?: number): Promise<JsonObject> {
+  public async search(particle: string, page?: number, perPage?: number): Promise<QuerySearchResponse> {
     const response = await this.forceGetQueryClient().rank.search(particle, page, perPage);
-    return QuerySearchResponse.toJSON(response);
+    return QuerySearchResponse.toJSON(response) as QuerySearchResponse;
   }
 
-  public async backlinks(particle: string, page?: number, perPage?: number): Promise<JsonObject> {
+  public async backlinks(particle: string, page?: number, perPage?: number): Promise<QuerySearchResponse> {
     const response = await this.forceGetQueryClient().rank.backlinks(particle, page, perPage);
-    return QuerySearchResponse.toJSON(response);
+    return QuerySearchResponse.toJSON(response) as QuerySearchResponse;
   }
 
-  public async rank(particle: string): Promise<JsonObject> {
+  public async rank(particle: string): Promise<QueryRankResponse> {
     const response = await this.forceGetQueryClient().rank.rank(particle);
-    return QueryRankResponse.toJSON(response);
+    return QueryRankResponse.toJSON(response) as QueryRankResponse;
   }
 
-  public async karma(neuron: string): Promise<JsonObject> {
+  public async karma(neuron: string): Promise<QueryKarmaResponse> {
     const response = await this.forceGetQueryClient().rank.karma(neuron);
-    return QueryKarmaResponse.toJSON(response);
+    return QueryKarmaResponse.toJSON(response) as QueryKarmaResponse;
   }
 
-  public async isLinkExist(from: string, to: string, agent: string): Promise<JsonObject> {
+  public async isLinkExist(from: string, to: string, agent: string): Promise<QueryLinkExistResponse> {
     const response = await this.forceGetQueryClient().rank.isLinkExist(from, to, agent);
-    return QueryLinkExistResponse.toJSON(response);
+    return QueryLinkExistResponse.toJSON(response) as QueryLinkExistResponse;
   }
 
-  public async isAnyLinkExist(from: string, to: string): Promise<JsonObject> {
+  public async isAnyLinkExist(from: string, to: string): Promise<QueryLinkExistResponse> {
     const response = await this.forceGetQueryClient().rank.isAnyLinkExist(from, to);
-    return QueryLinkExistResponse.toJSON(response);
+    return QueryLinkExistResponse.toJSON(response) as QueryLinkExistResponse;
   }
 
-  public async negentropy(): Promise<JsonObject> {
+  public async negentropy(): Promise<QueryNegentropyResponse> {
     const response = await this.forceGetQueryClient().rank.negentropy();
-    return QueryNegentropyResponse.toJSON(response);
+    return QueryNegentropyResponse.toJSON(response) as QueryNegentropyResponse;
   }
 
   // Bandwidth module
 
-  public async load(): Promise<JsonObject> {
+  public async load(): Promise<QueryLoadResponse> {
     const response = await this.forceGetQueryClient().bandwidth.load();
-    return QueryLoadResponse.toJSON(response);
+    return QueryLoadResponse.toJSON(response) as QueryLoadResponse;
   }
 
-  public async price(): Promise<JsonObject> {
+  public async price(): Promise<QueryPriceResponse> {
     const response = await this.forceGetQueryClient().bandwidth.price();
-    return QueryPriceResponse.toJSON(response);
+    return QueryPriceResponse.toJSON(response) as QueryPriceResponse;
   }
 
-  public async accountBandwidth(agent: string): Promise<JsonObject> {
+  public async accountBandwidth(agent: string): Promise<QueryNeuronBandwidthResponse> {
     const response = await this.forceGetQueryClient().bandwidth.account(agent);
-    return QueryNeuronBandwidthResponse.toJSON(response);
+    return QueryNeuronBandwidthResponse.toJSON(response) as QueryNeuronBandwidthResponse;
   }
 
   // Staking module
 
-  public async delegation(delegatorAddress: string, validatorAddress: string): Promise<JsonObject> {
+  public async delegation(
+    delegatorAddress: string,
+    validatorAddress: string,
+  ): Promise<QueryDelegationResponse> {
     const response = await this.forceGetQueryClient().staking.delegation(delegatorAddress, validatorAddress);
-    return QueryDelegationResponse.toJSON(response);
+    return QueryDelegationResponse.toJSON(response) as QueryDelegationResponse;
   }
 
   public async delegatorDelegations(
     delegatorAddress: string,
     paginationKey?: Uint8Array,
-  ): Promise<JsonObject> {
+  ): Promise<QueryDelegatorDelegationsResponse> {
     const response = await this.forceGetQueryClient().staking.delegatorDelegations(
       delegatorAddress,
       paginationKey,
     );
-    return QueryDelegatorDelegationsResponse.toJSON(response);
+    return QueryDelegatorDelegationsResponse.toJSON(response) as QueryDelegatorDelegationsResponse;
   }
 
   public async delegatorUnbondingDelegations(
     delegatorAddress: string,
     paginationKey?: Uint8Array,
-  ): Promise<JsonObject> {
+  ): Promise<QueryDelegatorUnbondingDelegationsResponse> {
     const response = await this.forceGetQueryClient().staking.delegatorUnbondingDelegations(
       delegatorAddress,
       paginationKey,
     );
-    return QueryDelegatorUnbondingDelegationsResponse.toJSON(response);
+    return QueryDelegatorUnbondingDelegationsResponse.toJSON(
+      response,
+    ) as QueryDelegatorUnbondingDelegationsResponse;
   }
 
-  public async delegatorValidator(delegatorAddress: string, validatorAddress: string): Promise<JsonObject> {
+  public async delegatorValidator(
+    delegatorAddress: string,
+    validatorAddress: string,
+  ): Promise<QueryDelegatorValidatorResponse> {
     const response = await this.forceGetQueryClient().staking.delegatorValidator(
       delegatorAddress,
       validatorAddress,
     );
-    return QueryDelegatorValidatorResponse.toJSON(response);
+    return QueryDelegatorValidatorResponse.toJSON(response) as QueryDelegatorValidatorResponse;
   }
 
   public async delegatorValidators(
     delegatorAddress: string,
     paginationKey?: Uint8Array,
-  ): Promise<JsonObject> {
+  ): Promise<QueryDelegatorValidatorsResponse> {
     const response = await this.forceGetQueryClient().staking.delegatorValidators(
       delegatorAddress,
       paginationKey,
     );
-    return QueryDelegatorValidatorsResponse.toJSON(response);
+    return QueryDelegatorValidatorsResponse.toJSON(response) as QueryDelegatorValidatorsResponse;
   }
 
-  public async historicalInfo(height: number): Promise<JsonObject> {
+  public async historicalInfo(height: number): Promise<QueryHistoricalInfoResponse> {
     const response = await this.forceGetQueryClient().staking.historicalInfo(height);
-    return QueryHistoricalInfoResponse.toJSON(response);
+    return QueryHistoricalInfoResponse.toJSON(response) as QueryHistoricalInfoResponse;
   }
 
-  public async stakingParams(): Promise<JsonObject> {
+  public async stakingParams(): Promise<QueryParamsResponseStaking> {
     const response = await this.forceGetQueryClient().staking.params();
-    return QueryParamsResponseStaking.toJSON(response);
+    return QueryParamsResponseStaking.toJSON(response) as QueryParamsResponseStaking;
   }
 
-  public async stakingPool(): Promise<JsonObject> {
+  public async stakingPool(): Promise<QueryPoolResponse> {
     const response = await this.forceGetQueryClient().staking.pool();
-    return QueryPoolResponse.toJSON(response);
+    return QueryPoolResponse.toJSON(response) as QueryPoolResponse;
   }
 
   public async redelegations(
@@ -516,98 +511,121 @@ export class CyberClient {
     sourceValidatorAddress: string,
     destinationValidatorAddress: string,
     paginationKey?: Uint8Array,
-  ): Promise<JsonObject> {
+  ): Promise<QueryRedelegationsResponse> {
     const response = await this.forceGetQueryClient().staking.redelegations(
       delegatorAddress,
       sourceValidatorAddress,
       destinationValidatorAddress,
       paginationKey,
     );
-    return QueryRedelegationsResponse.toJSON(response);
+    return QueryRedelegationsResponse.toJSON(response) as QueryRedelegationsResponse;
   }
-  public async unbondingDelegation(delegatorAddress: string, validatorAddress: string): Promise<JsonObject> {
+  public async unbondingDelegation(
+    delegatorAddress: string,
+    validatorAddress: string,
+  ): Promise<QueryUnbondingDelegationResponse> {
     const response = await this.forceGetQueryClient().staking.unbondingDelegation(
       delegatorAddress,
       validatorAddress,
     );
-    return QueryUnbondingDelegationResponse.toJSON(response);
+    return QueryUnbondingDelegationResponse.toJSON(response) as QueryUnbondingDelegationResponse;
   }
-  public async validator(validatorAddress: string): Promise<JsonObject> {
+  public async validator(validatorAddress: string): Promise<QueryValidatorResponse> {
     const response = await this.forceGetQueryClient().staking.validator(validatorAddress);
-    return QueryValidatorResponse.toJSON(response);
+    return QueryValidatorResponse.toJSON(response) as QueryValidatorResponse;
   }
   public async validatorDelegations(
     validatorAddress: string,
     paginationKey?: Uint8Array,
-  ): Promise<JsonObject> {
+  ): Promise<QueryValidatorDelegationsResponse> {
     const response = await this.forceGetQueryClient().staking.validatorDelegations(
       validatorAddress,
       paginationKey,
     );
-    return QueryValidatorDelegationsResponse.toJSON(response);
+    return QueryValidatorDelegationsResponse.toJSON(response) as QueryValidatorDelegationsResponse;
   }
 
-  public async validators(status: BondStatusString, paginationKey?: Uint8Array): Promise<JsonObject> {
+  public async validators(
+    status: BondStatusString,
+    paginationKey?: Uint8Array,
+  ): Promise<QueryValidatorsResponse> {
     const response = await this.forceGetQueryClient().staking.validators(status, paginationKey);
-    return QueryValidatorsResponse.toJSON(response);
+    return QueryValidatorsResponse.toJSON(response) as QueryValidatorsResponse;
   }
 
   public async validatorUnbondingDelegations(
     validatorAddress: string,
     paginationKey?: Uint8Array,
-  ): Promise<JsonObject> {
+  ): Promise<QueryValidatorUnbondingDelegationsResponse> {
     const response = await this.forceGetQueryClient().staking.validatorUnbondingDelegations(
       validatorAddress,
       paginationKey,
     );
-    return QueryValidatorUnbondingDelegationsResponse.toJSON(response);
+    return QueryValidatorUnbondingDelegationsResponse.toJSON(
+      response,
+    ) as QueryValidatorUnbondingDelegationsResponse;
   }
 
   // Distribution module
 
-  public async communityPool(): Promise<JsonObject> {
+  public async communityPool(): Promise<QueryCommunityPoolResponse> {
     const response = await this.forceGetQueryClient().distribution.communityPool();
-    return QueryCommunityPoolResponse.toJSON(response);
+    return QueryCommunityPoolResponse.toJSON(response) as QueryCommunityPoolResponse;
   }
 
-  public async delegationRewards(delegatorAddress: string, validatorAddress: string): Promise<JsonObject> {
+  public async delegationRewards(
+    delegatorAddress: string,
+    validatorAddress: string,
+  ): Promise<QueryDelegationRewardsResponse> {
     const response = await this.forceGetQueryClient().distribution.delegationRewards(
       delegatorAddress,
       validatorAddress,
     );
-    return QueryDelegationRewardsResponse.toJSON(response);
+    return QueryDelegationRewardsResponse.toJSON(response) as QueryDelegationRewardsResponse;
   }
 
-  public async delegationTotalRewards(delegatorAddress: string): Promise<JsonObject> {
+  public async delegationTotalRewards(
+    delegatorAddress: string,
+  ): Promise<QueryDelegationTotalRewardsResponse> {
     const response = await this.forceGetQueryClient().distribution.delegationTotalRewards(delegatorAddress);
-    return QueryDelegationTotalRewardsResponse.toJSON(response);
+    return QueryDelegationTotalRewardsResponse.toJSON(response) as QueryDelegationTotalRewardsResponse;
   }
 
-  public async delegatorValidatorsDistribution(delegatorAddress: string): Promise<JsonObject> {
+  public async delegatorValidatorsDistribution(
+    delegatorAddress: string,
+  ): Promise<QueryDelegatorValidatorsResponseDistribution> {
     const response = await this.forceGetQueryClient().distribution.delegatorValidators(delegatorAddress);
-    return QueryDelegatorValidatorsResponseDistribution.toJSON(response);
+    return QueryDelegatorValidatorsResponseDistribution.toJSON(
+      response,
+    ) as QueryDelegatorValidatorsResponseDistribution;
   }
 
-  public async delegatorWithdrawAddress(delegatorAddress: string): Promise<JsonObject> {
+  public async delegatorWithdrawAddress(
+    delegatorAddress: string,
+  ): Promise<QueryDelegatorWithdrawAddressResponse> {
     const response = await this.forceGetQueryClient().distribution.delegatorWithdrawAddress(delegatorAddress);
-    return QueryDelegatorWithdrawAddressResponse.toJSON(response);
+    return QueryDelegatorWithdrawAddressResponse.toJSON(response) as QueryDelegatorWithdrawAddressResponse;
   }
 
-  public async distributionParams(): Promise<JsonObject> {
+  public async distributionParams(): Promise<QueryParamsResponseDistribution> {
     const response = await this.forceGetQueryClient().distribution.params();
-    return QueryParamsResponseDistribution.toJSON(response);
+    return QueryParamsResponseDistribution.toJSON(response) as QueryParamsResponseDistribution;
   }
 
-  public async validatorCommission(validatorAddress: string): Promise<JsonObject> {
+  public async validatorCommission(validatorAddress: string): Promise<QueryValidatorCommissionResponse> {
     const response = await this.forceGetQueryClient().distribution.validatorCommission(validatorAddress);
-    return QueryValidatorCommissionResponse.toJSON(response);
+    return QueryValidatorCommissionResponse.toJSON(response) as QueryValidatorCommissionResponse;
   }
 
-  public async validatorOutstandingRewards(validatorAddress: string): Promise<JsonObject> {
+  public async validatorOutstandingRewards(
+    validatorAddress: string,
+  ): Promise<QueryValidatorOutstandingRewardsResponse> {
     const response = await this.forceGetQueryClient().distribution.validatorOutstandingRewards(
       validatorAddress,
     );
-    return QueryValidatorOutstandingRewardsResponse.toJSON(response);
+    return QueryValidatorOutstandingRewardsResponse.toJSON(
+      response,
+    ) as QueryValidatorOutstandingRewardsResponse;
   }
 
   public async validatorSlashes(
@@ -615,82 +633,82 @@ export class CyberClient {
     startingHeight: number,
     endingHeight: number,
     paginationKey?: Uint8Array,
-  ): Promise<JsonObject> {
+  ): Promise<QueryValidatorSlashesResponse> {
     const response = await this.forceGetQueryClient().distribution.validatorSlashes(
       validatorAddress,
       startingHeight,
       endingHeight,
       paginationKey,
     );
-    return QueryValidatorSlashesResponse.toJSON(response);
+    return QueryValidatorSlashesResponse.toJSON(response) as QueryValidatorSlashesResponse;
   }
 
   // Grid module
 
-  public async sourceRoutes(source: string): Promise<JsonObject> {
+  public async sourceRoutes(source: string): Promise<QueryRoutesResponse> {
     const response = await this.forceGetQueryClient().grid.sourceRoutes(source);
-    return QueryRoutesResponse.toJSON(response);
+    return QueryRoutesResponse.toJSON(response) as QueryRoutesResponse;
   }
 
-  public async destinationRoutes(destination: string): Promise<JsonObject> {
+  public async destinationRoutes(destination: string): Promise<QueryRoutesResponse> {
     const response = await this.forceGetQueryClient().grid.destinationRoutes(destination);
-    return QueryRoutesResponse.toJSON(response);
+    return QueryRoutesResponse.toJSON(response) as QueryRoutesResponse;
   }
 
-  public async destinationRoutedEnergy(destination: string): Promise<JsonObject> {
+  public async destinationRoutedEnergy(destination: string): Promise<QueryRoutedEnergyResponse> {
     const response = await this.forceGetQueryClient().grid.destinationRoutedEnergy(destination);
-    return QueryRoutedEnergyResponse.toJSON(response);
+    return QueryRoutedEnergyResponse.toJSON(response) as QueryRoutedEnergyResponse;
   }
 
-  public async sourceRoutedEnergy(source: string): Promise<JsonObject> {
+  public async sourceRoutedEnergy(source: string): Promise<QueryRoutedEnergyResponse> {
     const response = await this.forceGetQueryClient().grid.sourceRoutedEnergy(source);
-    return QueryRoutedEnergyResponse.toJSON(response);
+    return QueryRoutedEnergyResponse.toJSON(response) as QueryRoutedEnergyResponse;
   }
 
-  public async route(source: string, destination: string): Promise<JsonObject> {
+  public async route(source: string, destination: string): Promise<QueryRouteResponse> {
     const response = await this.forceGetQueryClient().grid.route(source, destination);
-    return QueryRouteResponse.toJSON(response);
+    return QueryRouteResponse.toJSON(response) as QueryRouteResponse;
   }
 
-  public async routes(): Promise<JsonObject> {
+  public async routes(): Promise<QueryRoutesResponse> {
     const response = await this.forceGetQueryClient().grid.routes();
-    return QueryRoutesResponse.toJSON(response);
+    return QueryRoutesResponse.toJSON(response) as QueryRoutesResponse;
   }
 
-  public async energyParams(): Promise<JsonObject> {
+  public async energyParams(): Promise<QueryParamsResponseEnergy> {
     const response = await this.forceGetQueryClient().grid.params();
-    return QueryParamsResponseEnergy.toJSON(response);
+    return QueryParamsResponseEnergy.toJSON(response) as QueryParamsResponseEnergy;
   }
 
   // Resources module
 
-  public async resourcesParams(): Promise<JsonObject> {
+  public async resourcesParams(): Promise<QueryParamsResponseResources> {
     const response = await this.forceGetQueryClient().resources.params();
-    return QueryParamsResponseResources.toJSON(response);
+    return QueryParamsResponseResources.toJSON(response) as QueryParamsResponseResources;
   }
 
   // Liquidity module
 
-  public async liquidityParams(): Promise<JsonObject> {
+  public async liquidityParams(): Promise<QueryParamsResponseLiquidity> {
     const response = await this.forceGetQueryClient().liquidity.params();
-    return QueryParamsResponseLiquidity.toJSON(response);
+    return QueryParamsResponseLiquidity.toJSON(response) as QueryParamsResponseLiquidity;
   }
 
-  public async pool(id: number): Promise<JsonObject> {
+  public async pool(id: number): Promise<QueryLiquidityPoolResponse> {
     const response = await this.forceGetQueryClient().liquidity.pool(id);
-    return QueryLiquidityPoolResponse.toJSON(response);
+    return QueryLiquidityPoolResponse.toJSON(response) as QueryLiquidityPoolResponse;
   }
 
-  public async pools(): Promise<JsonObject> {
+  public async pools(): Promise<QueryLiquidityPoolsResponse> {
     const response = await this.forceGetQueryClient().liquidity.pools();
-    return QueryLiquidityPoolsResponse.toJSON(response);
+    return QueryLiquidityPoolsResponse.toJSON(response) as QueryLiquidityPoolsResponse;
   }
 
   // Gov module
 
-  public async govParams(parametersType: GovParamsType): Promise<JsonObject> {
+  public async govParams(parametersType: GovParamsType): Promise<QueryParamsResponseGovernance> {
     const response = await this.forceGetQueryClient().gov.params(parametersType);
-    return QueryParamsResponseGovernance.toJSON(response);
+    return QueryParamsResponseGovernance.toJSON(response) as QueryParamsResponseGovernance;
   }
 
   public async proposals(
@@ -698,44 +716,44 @@ export class CyberClient {
     depositorAddress: string,
     voterAddress: string,
     paginationKey?: Uint8Array,
-  ): Promise<JsonObject> {
+  ): Promise<QueryProposalsResponse> {
     const response = await this.forceGetQueryClient().gov.proposals(
       proposalStatus,
       depositorAddress,
       voterAddress,
       paginationKey,
     );
-    return QueryProposalsResponse.toJSON(response);
+    return QueryProposalsResponse.toJSON(response) as QueryProposalsResponse;
   }
 
-  public async proposal(proposalId: GovProposalId): Promise<JsonObject> {
+  public async proposal(proposalId: GovProposalId): Promise<QueryProposalResponse> {
     const response = await this.forceGetQueryClient().gov.proposal(proposalId);
-    return QueryProposalResponse.toJSON(response);
+    return QueryProposalResponse.toJSON(response) as QueryProposalResponse;
   }
 
-  public async deposits(proposalId: GovProposalId): Promise<JsonObject> {
+  public async deposits(proposalId: GovProposalId): Promise<QueryDepositsResponse> {
     const response = await this.forceGetQueryClient().gov.deposits(proposalId);
-    return QueryDepositsResponse.toJSON(response);
+    return QueryDepositsResponse.toJSON(response) as QueryDepositsResponse;
   }
 
-  public async deposit(proposalId: GovProposalId, depositorAddress: string): Promise<JsonObject> {
+  public async deposit(proposalId: GovProposalId, depositorAddress: string): Promise<QueryDepositResponse> {
     const response = await this.forceGetQueryClient().gov.deposit(proposalId, depositorAddress);
-    return QueryDepositResponse.toJSON(response);
+    return QueryDepositResponse.toJSON(response) as QueryDepositResponse;
   }
 
-  public async tally(proposalId: GovProposalId): Promise<JsonObject> {
+  public async tally(proposalId: GovProposalId): Promise<QueryTallyResultResponse> {
     const response = await this.forceGetQueryClient().gov.tally(proposalId);
-    return QueryTallyResultResponse.toJSON(response);
+    return QueryTallyResultResponse.toJSON(response) as QueryTallyResultResponse;
   }
 
-  public async votes(proposalId: GovProposalId): Promise<JsonObject> {
+  public async votes(proposalId: GovProposalId): Promise<QueryVotesResponse> {
     const response = await this.forceGetQueryClient().gov.votes(proposalId);
-    return QueryVotesResponse.toJSON(response);
+    return QueryVotesResponse.toJSON(response) as QueryVotesResponse;
   }
 
-  public async vote(proposalId: GovProposalId, voterAddress: string): Promise<JsonObject> {
+  public async vote(proposalId: GovProposalId, voterAddress: string): Promise<QueryVoteResponse> {
     const response = await this.forceGetQueryClient().gov.vote(proposalId, voterAddress);
-    return QueryVoteResponse.toJSON(response);
+    return QueryVoteResponse.toJSON(response) as QueryVoteResponse;
   }
 
   // Wasm module
@@ -895,6 +913,8 @@ export class CyberClient {
         tx: tx.tx,
         gasUsed: tx.result.gasUsed,
         gasWanted: tx.result.gasWanted,
+        txIndex: tx.index,
+        events: [], // TODO:  tx.result.events || [],
       };
     });
   }
