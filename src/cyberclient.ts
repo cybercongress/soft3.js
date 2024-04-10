@@ -308,8 +308,9 @@ export class CyberClient {
     return this.forceGetQueryClient().bank.allBalances(address);
   }
 
-  public async totalSupply(): Promise<QueryTotalSupplyResponse> {
-    return this.forceGetQueryClient().bank.totalSupply();
+  public async totalSupply(): Promise<Coin[]> {
+    const result = await this.forceGetQueryClient().bank.totalSupply();
+    return result.supply;
   }
 
   public async getTx(id: string): Promise<IndexedTx | null> {

@@ -205,12 +205,11 @@ function createDefaultRegistry(): Registry {
 export interface SigningCyberClientOptions {
   readonly registry?: Registry;
   readonly aminoTypes?: AminoTypes;
-  readonly prefix?: string;
   readonly broadcastTimeoutMs?: number;
   readonly broadcastPollIntervalMs?: number;
 }
 
-function createAminoTypes(prefix: string): AminoConverters {
+function createAminoTypes(): AminoConverters {
   return {
     ...createCyberAminoConverters(),
     ...createWasmAminoConverters(),
@@ -290,9 +289,7 @@ export class SigningCyberClient extends CyberClient {
     options: SigningCyberClientOptions,
   ) {
     super(tmClient);
-    const prefix = options.prefix ?? "bostrom";
-    const { registry = createDefaultRegistry(), aminoTypes = new AminoTypes(createAminoTypes(prefix)) } =
-      options;
+    const { registry = createDefaultRegistry(), aminoTypes = new AminoTypes(createAminoTypes()) } = options;
     this.registry = registry;
     this.aminoTypes = aminoTypes;
     this.signer = signer;
