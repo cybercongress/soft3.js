@@ -15,10 +15,6 @@ jobs:
       - run: yarn install
       - run: yarn build
       - run: cp package.json ./build/package.json 
-      - uses: actions/upload-artifact@v3
-        with:
-          name: build-artifact
-          path: ./build
 
   publish-npm:
     needs: build
@@ -29,10 +25,6 @@ jobs:
         with:
           node-version: 18
           registry-url: https://registry.npmjs.org/
-      - uses: actions/download-artifact@v3
-        with:
-          name: build-artifact
-          path: ./build
       - run: npm publish ./build --access public
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
