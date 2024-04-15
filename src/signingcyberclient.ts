@@ -19,7 +19,6 @@ import {
   MsgStoreCodeEncodeObject,
   MsgUpdateAdminEncodeObject,
 } from "@cosmjs/cosmwasm-stargate";
-import { JsonObject } from "@cosmjs/cosmwasm-stargate";
 import { Secp256k1, Secp256k1Signature, sha256 } from "@cosmjs/crypto";
 import { fromBase64, fromBech32, toBase64, toUtf8 } from "@cosmjs/encoding";
 import { Int53, Uint53 } from "@cosmjs/math";
@@ -46,7 +45,6 @@ import {
   createStakingAminoConverters,
   defaultRegistryTypes,
   DeliverTxResponse,
-  logs,
   MsgDelegateEncodeObject,
   MsgSendEncodeObject,
   MsgTransferEncodeObject,
@@ -117,48 +115,14 @@ import {
   MsgVoteEncodeObject,
   MsgWithdrawWithinBatchEncodeObject,
 } from "./encodeobjects";
-import { renderItems } from "./renderItems";
 import {
   CosmosRegistryTypes,
   CosmwasmRegistryTypes,
   CyberRegistryTypes,
   TendermintRegistryTypes,
 } from "./registryTypes";
-
-export interface CyberlinkResult {
-  readonly logs: readonly logs.Log[];
-  readonly transactionHash: string;
-}
-
-export interface InvestmintResult {
-  readonly logs: readonly logs.Log[];
-  readonly transactionHash: string;
-}
-
-export interface CreateRouteResult {
-  readonly logs: readonly logs.Log[];
-  readonly transactionHash: string;
-}
-
-export interface EditRouteResult {
-  readonly logs: readonly logs.Log[];
-  readonly transactionHash: string;
-}
-
-export interface DeleteRouteResult {
-  readonly logs: readonly logs.Log[];
-  readonly transactionHash: string;
-}
-
-export interface EditRouteNameResult {
-  readonly logs: readonly logs.Log[];
-  readonly transactionHash: string;
-}
-
-export interface Link {
-  from: string;
-  to: string;
-}
+import { renderItems } from "./renderItems";
+import { Link } from "./types";
 
 export function link(from: string, to: string): Link {
   return { from: from, to: to };
@@ -241,18 +205,17 @@ function createDefaultRegistry(): Registry {
 export interface SigningCyberClientOptions {
   readonly registry?: Registry;
   readonly aminoTypes?: AminoTypes;
-  readonly prefix?: string;
   readonly broadcastTimeoutMs?: number;
   readonly broadcastPollIntervalMs?: number;
 }
 
-function createAminoTypes(prefix: string): AminoConverters {
+function createAminoTypes(): AminoConverters {
   return {
     ...createCyberAminoConverters(),
     ...createWasmAminoConverters(),
     ...createBankAminoConverters(),
     ...createDistributionAminoConverters(),
-    ...createStakingAminoConverters(prefix),
+    ...createStakingAminoConverters(),
     ...createGovAminoConverters(),
     ...createIbcAminoConverters(),
     ...createAuthzAminoConverters(),
@@ -326,9 +289,7 @@ export class SigningCyberClient extends CyberClient {
     options: SigningCyberClientOptions,
   ) {
     super(tmClient);
-    const prefix = options.prefix ?? "bostrom";
-    const { registry = createDefaultRegistry(), aminoTypes = new AminoTypes(createAminoTypes(prefix)) } =
-      options;
+    const { registry = createDefaultRegistry(), aminoTypes = new AminoTypes(createAminoTypes()) } = options;
     this.registry = registry;
     this.aminoTypes = aminoTypes;
     this.signer = signer;
@@ -1096,6 +1057,8 @@ export class SigningCyberClient extends CyberClient {
       [{ pubkey, sequence: signedSequence }],
       signed.fee.amount,
       signedGasLimit,
+      fee.granter,
+      fee.payer,
       signMode,
     );
     return TxRaw.fromPartial({
@@ -1129,7 +1092,13 @@ export class SigningCyberClient extends CyberClient {
     };
     const txBodyBytes = this.registry.encode(txBodyEncodeObject);
     const gasLimit = Int53.fromString(fee.gas).toNumber();
-    const authInfoBytes = makeAuthInfoBytes([{ pubkey, sequence }], fee.amount, gasLimit);
+    const authInfoBytes = makeAuthInfoBytes(
+      [{ pubkey, sequence }],
+      fee.amount,
+      gasLimit,
+      fee.granter,
+      fee.payer,
+    );
     const signDoc = makeSignDoc(txBodyBytes, authInfoBytes, chainId, accountNumber);
     const { signature, signed } = await this.signer.signDirect(signerAddress, signDoc);
     return TxRaw.fromPartial({

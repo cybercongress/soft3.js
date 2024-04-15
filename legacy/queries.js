@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 const { QueryClient } = require("@cosmjs/stargate");
 const { Tendermint34Client } = require("@cosmjs/tendermint-rpc");
-const { CyberClient } = require("./build/index");
+const { CyberClient } = require("../build/index");
 
 const rpcUrl = "http://localhost:26657";
 

@@ -4,7 +4,6 @@ build/
 custom_types/
 dist/
 docs/
-examples/
 generated/
 proto/
 types/

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 const { DirectSecp256k1HdWallet, Registry } = require("@cosmjs/proto-signing");
 const { stringToPath } = require("@cosmjs/crypto");
-const { SigningCyberClient, OfflineDappWallet } = require("./build/index");
+const { SigningCyberClient, OfflineDappWallet } = require("../build/index");
 const { GasPrice } = require("@cosmjs/stargate");
 const { fromBase64 } = require("@cosmjs/encoding");
 

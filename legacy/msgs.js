@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-const { SigningCyberClient, OfflineDappWallet } = require("./build/index");
+const { SigningCyberClient, OfflineDappWallet } = require("../build/index");
 
 const fs = require("fs-extra");
 
