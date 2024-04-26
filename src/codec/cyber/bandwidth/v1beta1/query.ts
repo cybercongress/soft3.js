@@ -1,24 +1,27 @@
 /* eslint-disable */
-import { DecProto } from "../../../cosmos/base/v1beta1/coin";
-import { NeuronBandwidth, Params } from "./types";
 import Long from "long";
 import _m0 from "protobufjs/minimal";
+import { DecProto } from "../../../cosmos/base/v1beta1/coin";
+import { NeuronBandwidth, Params } from "./types";
 
 export const protobufPackage = "cyber.bandwidth.v1beta1";
 
-export interface QueryLoadRequest {}
+export interface QueryLoadRequest {
+}
 
 export interface QueryLoadResponse {
-  load?: DecProto;
+  load?: DecProto | undefined;
 }
 
-export interface QueryPriceRequest {}
+export interface QueryPriceRequest {
+}
 
 export interface QueryPriceResponse {
-  price?: DecProto;
+  price?: DecProto | undefined;
 }
 
-export interface QueryTotalBandwidthRequest {}
+export interface QueryTotalBandwidthRequest {
+}
 
 export interface QueryTotalBandwidthResponse {
   totalBandwidth: Long;
@@ -29,13 +32,14 @@ export interface QueryNeuronBandwidthRequest {
 }
 
 export interface QueryNeuronBandwidthResponse {
-  neuronBandwidth?: NeuronBandwidth;
+  neuronBandwidth?: NeuronBandwidth | undefined;
 }
 
-export interface QueryParamsRequest {}
+export interface QueryParamsRequest {
+}
 
 export interface QueryParamsResponse {
-  params?: Params;
+  params?: Params | undefined;
 }
 
 function createBaseQueryLoadRequest(): QueryLoadRequest {
@@ -48,16 +52,17 @@ export const QueryLoadRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): QueryLoadRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseQueryLoadRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
-        default:
-          reader.skipType(tag & 7);
-          break;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -71,6 +76,9 @@ export const QueryLoadRequest = {
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<QueryLoadRequest>, I>>(base?: I): QueryLoadRequest {
+    return QueryLoadRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<QueryLoadRequest>, I>>(_: I): QueryLoadRequest {
     const message = createBaseQueryLoadRequest();
     return message;
@@ -90,39 +98,46 @@ export const QueryLoadResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): QueryLoadResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseQueryLoadResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.load = DecProto.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): QueryLoadResponse {
-    return {
-      load: isSet(object.load) ? DecProto.fromJSON(object.load) : undefined,
-    };
+    return { load: isSet(object.load) ? DecProto.fromJSON(object.load) : undefined };
   },
 
   toJSON(message: QueryLoadResponse): unknown {
     const obj: any = {};
-    message.load !== undefined && (obj.load = message.load ? DecProto.toJSON(message.load) : undefined);
+    if (message.load !== undefined) {
+      obj.load = DecProto.toJSON(message.load);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<QueryLoadResponse>, I>>(base?: I): QueryLoadResponse {
+    return QueryLoadResponse.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<QueryLoadResponse>, I>>(object: I): QueryLoadResponse {
     const message = createBaseQueryLoadResponse();
-    message.load =
-      object.load !== undefined && object.load !== null ? DecProto.fromPartial(object.load) : undefined;
+    message.load = (object.load !== undefined && object.load !== null) ? DecProto.fromPartial(object.load) : undefined;
     return message;
   },
 };
@@ -137,16 +152,17 @@ export const QueryPriceRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): QueryPriceRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseQueryPriceRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
-        default:
-          reader.skipType(tag & 7);
-          break;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -160,6 +176,9 @@ export const QueryPriceRequest = {
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<QueryPriceRequest>, I>>(base?: I): QueryPriceRequest {
+    return QueryPriceRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<QueryPriceRequest>, I>>(_: I): QueryPriceRequest {
     const message = createBaseQueryPriceRequest();
     return message;
@@ -179,39 +198,48 @@ export const QueryPriceResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): QueryPriceResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseQueryPriceResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.price = DecProto.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): QueryPriceResponse {
-    return {
-      price: isSet(object.price) ? DecProto.fromJSON(object.price) : undefined,
-    };
+    return { price: isSet(object.price) ? DecProto.fromJSON(object.price) : undefined };
   },
 
   toJSON(message: QueryPriceResponse): unknown {
     const obj: any = {};
-    message.price !== undefined && (obj.price = message.price ? DecProto.toJSON(message.price) : undefined);
+    if (message.price !== undefined) {
+      obj.price = DecProto.toJSON(message.price);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<QueryPriceResponse>, I>>(base?: I): QueryPriceResponse {
+    return QueryPriceResponse.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<QueryPriceResponse>, I>>(object: I): QueryPriceResponse {
     const message = createBaseQueryPriceResponse();
-    message.price =
-      object.price !== undefined && object.price !== null ? DecProto.fromPartial(object.price) : undefined;
+    message.price = (object.price !== undefined && object.price !== null)
+      ? DecProto.fromPartial(object.price)
+      : undefined;
     return message;
   },
 };
@@ -226,16 +254,17 @@ export const QueryTotalBandwidthRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): QueryTotalBandwidthRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseQueryTotalBandwidthRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
-        default:
-          reader.skipType(tag & 7);
-          break;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -249,6 +278,9 @@ export const QueryTotalBandwidthRequest = {
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<QueryTotalBandwidthRequest>, I>>(base?: I): QueryTotalBandwidthRequest {
+    return QueryTotalBandwidthRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<QueryTotalBandwidthRequest>, I>>(_: I): QueryTotalBandwidthRequest {
     const message = createBaseQueryTotalBandwidthRequest();
     return message;
@@ -261,51 +293,55 @@ function createBaseQueryTotalBandwidthResponse(): QueryTotalBandwidthResponse {
 
 export const QueryTotalBandwidthResponse = {
   encode(message: QueryTotalBandwidthResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (!message.totalBandwidth.isZero()) {
+    if (!message.totalBandwidth.equals(Long.UZERO)) {
       writer.uint32(8).uint64(message.totalBandwidth);
     }
     return writer;
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): QueryTotalBandwidthResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseQueryTotalBandwidthResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 8) {
+            break;
+          }
+
           message.totalBandwidth = reader.uint64() as Long;
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): QueryTotalBandwidthResponse {
-    return {
-      totalBandwidth: isSet(object.totalBandwidth) ? Long.fromValue(object.totalBandwidth) : Long.UZERO,
-    };
+    return { totalBandwidth: isSet(object.totalBandwidth) ? Long.fromValue(object.totalBandwidth) : Long.UZERO };
   },
 
   toJSON(message: QueryTotalBandwidthResponse): unknown {
     const obj: any = {};
-    message.totalBandwidth !== undefined &&
-      (obj.totalBandwidth = (message.totalBandwidth || Long.UZERO).toString());
+    if (!message.totalBandwidth.equals(Long.UZERO)) {
+      obj.totalBandwidth = (message.totalBandwidth || Long.UZERO).toString();
+    }
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<QueryTotalBandwidthResponse>, I>>(
-    object: I,
-  ): QueryTotalBandwidthResponse {
+  create<I extends Exact<DeepPartial<QueryTotalBandwidthResponse>, I>>(base?: I): QueryTotalBandwidthResponse {
+    return QueryTotalBandwidthResponse.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<QueryTotalBandwidthResponse>, I>>(object: I): QueryTotalBandwidthResponse {
     const message = createBaseQueryTotalBandwidthResponse();
-    message.totalBandwidth =
-      object.totalBandwidth !== undefined && object.totalBandwidth !== null
-        ? Long.fromValue(object.totalBandwidth)
-        : Long.UZERO;
+    message.totalBandwidth = (object.totalBandwidth !== undefined && object.totalBandwidth !== null)
+      ? Long.fromValue(object.totalBandwidth)
+      : Long.UZERO;
     return message;
   },
 };
@@ -323,38 +359,44 @@ export const QueryNeuronBandwidthRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): QueryNeuronBandwidthRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseQueryNeuronBandwidthRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.neuron = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): QueryNeuronBandwidthRequest {
-    return {
-      neuron: isSet(object.neuron) ? String(object.neuron) : "",
-    };
+    return { neuron: isSet(object.neuron) ? globalThis.String(object.neuron) : "" };
   },
 
   toJSON(message: QueryNeuronBandwidthRequest): unknown {
     const obj: any = {};
-    message.neuron !== undefined && (obj.neuron = message.neuron);
+    if (message.neuron !== "") {
+      obj.neuron = message.neuron;
+    }
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<QueryNeuronBandwidthRequest>, I>>(
-    object: I,
-  ): QueryNeuronBandwidthRequest {
+  create<I extends Exact<DeepPartial<QueryNeuronBandwidthRequest>, I>>(base?: I): QueryNeuronBandwidthRequest {
+    return QueryNeuronBandwidthRequest.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<QueryNeuronBandwidthRequest>, I>>(object: I): QueryNeuronBandwidthRequest {
     const message = createBaseQueryNeuronBandwidthRequest();
     message.neuron = object.neuron ?? "";
     return message;
@@ -374,48 +416,50 @@ export const QueryNeuronBandwidthResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): QueryNeuronBandwidthResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseQueryNeuronBandwidthResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.neuronBandwidth = NeuronBandwidth.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): QueryNeuronBandwidthResponse {
     return {
-      neuronBandwidth: isSet(object.neuronBandwidth)
-        ? NeuronBandwidth.fromJSON(object.neuronBandwidth)
-        : undefined,
+      neuronBandwidth: isSet(object.neuronBandwidth) ? NeuronBandwidth.fromJSON(object.neuronBandwidth) : undefined,
     };
   },
 
   toJSON(message: QueryNeuronBandwidthResponse): unknown {
     const obj: any = {};
-    message.neuronBandwidth !== undefined &&
-      (obj.neuronBandwidth = message.neuronBandwidth
-        ? NeuronBandwidth.toJSON(message.neuronBandwidth)
-        : undefined);
+    if (message.neuronBandwidth !== undefined) {
+      obj.neuronBandwidth = NeuronBandwidth.toJSON(message.neuronBandwidth);
+    }
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<QueryNeuronBandwidthResponse>, I>>(
-    object: I,
-  ): QueryNeuronBandwidthResponse {
+  create<I extends Exact<DeepPartial<QueryNeuronBandwidthResponse>, I>>(base?: I): QueryNeuronBandwidthResponse {
+    return QueryNeuronBandwidthResponse.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<QueryNeuronBandwidthResponse>, I>>(object: I): QueryNeuronBandwidthResponse {
     const message = createBaseQueryNeuronBandwidthResponse();
-    message.neuronBandwidth =
-      object.neuronBandwidth !== undefined && object.neuronBandwidth !== null
-        ? NeuronBandwidth.fromPartial(object.neuronBandwidth)
-        : undefined;
+    message.neuronBandwidth = (object.neuronBandwidth !== undefined && object.neuronBandwidth !== null)
+      ? NeuronBandwidth.fromPartial(object.neuronBandwidth)
+      : undefined;
     return message;
   },
 };
@@ -430,16 +474,17 @@ export const QueryParamsRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): QueryParamsRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseQueryParamsRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
-        default:
-          reader.skipType(tag & 7);
-          break;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -453,6 +498,9 @@ export const QueryParamsRequest = {
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<QueryParamsRequest>, I>>(base?: I): QueryParamsRequest {
+    return QueryParamsRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<QueryParamsRequest>, I>>(_: I): QueryParamsRequest {
     const message = createBaseQueryParamsRequest();
     return message;
@@ -472,39 +520,48 @@ export const QueryParamsResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): QueryParamsResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseQueryParamsResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.params = Params.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): QueryParamsResponse {
-    return {
-      params: isSet(object.params) ? Params.fromJSON(object.params) : undefined,
-    };
+    return { params: isSet(object.params) ? Params.fromJSON(object.params) : undefined };
   },
 
   toJSON(message: QueryParamsResponse): unknown {
     const obj: any = {};
-    message.params !== undefined && (obj.params = message.params ? Params.toJSON(message.params) : undefined);
+    if (message.params !== undefined) {
+      obj.params = Params.toJSON(message.params);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<QueryParamsResponse>, I>>(base?: I): QueryParamsResponse {
+    return QueryParamsResponse.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<QueryParamsResponse>, I>>(object: I): QueryParamsResponse {
     const message = createBaseQueryParamsResponse();
-    message.params =
-      object.params !== undefined && object.params !== null ? Params.fromPartial(object.params) : undefined;
+    message.params = (object.params !== undefined && object.params !== null)
+      ? Params.fromPartial(object.params)
+      : undefined;
     return message;
   },
 };
@@ -517,9 +574,12 @@ export interface Query {
   Params(request: QueryParamsRequest): Promise<QueryParamsResponse>;
 }
 
+export const QueryServiceName = "cyber.bandwidth.v1beta1.Query";
 export class QueryClientImpl implements Query {
   private readonly rpc: Rpc;
-  constructor(rpc: Rpc) {
+  private readonly service: string;
+  constructor(rpc: Rpc, opts?: { service?: string }) {
+    this.service = opts?.service || QueryServiceName;
     this.rpc = rpc;
     this.Load = this.Load.bind(this);
     this.Price = this.Price.bind(this);
@@ -529,32 +589,32 @@ export class QueryClientImpl implements Query {
   }
   Load(request: QueryLoadRequest): Promise<QueryLoadResponse> {
     const data = QueryLoadRequest.encode(request).finish();
-    const promise = this.rpc.request("cyber.bandwidth.v1beta1.Query", "Load", data);
-    return promise.then((data) => QueryLoadResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "Load", data);
+    return promise.then((data) => QueryLoadResponse.decode(_m0.Reader.create(data)));
   }
 
   Price(request: QueryPriceRequest): Promise<QueryPriceResponse> {
     const data = QueryPriceRequest.encode(request).finish();
-    const promise = this.rpc.request("cyber.bandwidth.v1beta1.Query", "Price", data);
-    return promise.then((data) => QueryPriceResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "Price", data);
+    return promise.then((data) => QueryPriceResponse.decode(_m0.Reader.create(data)));
   }
 
   TotalBandwidth(request: QueryTotalBandwidthRequest): Promise<QueryTotalBandwidthResponse> {
     const data = QueryTotalBandwidthRequest.encode(request).finish();
-    const promise = this.rpc.request("cyber.bandwidth.v1beta1.Query", "TotalBandwidth", data);
-    return promise.then((data) => QueryTotalBandwidthResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "TotalBandwidth", data);
+    return promise.then((data) => QueryTotalBandwidthResponse.decode(_m0.Reader.create(data)));
   }
 
   NeuronBandwidth(request: QueryNeuronBandwidthRequest): Promise<QueryNeuronBandwidthResponse> {
     const data = QueryNeuronBandwidthRequest.encode(request).finish();
-    const promise = this.rpc.request("cyber.bandwidth.v1beta1.Query", "NeuronBandwidth", data);
-    return promise.then((data) => QueryNeuronBandwidthResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "NeuronBandwidth", data);
+    return promise.then((data) => QueryNeuronBandwidthResponse.decode(_m0.Reader.create(data)));
   }
 
   Params(request: QueryParamsRequest): Promise<QueryParamsResponse> {
     const data = QueryParamsRequest.encode(request).finish();
-    const promise = this.rpc.request("cyber.bandwidth.v1beta1.Query", "Params", data);
-    return promise.then((data) => QueryParamsResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "Params", data);
+    return promise.then((data) => QueryParamsResponse.decode(_m0.Reader.create(data)));
   }
 }
 
@@ -564,21 +624,14 @@ interface Rpc {
 
 type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
 
-export type DeepPartial<T> = T extends Builtin
-  ? T
-  : T extends Long
-  ? string | number | Long
-  : T extends Array<infer U>
-  ? Array<DeepPartial<U>>
-  : T extends ReadonlyArray<infer U>
-  ? ReadonlyArray<DeepPartial<U>>
-  : T extends {}
-  ? { [K in keyof T]?: DeepPartial<T[K]> }
+export type DeepPartial<T> = T extends Builtin ? T
+  : T extends Long ? string | number | Long : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
+  : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
+  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
-export type Exact<P, I extends P> = P extends Builtin
-  ? P
+export type Exact<P, I extends P> = P extends Builtin ? P
   : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
 
 if (_m0.util.Long !== Long) {

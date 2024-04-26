@@ -1,15 +1,16 @@
 /* eslint-disable */
-import { Params, RankedParticle } from "./types";
-import { PageRequest, PageResponse } from "../../base/query/v1beta1/pagination";
 import Long from "long";
 import _m0 from "protobufjs/minimal";
+import { PageRequest, PageResponse } from "../../base/query/v1beta1/pagination";
+import { Params, RankedParticle } from "./types";
 
 export const protobufPackage = "cyber.rank.v1beta1";
 
-export interface QueryParamsRequest {}
+export interface QueryParamsRequest {
+}
 
 export interface QueryParamsResponse {
-  params?: Params;
+  params?: Params | undefined;
 }
 
 export interface QueryRankRequest {
@@ -22,15 +23,16 @@ export interface QueryRankResponse {
 
 export interface QuerySearchRequest {
   particle: string;
-  pagination?: PageRequest;
+  pagination?: PageRequest | undefined;
 }
 
 export interface QuerySearchResponse {
   result: RankedParticle[];
-  pagination?: PageResponse;
+  pagination?: PageResponse | undefined;
 }
 
-export interface QueryTopRequest {}
+export interface QueryTopRequest {
+}
 
 export interface QueryIsLinkExistRequest {
   from: string;
@@ -55,7 +57,8 @@ export interface QueryNegentropyParticleResponse {
   entropy: Long;
 }
 
-export interface QueryNegentropyRequest {}
+export interface QueryNegentropyRequest {
+}
 
 export interface QueryNegentropyResponse {
   negentropy: Long;
@@ -79,16 +82,17 @@ export const QueryParamsRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): QueryParamsRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseQueryParamsRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
-        default:
-          reader.skipType(tag & 7);
-          break;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -102,6 +106,9 @@ export const QueryParamsRequest = {
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<QueryParamsRequest>, I>>(base?: I): QueryParamsRequest {
+    return QueryParamsRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<QueryParamsRequest>, I>>(_: I): QueryParamsRequest {
     const message = createBaseQueryParamsRequest();
     return message;
@@ -121,39 +128,48 @@ export const QueryParamsResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): QueryParamsResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseQueryParamsResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.params = Params.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): QueryParamsResponse {
-    return {
-      params: isSet(object.params) ? Params.fromJSON(object.params) : undefined,
-    };
+    return { params: isSet(object.params) ? Params.fromJSON(object.params) : undefined };
   },
 
   toJSON(message: QueryParamsResponse): unknown {
     const obj: any = {};
-    message.params !== undefined && (obj.params = message.params ? Params.toJSON(message.params) : undefined);
+    if (message.params !== undefined) {
+      obj.params = Params.toJSON(message.params);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<QueryParamsResponse>, I>>(base?: I): QueryParamsResponse {
+    return QueryParamsResponse.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<QueryParamsResponse>, I>>(object: I): QueryParamsResponse {
     const message = createBaseQueryParamsResponse();
-    message.params =
-      object.params !== undefined && object.params !== null ? Params.fromPartial(object.params) : undefined;
+    message.params = (object.params !== undefined && object.params !== null)
+      ? Params.fromPartial(object.params)
+      : undefined;
     return message;
   },
 };
@@ -171,35 +187,43 @@ export const QueryRankRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): QueryRankRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseQueryRankRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.particle = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): QueryRankRequest {
-    return {
-      particle: isSet(object.particle) ? String(object.particle) : "",
-    };
+    return { particle: isSet(object.particle) ? globalThis.String(object.particle) : "" };
   },
 
   toJSON(message: QueryRankRequest): unknown {
     const obj: any = {};
-    message.particle !== undefined && (obj.particle = message.particle);
+    if (message.particle !== "") {
+      obj.particle = message.particle;
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<QueryRankRequest>, I>>(base?: I): QueryRankRequest {
+    return QueryRankRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<QueryRankRequest>, I>>(object: I): QueryRankRequest {
     const message = createBaseQueryRankRequest();
     message.particle = object.particle ?? "";
@@ -213,46 +237,53 @@ function createBaseQueryRankResponse(): QueryRankResponse {
 
 export const QueryRankResponse = {
   encode(message: QueryRankResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (!message.rank.isZero()) {
+    if (!message.rank.equals(Long.UZERO)) {
       writer.uint32(8).uint64(message.rank);
     }
     return writer;
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): QueryRankResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseQueryRankResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 8) {
+            break;
+          }
+
           message.rank = reader.uint64() as Long;
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): QueryRankResponse {
-    return {
-      rank: isSet(object.rank) ? Long.fromValue(object.rank) : Long.UZERO,
-    };
+    return { rank: isSet(object.rank) ? Long.fromValue(object.rank) : Long.UZERO };
   },
 
   toJSON(message: QueryRankResponse): unknown {
     const obj: any = {};
-    message.rank !== undefined && (obj.rank = (message.rank || Long.UZERO).toString());
+    if (!message.rank.equals(Long.UZERO)) {
+      obj.rank = (message.rank || Long.UZERO).toString();
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<QueryRankResponse>, I>>(base?: I): QueryRankResponse {
+    return QueryRankResponse.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<QueryRankResponse>, I>>(object: I): QueryRankResponse {
     const message = createBaseQueryRankResponse();
-    message.rank =
-      object.rank !== undefined && object.rank !== null ? Long.fromValue(object.rank) : Long.UZERO;
+    message.rank = (object.rank !== undefined && object.rank !== null) ? Long.fromValue(object.rank) : Long.UZERO;
     return message;
   },
 };
@@ -273,48 +304,62 @@ export const QuerySearchRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): QuerySearchRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseQuerySearchRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.particle = reader.string();
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.pagination = PageRequest.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): QuerySearchRequest {
     return {
-      particle: isSet(object.particle) ? String(object.particle) : "",
+      particle: isSet(object.particle) ? globalThis.String(object.particle) : "",
       pagination: isSet(object.pagination) ? PageRequest.fromJSON(object.pagination) : undefined,
     };
   },
 
   toJSON(message: QuerySearchRequest): unknown {
     const obj: any = {};
-    message.particle !== undefined && (obj.particle = message.particle);
-    message.pagination !== undefined &&
-      (obj.pagination = message.pagination ? PageRequest.toJSON(message.pagination) : undefined);
+    if (message.particle !== "") {
+      obj.particle = message.particle;
+    }
+    if (message.pagination !== undefined) {
+      obj.pagination = PageRequest.toJSON(message.pagination);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<QuerySearchRequest>, I>>(base?: I): QuerySearchRequest {
+    return QuerySearchRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<QuerySearchRequest>, I>>(object: I): QuerySearchRequest {
     const message = createBaseQuerySearchRequest();
     message.particle = object.particle ?? "";
-    message.pagination =
-      object.pagination !== undefined && object.pagination !== null
-        ? PageRequest.fromPartial(object.pagination)
-        : undefined;
+    message.pagination = (object.pagination !== undefined && object.pagination !== null)
+      ? PageRequest.fromPartial(object.pagination)
+      : undefined;
     return message;
   },
 };
@@ -335,52 +380,62 @@ export const QuerySearchResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): QuerySearchResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseQuerySearchResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.result.push(RankedParticle.decode(reader, reader.uint32()));
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.pagination = PageResponse.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): QuerySearchResponse {
     return {
-      result: Array.isArray(object?.result) ? object.result.map((e: any) => RankedParticle.fromJSON(e)) : [],
+      result: globalThis.Array.isArray(object?.result) ? object.result.map((e: any) => RankedParticle.fromJSON(e)) : [],
       pagination: isSet(object.pagination) ? PageResponse.fromJSON(object.pagination) : undefined,
     };
   },
 
   toJSON(message: QuerySearchResponse): unknown {
     const obj: any = {};
-    if (message.result) {
-      obj.result = message.result.map((e) => (e ? RankedParticle.toJSON(e) : undefined));
-    } else {
-      obj.result = [];
+    if (message.result?.length) {
+      obj.result = message.result.map((e) => RankedParticle.toJSON(e));
     }
-    message.pagination !== undefined &&
-      (obj.pagination = message.pagination ? PageResponse.toJSON(message.pagination) : undefined);
+    if (message.pagination !== undefined) {
+      obj.pagination = PageResponse.toJSON(message.pagination);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<QuerySearchResponse>, I>>(base?: I): QuerySearchResponse {
+    return QuerySearchResponse.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<QuerySearchResponse>, I>>(object: I): QuerySearchResponse {
     const message = createBaseQuerySearchResponse();
     message.result = object.result?.map((e) => RankedParticle.fromPartial(e)) || [];
-    message.pagination =
-      object.pagination !== undefined && object.pagination !== null
-        ? PageResponse.fromPartial(object.pagination)
-        : undefined;
+    message.pagination = (object.pagination !== undefined && object.pagination !== null)
+      ? PageResponse.fromPartial(object.pagination)
+      : undefined;
     return message;
   },
 };
@@ -395,16 +450,17 @@ export const QueryTopRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): QueryTopRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseQueryTopRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
-        default:
-          reader.skipType(tag & 7);
-          break;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -418,6 +474,9 @@ export const QueryTopRequest = {
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<QueryTopRequest>, I>>(base?: I): QueryTopRequest {
+    return QueryTopRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<QueryTopRequest>, I>>(_: I): QueryTopRequest {
     const message = createBaseQueryTopRequest();
     return message;
@@ -443,45 +502,67 @@ export const QueryIsLinkExistRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): QueryIsLinkExistRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseQueryIsLinkExistRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.from = reader.string();
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.to = reader.string();
-          break;
+          continue;
         case 3:
+          if (tag !== 26) {
+            break;
+          }
+
           message.address = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): QueryIsLinkExistRequest {
     return {
-      from: isSet(object.from) ? String(object.from) : "",
-      to: isSet(object.to) ? String(object.to) : "",
-      address: isSet(object.address) ? String(object.address) : "",
+      from: isSet(object.from) ? globalThis.String(object.from) : "",
+      to: isSet(object.to) ? globalThis.String(object.to) : "",
+      address: isSet(object.address) ? globalThis.String(object.address) : "",
     };
   },
 
   toJSON(message: QueryIsLinkExistRequest): unknown {
     const obj: any = {};
-    message.from !== undefined && (obj.from = message.from);
-    message.to !== undefined && (obj.to = message.to);
-    message.address !== undefined && (obj.address = message.address);
+    if (message.from !== "") {
+      obj.from = message.from;
+    }
+    if (message.to !== "") {
+      obj.to = message.to;
+    }
+    if (message.address !== "") {
+      obj.address = message.address;
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<QueryIsLinkExistRequest>, I>>(base?: I): QueryIsLinkExistRequest {
+    return QueryIsLinkExistRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<QueryIsLinkExistRequest>, I>>(object: I): QueryIsLinkExistRequest {
     const message = createBaseQueryIsLinkExistRequest();
     message.from = object.from ?? "";
@@ -507,43 +588,57 @@ export const QueryIsAnyLinkExistRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): QueryIsAnyLinkExistRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseQueryIsAnyLinkExistRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.from = reader.string();
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.to = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): QueryIsAnyLinkExistRequest {
     return {
-      from: isSet(object.from) ? String(object.from) : "",
-      to: isSet(object.to) ? String(object.to) : "",
+      from: isSet(object.from) ? globalThis.String(object.from) : "",
+      to: isSet(object.to) ? globalThis.String(object.to) : "",
     };
   },
 
   toJSON(message: QueryIsAnyLinkExistRequest): unknown {
     const obj: any = {};
-    message.from !== undefined && (obj.from = message.from);
-    message.to !== undefined && (obj.to = message.to);
+    if (message.from !== "") {
+      obj.from = message.from;
+    }
+    if (message.to !== "") {
+      obj.to = message.to;
+    }
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<QueryIsAnyLinkExistRequest>, I>>(
-    object: I,
-  ): QueryIsAnyLinkExistRequest {
+  create<I extends Exact<DeepPartial<QueryIsAnyLinkExistRequest>, I>>(base?: I): QueryIsAnyLinkExistRequest {
+    return QueryIsAnyLinkExistRequest.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<QueryIsAnyLinkExistRequest>, I>>(object: I): QueryIsAnyLinkExistRequest {
     const message = createBaseQueryIsAnyLinkExistRequest();
     message.from = object.from ?? "";
     message.to = object.to ?? "";
@@ -557,42 +652,50 @@ function createBaseQueryLinkExistResponse(): QueryLinkExistResponse {
 
 export const QueryLinkExistResponse = {
   encode(message: QueryLinkExistResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.exist === true) {
+    if (message.exist !== false) {
       writer.uint32(8).bool(message.exist);
     }
     return writer;
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): QueryLinkExistResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseQueryLinkExistResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 8) {
+            break;
+          }
+
           message.exist = reader.bool();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): QueryLinkExistResponse {
-    return {
-      exist: isSet(object.exist) ? Boolean(object.exist) : false,
-    };
+    return { exist: isSet(object.exist) ? globalThis.Boolean(object.exist) : false };
   },
 
   toJSON(message: QueryLinkExistResponse): unknown {
     const obj: any = {};
-    message.exist !== undefined && (obj.exist = message.exist);
+    if (message.exist !== false) {
+      obj.exist = message.exist;
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<QueryLinkExistResponse>, I>>(base?: I): QueryLinkExistResponse {
+    return QueryLinkExistResponse.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<QueryLinkExistResponse>, I>>(object: I): QueryLinkExistResponse {
     const message = createBaseQueryLinkExistResponse();
     message.exist = object.exist ?? false;
@@ -613,35 +716,43 @@ export const QueryNegentropyPartilceRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): QueryNegentropyPartilceRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseQueryNegentropyPartilceRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.particle = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): QueryNegentropyPartilceRequest {
-    return {
-      particle: isSet(object.particle) ? String(object.particle) : "",
-    };
+    return { particle: isSet(object.particle) ? globalThis.String(object.particle) : "" };
   },
 
   toJSON(message: QueryNegentropyPartilceRequest): unknown {
     const obj: any = {};
-    message.particle !== undefined && (obj.particle = message.particle);
+    if (message.particle !== "") {
+      obj.particle = message.particle;
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<QueryNegentropyPartilceRequest>, I>>(base?: I): QueryNegentropyPartilceRequest {
+    return QueryNegentropyPartilceRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<QueryNegentropyPartilceRequest>, I>>(
     object: I,
   ): QueryNegentropyPartilceRequest {
@@ -657,48 +768,57 @@ function createBaseQueryNegentropyParticleResponse(): QueryNegentropyParticleRes
 
 export const QueryNegentropyParticleResponse = {
   encode(message: QueryNegentropyParticleResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (!message.entropy.isZero()) {
+    if (!message.entropy.equals(Long.UZERO)) {
       writer.uint32(8).uint64(message.entropy);
     }
     return writer;
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): QueryNegentropyParticleResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseQueryNegentropyParticleResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 8) {
+            break;
+          }
+
           message.entropy = reader.uint64() as Long;
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): QueryNegentropyParticleResponse {
-    return {
-      entropy: isSet(object.entropy) ? Long.fromValue(object.entropy) : Long.UZERO,
-    };
+    return { entropy: isSet(object.entropy) ? Long.fromValue(object.entropy) : Long.UZERO };
   },
 
   toJSON(message: QueryNegentropyParticleResponse): unknown {
     const obj: any = {};
-    message.entropy !== undefined && (obj.entropy = (message.entropy || Long.UZERO).toString());
+    if (!message.entropy.equals(Long.UZERO)) {
+      obj.entropy = (message.entropy || Long.UZERO).toString();
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<QueryNegentropyParticleResponse>, I>>(base?: I): QueryNegentropyParticleResponse {
+    return QueryNegentropyParticleResponse.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<QueryNegentropyParticleResponse>, I>>(
     object: I,
   ): QueryNegentropyParticleResponse {
     const message = createBaseQueryNegentropyParticleResponse();
-    message.entropy =
-      object.entropy !== undefined && object.entropy !== null ? Long.fromValue(object.entropy) : Long.UZERO;
+    message.entropy = (object.entropy !== undefined && object.entropy !== null)
+      ? Long.fromValue(object.entropy)
+      : Long.UZERO;
     return message;
   },
 };
@@ -713,16 +833,17 @@ export const QueryNegentropyRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): QueryNegentropyRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseQueryNegentropyRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
-        default:
-          reader.skipType(tag & 7);
-          break;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -736,6 +857,9 @@ export const QueryNegentropyRequest = {
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<QueryNegentropyRequest>, I>>(base?: I): QueryNegentropyRequest {
+    return QueryNegentropyRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<QueryNegentropyRequest>, I>>(_: I): QueryNegentropyRequest {
     const message = createBaseQueryNegentropyRequest();
     return message;
@@ -748,48 +872,55 @@ function createBaseQueryNegentropyResponse(): QueryNegentropyResponse {
 
 export const QueryNegentropyResponse = {
   encode(message: QueryNegentropyResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (!message.negentropy.isZero()) {
+    if (!message.negentropy.equals(Long.UZERO)) {
       writer.uint32(8).uint64(message.negentropy);
     }
     return writer;
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): QueryNegentropyResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseQueryNegentropyResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 8) {
+            break;
+          }
+
           message.negentropy = reader.uint64() as Long;
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): QueryNegentropyResponse {
-    return {
-      negentropy: isSet(object.negentropy) ? Long.fromValue(object.negentropy) : Long.UZERO,
-    };
+    return { negentropy: isSet(object.negentropy) ? Long.fromValue(object.negentropy) : Long.UZERO };
   },
 
   toJSON(message: QueryNegentropyResponse): unknown {
     const obj: any = {};
-    message.negentropy !== undefined && (obj.negentropy = (message.negentropy || Long.UZERO).toString());
+    if (!message.negentropy.equals(Long.UZERO)) {
+      obj.negentropy = (message.negentropy || Long.UZERO).toString();
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<QueryNegentropyResponse>, I>>(base?: I): QueryNegentropyResponse {
+    return QueryNegentropyResponse.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<QueryNegentropyResponse>, I>>(object: I): QueryNegentropyResponse {
     const message = createBaseQueryNegentropyResponse();
-    message.negentropy =
-      object.negentropy !== undefined && object.negentropy !== null
-        ? Long.fromValue(object.negentropy)
-        : Long.UZERO;
+    message.negentropy = (object.negentropy !== undefined && object.negentropy !== null)
+      ? Long.fromValue(object.negentropy)
+      : Long.UZERO;
     return message;
   },
 };
@@ -807,35 +938,43 @@ export const QueryKarmaRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): QueryKarmaRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseQueryKarmaRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.neuron = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): QueryKarmaRequest {
-    return {
-      neuron: isSet(object.neuron) ? String(object.neuron) : "",
-    };
+    return { neuron: isSet(object.neuron) ? globalThis.String(object.neuron) : "" };
   },
 
   toJSON(message: QueryKarmaRequest): unknown {
     const obj: any = {};
-    message.neuron !== undefined && (obj.neuron = message.neuron);
+    if (message.neuron !== "") {
+      obj.neuron = message.neuron;
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<QueryKarmaRequest>, I>>(base?: I): QueryKarmaRequest {
+    return QueryKarmaRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<QueryKarmaRequest>, I>>(object: I): QueryKarmaRequest {
     const message = createBaseQueryKarmaRequest();
     message.neuron = object.neuron ?? "";
@@ -849,46 +988,53 @@ function createBaseQueryKarmaResponse(): QueryKarmaResponse {
 
 export const QueryKarmaResponse = {
   encode(message: QueryKarmaResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (!message.karma.isZero()) {
+    if (!message.karma.equals(Long.UZERO)) {
       writer.uint32(8).uint64(message.karma);
     }
     return writer;
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): QueryKarmaResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseQueryKarmaResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 8) {
+            break;
+          }
+
           message.karma = reader.uint64() as Long;
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): QueryKarmaResponse {
-    return {
-      karma: isSet(object.karma) ? Long.fromValue(object.karma) : Long.UZERO,
-    };
+    return { karma: isSet(object.karma) ? Long.fromValue(object.karma) : Long.UZERO };
   },
 
   toJSON(message: QueryKarmaResponse): unknown {
     const obj: any = {};
-    message.karma !== undefined && (obj.karma = (message.karma || Long.UZERO).toString());
+    if (!message.karma.equals(Long.UZERO)) {
+      obj.karma = (message.karma || Long.UZERO).toString();
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<QueryKarmaResponse>, I>>(base?: I): QueryKarmaResponse {
+    return QueryKarmaResponse.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<QueryKarmaResponse>, I>>(object: I): QueryKarmaResponse {
     const message = createBaseQueryKarmaResponse();
-    message.karma =
-      object.karma !== undefined && object.karma !== null ? Long.fromValue(object.karma) : Long.UZERO;
+    message.karma = (object.karma !== undefined && object.karma !== null) ? Long.fromValue(object.karma) : Long.UZERO;
     return message;
   },
 };
@@ -906,9 +1052,12 @@ export interface Query {
   Karma(request: QueryKarmaRequest): Promise<QueryKarmaResponse>;
 }
 
+export const QueryServiceName = "cyber.rank.v1beta1.Query";
 export class QueryClientImpl implements Query {
   private readonly rpc: Rpc;
-  constructor(rpc: Rpc) {
+  private readonly service: string;
+  constructor(rpc: Rpc, opts?: { service?: string }) {
+    this.service = opts?.service || QueryServiceName;
     this.rpc = rpc;
     this.Params = this.Params.bind(this);
     this.Rank = this.Rank.bind(this);
@@ -923,62 +1072,62 @@ export class QueryClientImpl implements Query {
   }
   Params(request: QueryParamsRequest): Promise<QueryParamsResponse> {
     const data = QueryParamsRequest.encode(request).finish();
-    const promise = this.rpc.request("cyber.rank.v1beta1.Query", "Params", data);
-    return promise.then((data) => QueryParamsResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "Params", data);
+    return promise.then((data) => QueryParamsResponse.decode(_m0.Reader.create(data)));
   }
 
   Rank(request: QueryRankRequest): Promise<QueryRankResponse> {
     const data = QueryRankRequest.encode(request).finish();
-    const promise = this.rpc.request("cyber.rank.v1beta1.Query", "Rank", data);
-    return promise.then((data) => QueryRankResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "Rank", data);
+    return promise.then((data) => QueryRankResponse.decode(_m0.Reader.create(data)));
   }
 
   Search(request: QuerySearchRequest): Promise<QuerySearchResponse> {
     const data = QuerySearchRequest.encode(request).finish();
-    const promise = this.rpc.request("cyber.rank.v1beta1.Query", "Search", data);
-    return promise.then((data) => QuerySearchResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "Search", data);
+    return promise.then((data) => QuerySearchResponse.decode(_m0.Reader.create(data)));
   }
 
   Backlinks(request: QuerySearchRequest): Promise<QuerySearchResponse> {
     const data = QuerySearchRequest.encode(request).finish();
-    const promise = this.rpc.request("cyber.rank.v1beta1.Query", "Backlinks", data);
-    return promise.then((data) => QuerySearchResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "Backlinks", data);
+    return promise.then((data) => QuerySearchResponse.decode(_m0.Reader.create(data)));
   }
 
   Top(request: PageRequest): Promise<QuerySearchResponse> {
     const data = PageRequest.encode(request).finish();
-    const promise = this.rpc.request("cyber.rank.v1beta1.Query", "Top", data);
-    return promise.then((data) => QuerySearchResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "Top", data);
+    return promise.then((data) => QuerySearchResponse.decode(_m0.Reader.create(data)));
   }
 
   IsLinkExist(request: QueryIsLinkExistRequest): Promise<QueryLinkExistResponse> {
     const data = QueryIsLinkExistRequest.encode(request).finish();
-    const promise = this.rpc.request("cyber.rank.v1beta1.Query", "IsLinkExist", data);
-    return promise.then((data) => QueryLinkExistResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "IsLinkExist", data);
+    return promise.then((data) => QueryLinkExistResponse.decode(_m0.Reader.create(data)));
   }
 
   IsAnyLinkExist(request: QueryIsAnyLinkExistRequest): Promise<QueryLinkExistResponse> {
     const data = QueryIsAnyLinkExistRequest.encode(request).finish();
-    const promise = this.rpc.request("cyber.rank.v1beta1.Query", "IsAnyLinkExist", data);
-    return promise.then((data) => QueryLinkExistResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "IsAnyLinkExist", data);
+    return promise.then((data) => QueryLinkExistResponse.decode(_m0.Reader.create(data)));
   }
 
   ParticleNegentropy(request: QueryNegentropyPartilceRequest): Promise<QueryNegentropyParticleResponse> {
     const data = QueryNegentropyPartilceRequest.encode(request).finish();
-    const promise = this.rpc.request("cyber.rank.v1beta1.Query", "ParticleNegentropy", data);
-    return promise.then((data) => QueryNegentropyParticleResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "ParticleNegentropy", data);
+    return promise.then((data) => QueryNegentropyParticleResponse.decode(_m0.Reader.create(data)));
   }
 
   Negentropy(request: QueryNegentropyRequest): Promise<QueryNegentropyResponse> {
     const data = QueryNegentropyRequest.encode(request).finish();
-    const promise = this.rpc.request("cyber.rank.v1beta1.Query", "Negentropy", data);
-    return promise.then((data) => QueryNegentropyResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "Negentropy", data);
+    return promise.then((data) => QueryNegentropyResponse.decode(_m0.Reader.create(data)));
   }
 
   Karma(request: QueryKarmaRequest): Promise<QueryKarmaResponse> {
     const data = QueryKarmaRequest.encode(request).finish();
-    const promise = this.rpc.request("cyber.rank.v1beta1.Query", "Karma", data);
-    return promise.then((data) => QueryKarmaResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "Karma", data);
+    return promise.then((data) => QueryKarmaResponse.decode(_m0.Reader.create(data)));
   }
 }
 
@@ -988,21 +1137,14 @@ interface Rpc {
 
 type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
 
-export type DeepPartial<T> = T extends Builtin
-  ? T
-  : T extends Long
-  ? string | number | Long
-  : T extends Array<infer U>
-  ? Array<DeepPartial<U>>
-  : T extends ReadonlyArray<infer U>
-  ? ReadonlyArray<DeepPartial<U>>
-  : T extends {}
-  ? { [K in keyof T]?: DeepPartial<T[K]> }
+export type DeepPartial<T> = T extends Builtin ? T
+  : T extends Long ? string | number | Long : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
+  : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
+  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
-export type Exact<P, I extends P> = P extends Builtin
-  ? P
+export type Exact<P, I extends P> = P extends Builtin ? P
   : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
 
 if (_m0.util.Long !== Long) {

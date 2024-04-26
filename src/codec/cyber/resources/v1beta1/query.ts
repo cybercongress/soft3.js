@@ -1,25 +1,26 @@
 /* eslint-disable */
-import { Params } from "./types";
-import { Coin } from "../../../cosmos/base/v1beta1/coin";
 import Long from "long";
 import _m0 from "protobufjs/minimal";
+import { Coin } from "../../../cosmos/base/v1beta1/coin";
+import { Params } from "./types";
 
 export const protobufPackage = "cyber.resources.v1beta1";
 
-export interface QueryParamsRequest {}
+export interface QueryParamsRequest {
+}
 
 export interface QueryParamsResponse {
-  params?: Params;
+  params?: Params | undefined;
 }
 
 export interface QueryInvestmintRequest {
-  amount?: Coin;
+  amount?: Coin | undefined;
   resource: string;
   length: Long;
 }
 
 export interface QueryInvestmintResponse {
-  amount?: Coin;
+  amount?: Coin | undefined;
 }
 
 function createBaseQueryParamsRequest(): QueryParamsRequest {
@@ -32,16 +33,17 @@ export const QueryParamsRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): QueryParamsRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseQueryParamsRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
-        default:
-          reader.skipType(tag & 7);
-          break;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -55,6 +57,9 @@ export const QueryParamsRequest = {
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<QueryParamsRequest>, I>>(base?: I): QueryParamsRequest {
+    return QueryParamsRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<QueryParamsRequest>, I>>(_: I): QueryParamsRequest {
     const message = createBaseQueryParamsRequest();
     return message;
@@ -74,39 +79,48 @@ export const QueryParamsResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): QueryParamsResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseQueryParamsResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.params = Params.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): QueryParamsResponse {
-    return {
-      params: isSet(object.params) ? Params.fromJSON(object.params) : undefined,
-    };
+    return { params: isSet(object.params) ? Params.fromJSON(object.params) : undefined };
   },
 
   toJSON(message: QueryParamsResponse): unknown {
     const obj: any = {};
-    message.params !== undefined && (obj.params = message.params ? Params.toJSON(message.params) : undefined);
+    if (message.params !== undefined) {
+      obj.params = Params.toJSON(message.params);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<QueryParamsResponse>, I>>(base?: I): QueryParamsResponse {
+    return QueryParamsResponse.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<QueryParamsResponse>, I>>(object: I): QueryParamsResponse {
     const message = createBaseQueryParamsResponse();
-    message.params =
-      object.params !== undefined && object.params !== null ? Params.fromPartial(object.params) : undefined;
+    message.params = (object.params !== undefined && object.params !== null)
+      ? Params.fromPartial(object.params)
+      : undefined;
     return message;
   },
 };
@@ -123,32 +137,45 @@ export const QueryInvestmintRequest = {
     if (message.resource !== "") {
       writer.uint32(18).string(message.resource);
     }
-    if (!message.length.isZero()) {
+    if (!message.length.equals(Long.UZERO)) {
       writer.uint32(24).uint64(message.length);
     }
     return writer;
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): QueryInvestmintRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseQueryInvestmintRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.amount = Coin.decode(reader, reader.uint32());
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.resource = reader.string();
-          break;
+          continue;
         case 3:
+          if (tag !== 24) {
+            break;
+          }
+
           message.length = reader.uint64() as Long;
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -156,26 +183,37 @@ export const QueryInvestmintRequest = {
   fromJSON(object: any): QueryInvestmintRequest {
     return {
       amount: isSet(object.amount) ? Coin.fromJSON(object.amount) : undefined,
-      resource: isSet(object.resource) ? String(object.resource) : "",
+      resource: isSet(object.resource) ? globalThis.String(object.resource) : "",
       length: isSet(object.length) ? Long.fromValue(object.length) : Long.UZERO,
     };
   },
 
   toJSON(message: QueryInvestmintRequest): unknown {
     const obj: any = {};
-    message.amount !== undefined && (obj.amount = message.amount ? Coin.toJSON(message.amount) : undefined);
-    message.resource !== undefined && (obj.resource = message.resource);
-    message.length !== undefined && (obj.length = (message.length || Long.UZERO).toString());
+    if (message.amount !== undefined) {
+      obj.amount = Coin.toJSON(message.amount);
+    }
+    if (message.resource !== "") {
+      obj.resource = message.resource;
+    }
+    if (!message.length.equals(Long.UZERO)) {
+      obj.length = (message.length || Long.UZERO).toString();
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<QueryInvestmintRequest>, I>>(base?: I): QueryInvestmintRequest {
+    return QueryInvestmintRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<QueryInvestmintRequest>, I>>(object: I): QueryInvestmintRequest {
     const message = createBaseQueryInvestmintRequest();
-    message.amount =
-      object.amount !== undefined && object.amount !== null ? Coin.fromPartial(object.amount) : undefined;
+    message.amount = (object.amount !== undefined && object.amount !== null)
+      ? Coin.fromPartial(object.amount)
+      : undefined;
     message.resource = object.resource ?? "";
-    message.length =
-      object.length !== undefined && object.length !== null ? Long.fromValue(object.length) : Long.UZERO;
+    message.length = (object.length !== undefined && object.length !== null)
+      ? Long.fromValue(object.length)
+      : Long.UZERO;
     return message;
   },
 };
@@ -193,39 +231,48 @@ export const QueryInvestmintResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): QueryInvestmintResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseQueryInvestmintResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.amount = Coin.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): QueryInvestmintResponse {
-    return {
-      amount: isSet(object.amount) ? Coin.fromJSON(object.amount) : undefined,
-    };
+    return { amount: isSet(object.amount) ? Coin.fromJSON(object.amount) : undefined };
   },
 
   toJSON(message: QueryInvestmintResponse): unknown {
     const obj: any = {};
-    message.amount !== undefined && (obj.amount = message.amount ? Coin.toJSON(message.amount) : undefined);
+    if (message.amount !== undefined) {
+      obj.amount = Coin.toJSON(message.amount);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<QueryInvestmintResponse>, I>>(base?: I): QueryInvestmintResponse {
+    return QueryInvestmintResponse.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<QueryInvestmintResponse>, I>>(object: I): QueryInvestmintResponse {
     const message = createBaseQueryInvestmintResponse();
-    message.amount =
-      object.amount !== undefined && object.amount !== null ? Coin.fromPartial(object.amount) : undefined;
+    message.amount = (object.amount !== undefined && object.amount !== null)
+      ? Coin.fromPartial(object.amount)
+      : undefined;
     return message;
   },
 };
@@ -235,23 +282,26 @@ export interface Query {
   Investmint(request: QueryInvestmintRequest): Promise<QueryInvestmintResponse>;
 }
 
+export const QueryServiceName = "cyber.resources.v1beta1.Query";
 export class QueryClientImpl implements Query {
   private readonly rpc: Rpc;
-  constructor(rpc: Rpc) {
+  private readonly service: string;
+  constructor(rpc: Rpc, opts?: { service?: string }) {
+    this.service = opts?.service || QueryServiceName;
     this.rpc = rpc;
     this.Params = this.Params.bind(this);
     this.Investmint = this.Investmint.bind(this);
   }
   Params(request: QueryParamsRequest): Promise<QueryParamsResponse> {
     const data = QueryParamsRequest.encode(request).finish();
-    const promise = this.rpc.request("cyber.resources.v1beta1.Query", "Params", data);
-    return promise.then((data) => QueryParamsResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "Params", data);
+    return promise.then((data) => QueryParamsResponse.decode(_m0.Reader.create(data)));
   }
 
   Investmint(request: QueryInvestmintRequest): Promise<QueryInvestmintResponse> {
     const data = QueryInvestmintRequest.encode(request).finish();
-    const promise = this.rpc.request("cyber.resources.v1beta1.Query", "Investmint", data);
-    return promise.then((data) => QueryInvestmintResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "Investmint", data);
+    return promise.then((data) => QueryInvestmintResponse.decode(_m0.Reader.create(data)));
   }
 }
 
@@ -261,21 +311,14 @@ interface Rpc {
 
 type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
 
-export type DeepPartial<T> = T extends Builtin
-  ? T
-  : T extends Long
-  ? string | number | Long
-  : T extends Array<infer U>
-  ? Array<DeepPartial<U>>
-  : T extends ReadonlyArray<infer U>
-  ? ReadonlyArray<DeepPartial<U>>
-  : T extends {}
-  ? { [K in keyof T]?: DeepPartial<T[K]> }
+export type DeepPartial<T> = T extends Builtin ? T
+  : T extends Long ? string | number | Long : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
+  : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
+  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
-export type Exact<P, I extends P> = P extends Builtin
-  ? P
+export type Exact<P, I extends P> = P extends Builtin ? P
   : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
 
 if (_m0.util.Long !== Long) {

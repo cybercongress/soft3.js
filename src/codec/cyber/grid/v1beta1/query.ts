@@ -1,16 +1,17 @@
 /* eslint-disable */
-import { Params, Route } from "./types";
-import { PageRequest, PageResponse } from "../../../cosmos/base/query/v1beta1/pagination";
 import Long from "long";
-import { Coin } from "../../../cosmos/base/v1beta1/coin";
 import _m0 from "protobufjs/minimal";
+import { PageRequest, PageResponse } from "../../../cosmos/base/query/v1beta1/pagination";
+import { Coin } from "../../../cosmos/base/v1beta1/coin";
+import { Params, Route } from "./types";
 
 export const protobufPackage = "cyber.grid.v1beta1";
 
-export interface QueryParamsRequest {}
+export interface QueryParamsRequest {
+}
 
 export interface QueryParamsResponse {
-  params?: Params;
+  params?: Params | undefined;
 }
 
 export interface QuerySourceRequest {
@@ -31,16 +32,16 @@ export interface QueryRouteRequest {
 }
 
 export interface QueryRouteResponse {
-  route?: Route;
+  route?: Route | undefined;
 }
 
 export interface QueryRoutesRequest {
-  pagination?: PageRequest;
+  pagination?: PageRequest | undefined;
 }
 
 export interface QueryRoutesResponse {
   routes: Route[];
-  pagination?: PageResponse;
+  pagination?: PageResponse | undefined;
 }
 
 function createBaseQueryParamsRequest(): QueryParamsRequest {
@@ -53,16 +54,17 @@ export const QueryParamsRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): QueryParamsRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseQueryParamsRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
-        default:
-          reader.skipType(tag & 7);
-          break;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
@@ -76,6 +78,9 @@ export const QueryParamsRequest = {
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<QueryParamsRequest>, I>>(base?: I): QueryParamsRequest {
+    return QueryParamsRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<QueryParamsRequest>, I>>(_: I): QueryParamsRequest {
     const message = createBaseQueryParamsRequest();
     return message;
@@ -95,39 +100,48 @@ export const QueryParamsResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): QueryParamsResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseQueryParamsResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.params = Params.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): QueryParamsResponse {
-    return {
-      params: isSet(object.params) ? Params.fromJSON(object.params) : undefined,
-    };
+    return { params: isSet(object.params) ? Params.fromJSON(object.params) : undefined };
   },
 
   toJSON(message: QueryParamsResponse): unknown {
     const obj: any = {};
-    message.params !== undefined && (obj.params = message.params ? Params.toJSON(message.params) : undefined);
+    if (message.params !== undefined) {
+      obj.params = Params.toJSON(message.params);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<QueryParamsResponse>, I>>(base?: I): QueryParamsResponse {
+    return QueryParamsResponse.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<QueryParamsResponse>, I>>(object: I): QueryParamsResponse {
     const message = createBaseQueryParamsResponse();
-    message.params =
-      object.params !== undefined && object.params !== null ? Params.fromPartial(object.params) : undefined;
+    message.params = (object.params !== undefined && object.params !== null)
+      ? Params.fromPartial(object.params)
+      : undefined;
     return message;
   },
 };
@@ -145,35 +159,43 @@ export const QuerySourceRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): QuerySourceRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseQuerySourceRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.source = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): QuerySourceRequest {
-    return {
-      source: isSet(object.source) ? String(object.source) : "",
-    };
+    return { source: isSet(object.source) ? globalThis.String(object.source) : "" };
   },
 
   toJSON(message: QuerySourceRequest): unknown {
     const obj: any = {};
-    message.source !== undefined && (obj.source = message.source);
+    if (message.source !== "") {
+      obj.source = message.source;
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<QuerySourceRequest>, I>>(base?: I): QuerySourceRequest {
+    return QuerySourceRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<QuerySourceRequest>, I>>(object: I): QuerySourceRequest {
     const message = createBaseQuerySourceRequest();
     message.source = object.source ?? "";
@@ -194,35 +216,43 @@ export const QueryDestinationRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): QueryDestinationRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseQueryDestinationRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.destination = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): QueryDestinationRequest {
-    return {
-      destination: isSet(object.destination) ? String(object.destination) : "",
-    };
+    return { destination: isSet(object.destination) ? globalThis.String(object.destination) : "" };
   },
 
   toJSON(message: QueryDestinationRequest): unknown {
     const obj: any = {};
-    message.destination !== undefined && (obj.destination = message.destination);
+    if (message.destination !== "") {
+      obj.destination = message.destination;
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<QueryDestinationRequest>, I>>(base?: I): QueryDestinationRequest {
+    return QueryDestinationRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<QueryDestinationRequest>, I>>(object: I): QueryDestinationRequest {
     const message = createBaseQueryDestinationRequest();
     message.destination = object.destination ?? "";
@@ -243,42 +273,44 @@ export const QueryRoutedEnergyResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): QueryRoutedEnergyResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseQueryRoutedEnergyResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.value.push(Coin.decode(reader, reader.uint32()));
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): QueryRoutedEnergyResponse {
-    return {
-      value: Array.isArray(object?.value) ? object.value.map((e: any) => Coin.fromJSON(e)) : [],
-    };
+    return { value: globalThis.Array.isArray(object?.value) ? object.value.map((e: any) => Coin.fromJSON(e)) : [] };
   },
 
   toJSON(message: QueryRoutedEnergyResponse): unknown {
     const obj: any = {};
-    if (message.value) {
-      obj.value = message.value.map((e) => (e ? Coin.toJSON(e) : undefined));
-    } else {
-      obj.value = [];
+    if (message.value?.length) {
+      obj.value = message.value.map((e) => Coin.toJSON(e));
     }
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<QueryRoutedEnergyResponse>, I>>(
-    object: I,
-  ): QueryRoutedEnergyResponse {
+  create<I extends Exact<DeepPartial<QueryRoutedEnergyResponse>, I>>(base?: I): QueryRoutedEnergyResponse {
+    return QueryRoutedEnergyResponse.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<QueryRoutedEnergyResponse>, I>>(object: I): QueryRoutedEnergyResponse {
     const message = createBaseQueryRoutedEnergyResponse();
     message.value = object.value?.map((e) => Coin.fromPartial(e)) || [];
     return message;
@@ -301,40 +333,56 @@ export const QueryRouteRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): QueryRouteRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseQueryRouteRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.source = reader.string();
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.destination = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): QueryRouteRequest {
     return {
-      source: isSet(object.source) ? String(object.source) : "",
-      destination: isSet(object.destination) ? String(object.destination) : "",
+      source: isSet(object.source) ? globalThis.String(object.source) : "",
+      destination: isSet(object.destination) ? globalThis.String(object.destination) : "",
     };
   },
 
   toJSON(message: QueryRouteRequest): unknown {
     const obj: any = {};
-    message.source !== undefined && (obj.source = message.source);
-    message.destination !== undefined && (obj.destination = message.destination);
+    if (message.source !== "") {
+      obj.source = message.source;
+    }
+    if (message.destination !== "") {
+      obj.destination = message.destination;
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<QueryRouteRequest>, I>>(base?: I): QueryRouteRequest {
+    return QueryRouteRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<QueryRouteRequest>, I>>(object: I): QueryRouteRequest {
     const message = createBaseQueryRouteRequest();
     message.source = object.source ?? "";
@@ -356,39 +404,46 @@ export const QueryRouteResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): QueryRouteResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseQueryRouteResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.route = Route.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): QueryRouteResponse {
-    return {
-      route: isSet(object.route) ? Route.fromJSON(object.route) : undefined,
-    };
+    return { route: isSet(object.route) ? Route.fromJSON(object.route) : undefined };
   },
 
   toJSON(message: QueryRouteResponse): unknown {
     const obj: any = {};
-    message.route !== undefined && (obj.route = message.route ? Route.toJSON(message.route) : undefined);
+    if (message.route !== undefined) {
+      obj.route = Route.toJSON(message.route);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<QueryRouteResponse>, I>>(base?: I): QueryRouteResponse {
+    return QueryRouteResponse.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<QueryRouteResponse>, I>>(object: I): QueryRouteResponse {
     const message = createBaseQueryRouteResponse();
-    message.route =
-      object.route !== undefined && object.route !== null ? Route.fromPartial(object.route) : undefined;
+    message.route = (object.route !== undefined && object.route !== null) ? Route.fromPartial(object.route) : undefined;
     return message;
   },
 };
@@ -406,42 +461,48 @@ export const QueryRoutesRequest = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): QueryRoutesRequest {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseQueryRoutesRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.pagination = PageRequest.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): QueryRoutesRequest {
-    return {
-      pagination: isSet(object.pagination) ? PageRequest.fromJSON(object.pagination) : undefined,
-    };
+    return { pagination: isSet(object.pagination) ? PageRequest.fromJSON(object.pagination) : undefined };
   },
 
   toJSON(message: QueryRoutesRequest): unknown {
     const obj: any = {};
-    message.pagination !== undefined &&
-      (obj.pagination = message.pagination ? PageRequest.toJSON(message.pagination) : undefined);
+    if (message.pagination !== undefined) {
+      obj.pagination = PageRequest.toJSON(message.pagination);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<QueryRoutesRequest>, I>>(base?: I): QueryRoutesRequest {
+    return QueryRoutesRequest.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<QueryRoutesRequest>, I>>(object: I): QueryRoutesRequest {
     const message = createBaseQueryRoutesRequest();
-    message.pagination =
-      object.pagination !== undefined && object.pagination !== null
-        ? PageRequest.fromPartial(object.pagination)
-        : undefined;
+    message.pagination = (object.pagination !== undefined && object.pagination !== null)
+      ? PageRequest.fromPartial(object.pagination)
+      : undefined;
     return message;
   },
 };
@@ -462,52 +523,62 @@ export const QueryRoutesResponse = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): QueryRoutesResponse {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseQueryRoutesResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 10) {
+            break;
+          }
+
           message.routes.push(Route.decode(reader, reader.uint32()));
-          break;
+          continue;
         case 2:
+          if (tag !== 18) {
+            break;
+          }
+
           message.pagination = PageResponse.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): QueryRoutesResponse {
     return {
-      routes: Array.isArray(object?.routes) ? object.routes.map((e: any) => Route.fromJSON(e)) : [],
+      routes: globalThis.Array.isArray(object?.routes) ? object.routes.map((e: any) => Route.fromJSON(e)) : [],
       pagination: isSet(object.pagination) ? PageResponse.fromJSON(object.pagination) : undefined,
     };
   },
 
   toJSON(message: QueryRoutesResponse): unknown {
     const obj: any = {};
-    if (message.routes) {
-      obj.routes = message.routes.map((e) => (e ? Route.toJSON(e) : undefined));
-    } else {
-      obj.routes = [];
+    if (message.routes?.length) {
+      obj.routes = message.routes.map((e) => Route.toJSON(e));
     }
-    message.pagination !== undefined &&
-      (obj.pagination = message.pagination ? PageResponse.toJSON(message.pagination) : undefined);
+    if (message.pagination !== undefined) {
+      obj.pagination = PageResponse.toJSON(message.pagination);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<QueryRoutesResponse>, I>>(base?: I): QueryRoutesResponse {
+    return QueryRoutesResponse.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<QueryRoutesResponse>, I>>(object: I): QueryRoutesResponse {
     const message = createBaseQueryRoutesResponse();
     message.routes = object.routes?.map((e) => Route.fromPartial(e)) || [];
-    message.pagination =
-      object.pagination !== undefined && object.pagination !== null
-        ? PageResponse.fromPartial(object.pagination)
-        : undefined;
+    message.pagination = (object.pagination !== undefined && object.pagination !== null)
+      ? PageResponse.fromPartial(object.pagination)
+      : undefined;
     return message;
   },
 };
@@ -522,9 +593,12 @@ export interface Query {
   Routes(request: QueryRoutesRequest): Promise<QueryRoutesResponse>;
 }
 
+export const QueryServiceName = "cyber.grid.v1beta1.Query";
 export class QueryClientImpl implements Query {
   private readonly rpc: Rpc;
-  constructor(rpc: Rpc) {
+  private readonly service: string;
+  constructor(rpc: Rpc, opts?: { service?: string }) {
+    this.service = opts?.service || QueryServiceName;
     this.rpc = rpc;
     this.Params = this.Params.bind(this);
     this.SourceRoutes = this.SourceRoutes.bind(this);
@@ -536,44 +610,44 @@ export class QueryClientImpl implements Query {
   }
   Params(request: QueryParamsRequest): Promise<QueryParamsResponse> {
     const data = QueryParamsRequest.encode(request).finish();
-    const promise = this.rpc.request("cyber.grid.v1beta1.Query", "Params", data);
-    return promise.then((data) => QueryParamsResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "Params", data);
+    return promise.then((data) => QueryParamsResponse.decode(_m0.Reader.create(data)));
   }
 
   SourceRoutes(request: QuerySourceRequest): Promise<QueryRoutesResponse> {
     const data = QuerySourceRequest.encode(request).finish();
-    const promise = this.rpc.request("cyber.grid.v1beta1.Query", "SourceRoutes", data);
-    return promise.then((data) => QueryRoutesResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "SourceRoutes", data);
+    return promise.then((data) => QueryRoutesResponse.decode(_m0.Reader.create(data)));
   }
 
   DestinationRoutes(request: QueryDestinationRequest): Promise<QueryRoutesResponse> {
     const data = QueryDestinationRequest.encode(request).finish();
-    const promise = this.rpc.request("cyber.grid.v1beta1.Query", "DestinationRoutes", data);
-    return promise.then((data) => QueryRoutesResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "DestinationRoutes", data);
+    return promise.then((data) => QueryRoutesResponse.decode(_m0.Reader.create(data)));
   }
 
   DestinationRoutedEnergy(request: QueryDestinationRequest): Promise<QueryRoutedEnergyResponse> {
     const data = QueryDestinationRequest.encode(request).finish();
-    const promise = this.rpc.request("cyber.grid.v1beta1.Query", "DestinationRoutedEnergy", data);
-    return promise.then((data) => QueryRoutedEnergyResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "DestinationRoutedEnergy", data);
+    return promise.then((data) => QueryRoutedEnergyResponse.decode(_m0.Reader.create(data)));
   }
 
   SourceRoutedEnergy(request: QuerySourceRequest): Promise<QueryRoutedEnergyResponse> {
     const data = QuerySourceRequest.encode(request).finish();
-    const promise = this.rpc.request("cyber.grid.v1beta1.Query", "SourceRoutedEnergy", data);
-    return promise.then((data) => QueryRoutedEnergyResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "SourceRoutedEnergy", data);
+    return promise.then((data) => QueryRoutedEnergyResponse.decode(_m0.Reader.create(data)));
   }
 
   Route(request: QueryRouteRequest): Promise<QueryRouteResponse> {
     const data = QueryRouteRequest.encode(request).finish();
-    const promise = this.rpc.request("cyber.grid.v1beta1.Query", "Route", data);
-    return promise.then((data) => QueryRouteResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "Route", data);
+    return promise.then((data) => QueryRouteResponse.decode(_m0.Reader.create(data)));
   }
 
   Routes(request: QueryRoutesRequest): Promise<QueryRoutesResponse> {
     const data = QueryRoutesRequest.encode(request).finish();
-    const promise = this.rpc.request("cyber.grid.v1beta1.Query", "Routes", data);
-    return promise.then((data) => QueryRoutesResponse.decode(new _m0.Reader(data)));
+    const promise = this.rpc.request(this.service, "Routes", data);
+    return promise.then((data) => QueryRoutesResponse.decode(_m0.Reader.create(data)));
   }
 }
 
@@ -583,21 +657,14 @@ interface Rpc {
 
 type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
 
-export type DeepPartial<T> = T extends Builtin
-  ? T
-  : T extends Long
-  ? string | number | Long
-  : T extends Array<infer U>
-  ? Array<DeepPartial<U>>
-  : T extends ReadonlyArray<infer U>
-  ? ReadonlyArray<DeepPartial<U>>
-  : T extends {}
-  ? { [K in keyof T]?: DeepPartial<T[K]> }
+export type DeepPartial<T> = T extends Builtin ? T
+  : T extends Long ? string | number | Long : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
+  : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
+  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
-export type Exact<P, I extends P> = P extends Builtin
-  ? P
+export type Exact<P, I extends P> = P extends Builtin ? P
   : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
 
 if (_m0.util.Long !== Long) {

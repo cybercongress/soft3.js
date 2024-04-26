@@ -1,7 +1,7 @@
 /* eslint-disable */
-import { Coin } from "../../../cosmos/base/v1beta1/coin";
 import Long from "long";
 import _m0 from "protobufjs/minimal";
+import { Coin } from "../../../cosmos/base/v1beta1/coin";
 
 export const protobufPackage = "cyber.resources.v1beta1";
 
@@ -12,8 +12,8 @@ export interface Params {
   baseInvestmintPeriodVolt: number;
   baseInvestmintPeriodAmpere: number;
   minInvestmintPeriod: number;
-  baseInvestmintAmountVolt?: Coin;
-  baseInvestmintAmountAmpere?: Coin;
+  baseInvestmintAmountVolt?: Coin | undefined;
+  baseInvestmintAmountAmpere?: Coin | undefined;
 }
 
 function createBaseParams(): Params {
@@ -59,60 +59,93 @@ export const Params = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): Params {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseParams();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          if (tag !== 8) {
+            break;
+          }
+
           message.maxSlots = reader.uint32();
-          break;
+          continue;
         case 2:
+          if (tag !== 16) {
+            break;
+          }
+
           message.halvingPeriodVoltBlocks = reader.uint32();
-          break;
+          continue;
         case 3:
+          if (tag !== 24) {
+            break;
+          }
+
           message.halvingPeriodAmpereBlocks = reader.uint32();
-          break;
+          continue;
         case 4:
+          if (tag !== 32) {
+            break;
+          }
+
           message.baseInvestmintPeriodVolt = reader.uint32();
-          break;
+          continue;
         case 5:
+          if (tag !== 40) {
+            break;
+          }
+
           message.baseInvestmintPeriodAmpere = reader.uint32();
-          break;
+          continue;
         case 6:
+          if (tag !== 48) {
+            break;
+          }
+
           message.minInvestmintPeriod = reader.uint32();
-          break;
+          continue;
         case 7:
+          if (tag !== 58) {
+            break;
+          }
+
           message.baseInvestmintAmountVolt = Coin.decode(reader, reader.uint32());
-          break;
+          continue;
         case 8:
+          if (tag !== 66) {
+            break;
+          }
+
           message.baseInvestmintAmountAmpere = Coin.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
+          continue;
       }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
     }
     return message;
   },
 
   fromJSON(object: any): Params {
     return {
-      maxSlots: isSet(object.maxSlots) ? Number(object.maxSlots) : 0,
+      maxSlots: isSet(object.maxSlots) ? globalThis.Number(object.maxSlots) : 0,
       halvingPeriodVoltBlocks: isSet(object.halvingPeriodVoltBlocks)
-        ? Number(object.halvingPeriodVoltBlocks)
+        ? globalThis.Number(object.halvingPeriodVoltBlocks)
         : 0,
       halvingPeriodAmpereBlocks: isSet(object.halvingPeriodAmpereBlocks)
-        ? Number(object.halvingPeriodAmpereBlocks)
+        ? globalThis.Number(object.halvingPeriodAmpereBlocks)
         : 0,
       baseInvestmintPeriodVolt: isSet(object.baseInvestmintPeriodVolt)
-        ? Number(object.baseInvestmintPeriodVolt)
+        ? globalThis.Number(object.baseInvestmintPeriodVolt)
         : 0,
       baseInvestmintPeriodAmpere: isSet(object.baseInvestmintPeriodAmpere)
-        ? Number(object.baseInvestmintPeriodAmpere)
+        ? globalThis.Number(object.baseInvestmintPeriodAmpere)
         : 0,
-      minInvestmintPeriod: isSet(object.minInvestmintPeriod) ? Number(object.minInvestmintPeriod) : 0,
+      minInvestmintPeriod: isSet(object.minInvestmintPeriod) ? globalThis.Number(object.minInvestmintPeriod) : 0,
       baseInvestmintAmountVolt: isSet(object.baseInvestmintAmountVolt)
         ? Coin.fromJSON(object.baseInvestmintAmountVolt)
         : undefined,
@@ -124,28 +157,36 @@ export const Params = {
 
   toJSON(message: Params): unknown {
     const obj: any = {};
-    message.maxSlots !== undefined && (obj.maxSlots = Math.round(message.maxSlots));
-    message.halvingPeriodVoltBlocks !== undefined &&
-      (obj.halvingPeriodVoltBlocks = Math.round(message.halvingPeriodVoltBlocks));
-    message.halvingPeriodAmpereBlocks !== undefined &&
-      (obj.halvingPeriodAmpereBlocks = Math.round(message.halvingPeriodAmpereBlocks));
-    message.baseInvestmintPeriodVolt !== undefined &&
-      (obj.baseInvestmintPeriodVolt = Math.round(message.baseInvestmintPeriodVolt));
-    message.baseInvestmintPeriodAmpere !== undefined &&
-      (obj.baseInvestmintPeriodAmpere = Math.round(message.baseInvestmintPeriodAmpere));
-    message.minInvestmintPeriod !== undefined &&
-      (obj.minInvestmintPeriod = Math.round(message.minInvestmintPeriod));
-    message.baseInvestmintAmountVolt !== undefined &&
-      (obj.baseInvestmintAmountVolt = message.baseInvestmintAmountVolt
-        ? Coin.toJSON(message.baseInvestmintAmountVolt)
-        : undefined);
-    message.baseInvestmintAmountAmpere !== undefined &&
-      (obj.baseInvestmintAmountAmpere = message.baseInvestmintAmountAmpere
-        ? Coin.toJSON(message.baseInvestmintAmountAmpere)
-        : undefined);
+    if (message.maxSlots !== 0) {
+      obj.maxSlots = Math.round(message.maxSlots);
+    }
+    if (message.halvingPeriodVoltBlocks !== 0) {
+      obj.halvingPeriodVoltBlocks = Math.round(message.halvingPeriodVoltBlocks);
+    }
+    if (message.halvingPeriodAmpereBlocks !== 0) {
+      obj.halvingPeriodAmpereBlocks = Math.round(message.halvingPeriodAmpereBlocks);
+    }
+    if (message.baseInvestmintPeriodVolt !== 0) {
+      obj.baseInvestmintPeriodVolt = Math.round(message.baseInvestmintPeriodVolt);
+    }
+    if (message.baseInvestmintPeriodAmpere !== 0) {
+      obj.baseInvestmintPeriodAmpere = Math.round(message.baseInvestmintPeriodAmpere);
+    }
+    if (message.minInvestmintPeriod !== 0) {
+      obj.minInvestmintPeriod = Math.round(message.minInvestmintPeriod);
+    }
+    if (message.baseInvestmintAmountVolt !== undefined) {
+      obj.baseInvestmintAmountVolt = Coin.toJSON(message.baseInvestmintAmountVolt);
+    }
+    if (message.baseInvestmintAmountAmpere !== undefined) {
+      obj.baseInvestmintAmountAmpere = Coin.toJSON(message.baseInvestmintAmountAmpere);
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<Params>, I>>(base?: I): Params {
+    return Params.fromPartial(base ?? ({} as any));
+  },
   fromPartial<I extends Exact<DeepPartial<Params>, I>>(object: I): Params {
     const message = createBaseParams();
     message.maxSlots = object.maxSlots ?? 0;
@@ -155,11 +196,11 @@ export const Params = {
     message.baseInvestmintPeriodAmpere = object.baseInvestmintPeriodAmpere ?? 0;
     message.minInvestmintPeriod = object.minInvestmintPeriod ?? 0;
     message.baseInvestmintAmountVolt =
-      object.baseInvestmintAmountVolt !== undefined && object.baseInvestmintAmountVolt !== null
+      (object.baseInvestmintAmountVolt !== undefined && object.baseInvestmintAmountVolt !== null)
         ? Coin.fromPartial(object.baseInvestmintAmountVolt)
         : undefined;
     message.baseInvestmintAmountAmpere =
-      object.baseInvestmintAmountAmpere !== undefined && object.baseInvestmintAmountAmpere !== null
+      (object.baseInvestmintAmountAmpere !== undefined && object.baseInvestmintAmountAmpere !== null)
         ? Coin.fromPartial(object.baseInvestmintAmountAmpere)
         : undefined;
     return message;
@@ -168,21 +209,14 @@ export const Params = {
 
 type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
 
-export type DeepPartial<T> = T extends Builtin
-  ? T
-  : T extends Long
-  ? string | number | Long
-  : T extends Array<infer U>
-  ? Array<DeepPartial<U>>
-  : T extends ReadonlyArray<infer U>
-  ? ReadonlyArray<DeepPartial<U>>
-  : T extends {}
-  ? { [K in keyof T]?: DeepPartial<T[K]> }
+export type DeepPartial<T> = T extends Builtin ? T
+  : T extends Long ? string | number | Long : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
+  : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
+  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
-export type Exact<P, I extends P> = P extends Builtin
-  ? P
+export type Exact<P, I extends P> = P extends Builtin ? P
   : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
 
 if (_m0.util.Long !== Long) {

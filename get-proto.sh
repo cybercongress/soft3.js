@@ -5,7 +5,7 @@ command -v shellcheck >/dev/null && shellcheck "$0"
 PROTO_DIR="./proto"
 CYBER_DIR="$PROTO_DIR/cyber"
 ZIP_FILE="$CYBER_DIR/tmp.zip"
-CYBER_REF='v2.0.0'
+CYBER_REF='v4.0.0-rc1'
 mkdir -p "$CYBER_DIR"
 
 wget -qO "$ZIP_FILE" "https://github.com/cybercongress/go-cyber/archive/refs/tags/$CYBER_REF.zip"
