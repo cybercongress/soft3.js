@@ -1,7 +1,7 @@
 import { toUtf8 } from "@cosmjs/encoding";
 import { Uint53 } from "@cosmjs/math";
 import { longify } from "@cosmjs/stargate/build/queryclient";
-import { MsgExec, MsgGrant, MsgRevoke } from "cosmjs-types/cosmos/authz/v1beta1/tx";
+// import { MsgExec, MsgGrant, MsgRevoke } from "cosmjs-types/cosmos/authz/v1beta1/tx";
 import { MsgSend } from "cosmjs-types/cosmos/bank/v1beta1/tx";
 import { MsgWithdrawDelegatorReward } from "cosmjs-types/cosmos/distribution/v1beta1/tx";
 import { MsgDeposit, MsgSubmitProposal, MsgVote } from "cosmjs-types/cosmos/gov/v1beta1/tx";
@@ -37,13 +37,6 @@ const testAddress2 = "bostrom1frk9k38pvp70vheezhdfd4nvqnlsm9dw3j8hlw";
 const testContract = "bostrom1nwnejwsdpqktusvh8qhxe5arsznjd5asdwutmaz9n5qcpl3dcmhsujhemd";
 const testValidatorAddress = "bostromvaloper135ca8hdpy9sk0ntwqzpzsvatyl48ptx52tn60p";
 
-const executePlaceholder = {
-  transfer: {
-    recipient: "bostrom1p0r7uxstcw8ehrwuj4kn8qzzs0yypsjwxgd445",
-    amount: "1",
-  },
-};
-
 const depositCoin = { denom: "boot", amount: "1000000" };
 
 const depositCoins = [
@@ -51,26 +44,10 @@ const depositCoins = [
   { denom: "hydrogen", amount: "1000000" },
 ];
 
-const instantiatePlaceholder = {
-  name: "Nation coin",
-  symbol: "NTN",
-  decimals: 0,
-  initial_balances: [
-    {
-      address: "bostrom1p0r7uxstcw8ehrwuj4kn8qzzs0yypsjwxgd445",
-      amount: "100000",
-    },
-  ],
-  mint: {
-    minter: "bostrom1p0r7uxstcw8ehrwuj4kn8qzzs0yypsjwxgd445",
-    cap: "1000000",
-  },
-};
-
 interface RenderItem {
   typeUrl: string;
   value: Partial<any>;
-  data: {};
+  data: any;
 }
 
 interface RenderItems extends Array<RenderItem> {}

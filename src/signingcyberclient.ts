@@ -133,14 +133,14 @@ export function links(from: string, to: string): Link[] {
 }
 
 export function chain(particles: string[]): Link[] {
-  const chain = [];
+  const chainResult = [];
   for (let i = 0; i < particles.length - 1; i++) {
-    chain.push({
+    chainResult.push({
       from: particles[i],
       to: particles[i + 1],
     });
   }
-  return chain;
+  return chainResult;
 }
 
 // Experimental for remote dapps with cyb's signer integration
@@ -256,9 +256,9 @@ export class SigningCyberClient extends CyberClient {
   }
 
   public render(): string {
-    const arr: Array<{}> = [];
+    const arr: Array<Record<string, any>> = [];
 
-    renderItems.forEach((i, o) => {
+    renderItems.forEach((i) => {
       arr.push({
         [i.typeUrl.toString()]: {
           proto: {
@@ -986,11 +986,11 @@ export class SigningCyberClient extends CyberClient {
     memo = "",
   ): Promise<DeliverTxResponse | string[]> {
     // Experimental for remote dapps with cyb's signer integration
-    const msg = messages.map((msg) => this.aminoTypes.fromAmino({ type: msg.type, value: msg.value }));
+    const msgs = messages.map((msg) => this.aminoTypes.fromAmino({ type: msg.type, value: msg.value }));
     if (isOfflineDappSigner(this.signer)) {
-      return msg.map((m) => toBase64(Buffer.from(JSON.stringify(m), "utf-8")));
+      return msgs.map((m) => toBase64(Buffer.from(JSON.stringify(m), "utf-8")));
     }
-    const txRaw = await this.sign(signerAddress, msg, fee, memo);
+    const txRaw = await this.sign(signerAddress, msgs, fee, memo);
     const txBytes = TxRaw.encode(txRaw).finish();
     return this.broadcastTx(txBytes);
   }

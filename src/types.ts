@@ -34,3 +34,14 @@ export interface Link {
   from: string;
   to: string;
 }
+
+export interface CyberSearchTxFilter {
+  readonly minHeight?: number;
+  readonly maxHeight?: number;
+}
+
+export interface CyberSearchTxQuery {
+  sentFromOrTo?: string;
+  height?: number;
+  tags?: ReadonlyArray<{ readonly key: string; readonly value: string }>;
+}

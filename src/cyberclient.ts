@@ -23,12 +23,7 @@ import {
   GovProposalId,
   IbcExtension,
   IndexedTx,
-  isSearchByHeightQuery,
-  isSearchBySentFromOrToQuery,
-  isSearchByTagsQuery,
   QueryClient,
-  SearchTxFilter,
-  SearchTxQuery,
   SequenceResponse,
   setupAuthExtension,
   setupBankExtension,
@@ -47,7 +42,6 @@ import {
   toRfc3339WithNanoseconds,
 } from "@cosmjs/tendermint-rpc";
 import { assert } from "@cosmjs/utils";
-import { QueryTotalSupplyResponse } from "cosmjs-types/cosmos/bank/v1beta1/query";
 import {
   QueryCommunityPoolResponse,
   QueryDelegationRewardsResponse,
@@ -137,6 +131,7 @@ import {
   setupRankExtension,
   setupResourcesExtension,
 } from "./queries/index";
+import { CyberSearchTxFilter, CyberSearchTxQuery } from "./types";
 
 export { Code, CodeDetails, Contract, ContractCodeHistoryEntry };
 
@@ -318,7 +313,10 @@ export class CyberClient {
     return results[0] ?? null;
   }
 
-  public async searchTx(query: SearchTxQuery, filter: SearchTxFilter = {}): Promise<readonly IndexedTx[]> {
+  public async searchTx(
+    query: CyberSearchTxQuery,
+    filter: CyberSearchTxFilter = {},
+  ): Promise<readonly IndexedTx[]> {
     const minHeight = filter.minHeight || 0;
     const maxHeight = filter.maxHeight || Number.MAX_SAFE_INTEGER;
 
@@ -330,12 +328,12 @@ export class CyberClient {
 
     let txs: readonly IndexedTx[];
 
-    if (isSearchByHeightQuery(query)) {
+    if (query?.height !== undefined) {
       txs =
         query.height >= minHeight && query.height <= maxHeight
           ? await this.txsQuery(`tx.height=${query.height}`)
           : [];
-    } else if (isSearchBySentFromOrToQuery(query)) {
+    } else if (query?.sentFromOrTo !== undefined) {
       const sentQuery = withFilters(`message.module='bank' AND transfer.sender='${query.sentFromOrTo}'`);
       const receivedQuery = withFilters(
         `message.module='bank' AND transfer.recipient='${query.sentFromOrTo}'`,
@@ -345,7 +343,7 @@ export class CyberClient {
       );
       const sentHashes = sent.map((t) => t.hash);
       txs = [...sent, ...received.filter((t) => !sentHashes.includes(t.hash))];
-    } else if (isSearchByTagsQuery(query)) {
+    } else if (query?.tags !== undefined) {
       const rawQuery = withFilters(query.tags.map((t) => `${t.key}='${t.value}'`).join(" AND "));
       txs = await this.txsQuery(rawQuery);
     } else {
@@ -363,6 +361,7 @@ export class CyberClient {
   public async broadcastTx(tx: Uint8Array): Promise<DeliverTxResponse> {
     const broadcasted = await this.forceGetTmClient().broadcastTxSync({ tx });
     const transactionId = toHex(broadcasted.hash).toUpperCase();
+
     return {
       code: broadcasted.code,
       height: 0,
@@ -372,6 +371,7 @@ export class CyberClient {
       gasWanted: broadcasted.gasWanted,
       txIndex: 0,
       events: [], // TODO:  broadcasted.events,
+      msgResponses: [],
     };
   }
 
@@ -916,6 +916,7 @@ export class CyberClient {
         gasWanted: tx.result.gasWanted,
         txIndex: tx.index,
         events: [], // TODO:  tx.result.events || [],
+        msgResponses: [],
       };
     });
   }
