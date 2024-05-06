@@ -371,7 +371,7 @@ export class CyberClient {
       gasWanted: broadcasted.gasWanted,
       txIndex: 0,
       events: [], // TODO:  broadcasted.events,
-      // msgResponses: [],
+      msgResponses: [],
     };
   }
 
